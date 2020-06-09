@@ -11,8 +11,8 @@ class TestPriya: public AbstractCellBasedTestSuite
 public:
     void Test1()
     {      
-		int main();
-		{
+	int main();
+	{
             int i, n = 1000;
             double sum = 0;
             for (i = 1; i <= n; ++i) 
