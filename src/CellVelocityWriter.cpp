@@ -1,4 +1,3 @@
-
 #include "CellVelocityWriter.hpp"
 #include "AbstractCellPopulation.hpp"
 #include "MeshBasedCellPopulation.hpp"
