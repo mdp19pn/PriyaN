@@ -1,7 +1,7 @@
 #ifndef CELLVELOCITYWRITER_HPP_
 #define CELLVELOCITYWRITER_HPP_
 
-#include "AbstractCellPopulationWriter.hpp"
+#include "AbstractCellWriter.hpp"
 #include "ChasteSerialization.hpp"
 #include <boost/serialization/base_object.hpp>
 
