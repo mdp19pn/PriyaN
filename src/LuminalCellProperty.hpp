@@ -8,26 +8,6 @@
 #include "CheckpointArchiveTypes.hpp"
 #include "AbstractCellBasedTestSuite.hpp"
 
-/* The next header defines a base class for cell properties. Our new
- * cell property will inherit from this abstract class. */
-#include "AbstractCellProperty.hpp"
-/* The remaining header files define classes that will be used in the cell-based
- * simulation test. We have encountered each of these header files in previous cell-based
- * Chaste tutorials. */
-#include "AbstractForce.hpp"
-#include "HoneycombMeshGenerator.hpp"
-#include "NodesOnlyMesh.hpp"
-#include "WildTypeCellMutationState.hpp"
-#include "DifferentiatedCellProliferativeType.hpp"
-#include "CellLabel.hpp"
-#include "FixedG1GenerationalCellCycleModel.hpp"
-#include "GeneralisedLinearSpringForce.hpp"
-#include "CellMutationStatesCountWriter.hpp"
-#include "OffLatticeSimulation.hpp"
-#include "SmartPointers.hpp"
-//This test is always run sequentially (never in parallel)
-#include "FakePetscSetup.hpp"
-
 /*
  * == Defining the cell property class ==
  *
