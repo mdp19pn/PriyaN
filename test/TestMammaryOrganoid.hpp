@@ -7,7 +7,6 @@
 #include "AbstractCellBasedTestSuite.hpp"
 #include "PetscSetupAndFinalize.hpp"
 #include "CellsGenerator.hpp"
-#include "TransitCellProliferativeType.hpp"
 #include "UniformCellCycleModel.hpp"
 #include "HoneycombMeshGenerator.hpp"
 #include "GeneralisedLinearSpringForce.hpp"
@@ -15,11 +14,32 @@
 #include "SmartPointers.hpp"
 #include "NodesOnlyMesh.hpp"
 #include "NodeBasedCellPopulation.hpp"
+#include "CellLabel.hpp"
+#include "CellVelocityWriter.hpp"
+#include "LuminalCellProperty.hpp"
+#include "MyoepithelialCellProperty.hpp"
+
+/*
+ * The next block of code is included to be able to archive the cell property and force objects in a cell-based simulation,
+ * and to obtain a unique identifier for our new classes for when writing results to file. 
+ * Identifiers for all classes are defined together here, since we can only have each #include once in this source file. 
+ * 
+ * The first include and export would go in the class' header, 
+ * and the second include and export in the .cpp file for each respective class.
+ */
+
+#include "SerializationExportWrapper.hpp"
+CHASTE_CLASS_EXPORT(LuminalCellProperty)
+CHASTE_CLASS_EXPORT(MyoepithelialCellProperty)
+CHASTE_CLASS_EXPORT(CellVelocityWriter)
+#include "SerializationExportWrapperForCpp.hpp"
+CHASTE_CLASS_EXPORT(LuminalCellProperty)
+CHASTE_CLASS_EXPORT(MyoepithelialCellProperty)
+CHASTE_CLASS_EXPORT(CellVelocityWriter)
 
 /*
  * To visualize the results of each test below, use Paraview or Chaste's 
- * Java visualizer (for more details, see the Chaste user tutorial on 
- * running node-based simulations).
+ * Java visualizer.
  */
 class TestMammaryOrganoid : public AbstractCellBasedTestSuite
 {
@@ -37,9 +57,10 @@ public:
 
         // Create a vector of proliferative cells using the helper CellsGenerator
         std::vector<CellPtr> cells;
-        MAKE_PTR(TransitCellProliferativeType, p_transit_type);
+        MAKE_PTR(LuminalCellProperty, p_luminal);
+        MAKE_PTR(CellLabel, p_label);
         CellsGenerator<UniformCellCycleModel, 2> cells_generator;
-        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes(), p_transit_type);
+        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes(), p_luminal);
 
         // Use the mesh and cells to create a cell population
         NodeBasedCellPopulation<2> cell_population(mesh, cells);
@@ -73,9 +94,10 @@ public:
 
         // Create a vector of proliferative cells using the helper CellsGenerator
         std::vector<CellPtr> cells;
-        MAKE_PTR(TransitCellProliferativeType, p_transit_type);
+        MAKE_PTR(LuminalCellProperty, p_luminal);
+        MAKE_PTR(CellLabel, p_label);
         CellsGenerator<UniformCellCycleModel, 3> cells_generator;
-        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes(), p_transit_type);
+        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes(), p_luminal);
 
         // Use the mesh and cells to create a cell population
         NodeBasedCellPopulation<3> cell_population(mesh, cells);
