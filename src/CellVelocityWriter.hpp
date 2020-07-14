@@ -14,7 +14,7 @@
  * \todo some code duplication in methods; potential for refactoring (#2404)
  */
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-class CellVelocityWriter : public AbstractCellPopulationWriter<ELEMENT_DIM, SPACE_DIM>
+class CellVelocityWriter : public AbstractCellWriter<ELEMENT_DIM, SPACE_DIM>
 {
 private:
     /** Needed for serialization. */
@@ -28,7 +28,7 @@ private:
     template<class Archive>
     void serialize(Archive & archive, const unsigned int version)
     {
-        archive & boost::serialization::base_object<AbstractCellPopulationWriter<ELEMENT_DIM, SPACE_DIM> >(*this);
+        archive & boost::serialization::base_object<AbstractCellWriter<ELEMENT_DIM, SPACE_DIM> >(*this);
     }
 
 public:
