@@ -63,7 +63,7 @@ public:
      * This line is appended to the output written by AbstractCellBasedWriter, which is a single
      * value [present simulation time], followed by a tab.
      *
-     * @param pCellPopulation a pointer to the NodeBasedCellPopulation to visit.
+     * @param pCellPopulation a pointer to the cell population owning the cell.
      */
     virtual void VisitCell(CellPtr pCell, AbstractCellPopulation<ELEMENT_DIM,SPACE_DIM>* pCellPopulation);
 };
