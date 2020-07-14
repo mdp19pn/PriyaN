@@ -8,7 +8,7 @@
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 CellVelocityWriter<ELEMENT_DIM, SPACE_DIM>::CellVelocityWriter()
-    : AbstractCellPopulationWriter<ELEMENT_DIM, SPACE_DIM>("cellvelocities.dat")
+    : AbstractCellWriter<ELEMENT_DIM, SPACE_DIM>("cellvelocities.dat")
 {
 }
 
