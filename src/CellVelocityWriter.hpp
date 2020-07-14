@@ -39,32 +39,20 @@ public:
     CellVelocityWriter();
 
     /**
-     * Visit the population and write the location of each Cell.
+     * Overridden GetCellDataForVtkOutput() method.
      *
-     * Outputs a line of space-separated values of the form:
-     * ... [Cell index] [Cell x-pos] [Cell y-pos] [Cell z-pos] [Cell x-vel] [Cell y-vel] [Cell z-vel]...
+     * Get a double associated with a cell. This method reduces duplication
+     * of code between the methods VisitCell() and AddVtkData().
      *
-     * where z-pos and z-vel are used in 3 dimensions.
-     * Here the indexing of cells is as given by the CellIterator.
+     * @param pCell a cell
+     * @param pCellPopulation a pointer to the cell population owning the cell
      *
-     * This line is appended to the output written by AbstractCellBasedWriter, which is a single
-     * value [present simulation time], followed by a tab.
-     *
-     * @param pCellPopulation a pointer to the MeshBasedCellPopulation to visit.
+     * @return data associated with the cell
      */
-    virtual void Visit(MeshBasedCellPopulation<ELEMENT_DIM, SPACE_DIM>* pCellPopulation);
+    double GetCellDataForVtkOutput(CellPtr pCell, AbstractCellPopulation<ELEMENT_DIM, SPACE_DIM>* pCellPopulation);
 
     /**
-     * Visit the population and write the data.
-     *
-     * This is an empty dummy function, since this class is not defined for use with a CaBasedCellPopulation.
-     *
-     * @param pCellPopulation a pointer to the CaBasedCellPopulation to visit.
-     */
-    virtual void Visit(CaBasedCellPopulation<SPACE_DIM>* pCellPopulation);
-
-    /**
-     * Visit the population and write the location of each Cell.
+     * Visit a cell and write its location index.
      *
      * Outputs a line of space-separated values of the form:
      * ... [Cell index] [Cell x-pos] [Cell y-pos] [Cell z-pos] [Cell x-vel] [Cell y-vel] [Cell z-vel]...
@@ -77,32 +65,7 @@ public:
      *
      * @param pCellPopulation a pointer to the NodeBasedCellPopulation to visit.
      */
-    virtual void Visit(NodeBasedCellPopulation<SPACE_DIM>* pCellPopulation);
-
-    /**
-     * Visit the population and write the data.
-     *
-     * This is an empty dummy function, since this class is not defined for use with a PottsBasedCellPopulation.
-     *
-     * @param pCellPopulation a pointer to the PottsBasedCellPopulation to visit.
-     */
-    virtual void Visit(PottsBasedCellPopulation<SPACE_DIM>* pCellPopulation);
-
-    /**
-     * Visit the population and write the location of each Cell.
-     *
-     * Outputs a line of space-separated values of the form:
-     * ... [Cell index] [Cell x-pos] [Cell y-pos] [Cell z-pos] [Cell x-vel] [Cell y-vel] [Cell z-vel]...
-     *
-     * where z-pos and z-vel are used in 3 dimensions.
-     * Here the indexing of Cells is as given by the CellIterator.
-     *
-     * This line is appended to the output written by AbstractCellBasedWriter, which is a single
-     * value [present simulation time], followed by a tab.
-     *
-     * @param pCellPopulation a pointer to the VertexBasedCellPopulation to visit.
-     */
-    virtual void Visit(VertexBasedCellPopulation<SPACE_DIM>* pCellPopulation);
+    virtual void VisitCell(CellPtr pCell, AbstractCellPopulation<ELEMENT_DIM,SPACE_DIM>* pCellPopulation);
 };
 
 #include "SerializationExportWrapper.hpp"
