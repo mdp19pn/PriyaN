@@ -27,7 +27,6 @@
  * The first include and export would go in the class' header, 
  * and the second include and export in the .cpp file for each respective class.
  */
-
 #include "SerializationExportWrapper.hpp"
 CHASTE_CLASS_EXPORT(LuminalCellProperty)
 CHASTE_CLASS_EXPORT(MyoepithelialCellProperty)
@@ -62,8 +61,9 @@ public:
         CellsGenerator<UniformCellCycleModel, 2> cells_generator;
         cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes(), p_luminal);
 
-        // Use the mesh and cells to create a cell population
+        // Use the mesh and cells to create a cell population, and specify which results to output to file.
         NodeBasedCellPopulation<2> cell_population(mesh, cells);
+        cell_population.AddCellWriter<CellVelocityWriter>();
 
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<2> simulator(cell_population);
@@ -99,8 +99,9 @@ public:
         CellsGenerator<UniformCellCycleModel, 3> cells_generator;
         cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes(), p_luminal);
 
-        // Use the mesh and cells to create a cell population
+        // Use the mesh and cells to create a cell population, and specify which results to output to file.
         NodeBasedCellPopulation<3> cell_population(mesh, cells);
+        cell_population.AddCellWriter<CellVelocityWriter>();
 
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
