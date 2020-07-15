@@ -17,6 +17,7 @@
 #include "CellLabel.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
+#include "CellVelocityWriter.hpp"
 
 /*
  * The next block of code is included to be able to archive the cell property and force objects in a cell-based simulation,
@@ -29,9 +30,11 @@
 #include "SerializationExportWrapper.hpp"
 CHASTE_CLASS_EXPORT(LuminalCellProperty)
 CHASTE_CLASS_EXPORT(MyoepithelialCellProperty)
+CHASTE_CLASS_EXPORT(CellVelocityWriter)
 #include "SerializationExportWrapperForCpp.hpp"
 CHASTE_CLASS_EXPORT(LuminalCellProperty)
 CHASTE_CLASS_EXPORT(MyoepithelialCellProperty)
+CHASTE_CLASS_EXPORT(CellVelocityWriter)
 
 /*
  * To visualize the results of each test below, use Paraview or Chaste's 
@@ -60,6 +63,7 @@ public:
 
         // Use the mesh and cells to create a cell population, and specify which results to output to file.
         NodeBasedCellPopulation<2> cell_population(mesh, cells);
+        cell_population.AddCellWriter<CellVelocityWriter>();
 
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<2> simulator(cell_population);
