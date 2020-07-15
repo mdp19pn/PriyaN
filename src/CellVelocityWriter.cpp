@@ -5,10 +5,18 @@ template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 CellVelocityWriter<ELEMENT_DIM, SPACE_DIM>::CellVelocityWriter()
     : AbstractCellWriter<ELEMENT_DIM, SPACE_DIM>("cellvelocities.dat")
 {
+    this->mVtkCellDataName = "Velocity";
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-void CellVelocityWriter<ELEMENT_DIM, SPACE_DIM>::Visit(NodeBasedCellPopulation<SPACE_DIM>* pCellPopulation)
+double CellVelocityWriter<ELEMENT_DIM, SPACE_DIM>::GetCellDataForVtkOutput(CellPtr pCell, AbstractCellPopulation<ELEMENT_DIM, SPACE_DIM>* pCellPopulation)
+{
+    // The method GetCellDataForVtkOutput() is not suitable for this class, so we simply return zero
+    return 0.0;
+}
+
+template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
+void CellVelocityWriter<ELEMENT_DIM, SPACE_DIM>::VisitCell(CellPtr pCell, AbstractCellPopulation<ELEMENT_DIM, SPACE_DIM>* pCellPopulation)
 {
     for (typename AbstractMesh<SPACE_DIM, SPACE_DIM>::NodeIterator node_iter = pCellPopulation->rGetMesh().GetNodeIteratorBegin();
          node_iter != pCellPopulation->rGetMesh().GetNodeIteratorEnd();
