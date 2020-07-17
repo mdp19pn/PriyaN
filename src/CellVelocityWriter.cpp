@@ -24,13 +24,11 @@ void CellVelocityWriter<ELEMENT_DIM, SPACE_DIM>::VisitCell(CellPtr pCell, Abstra
     if (dynamic_cast<NodeBasedCellPopulation<SPACE_DIM>*>(pCellPopulation))
     {
         unsigned node_index = pCellPopulation->GetLocationIndexUsingCell(pCell);
+        Node<SPACE_DIM>* p_node = pCellPopulation->GetNode(node_index);
         
         // We should never encounter nodes that are deleted or associated with dead cells when calling this method
-        assert(!node_iter->IsDeleted());
-        if (!(pCellPopulation->IsGhostNode(node_index)))
-        {
-            assert(!pCell->IsDead());
-        }
+        assert(!p_node->IsDeleted());
+        assert(!pCell->IsDead());
         
         unsigned cell_id = pCell->GetCellId();
        
@@ -38,7 +36,7 @@ void CellVelocityWriter<ELEMENT_DIM, SPACE_DIM>::VisitCell(CellPtr pCell, Abstra
         *this->mpOutStream << cell_id << " ";
 
         // Write the cell's position to file
-        const c_vector<double, SPACE_DIM>& position = pCellPopulation->GetNode(node_index)->rGetLocation();
+        const c_vector<double, SPACE_DIM>& position = p_node->rGetLocation();
         for (unsigned i=0; i<SPACE_DIM; i++)
         {
             *this->mpOutStream << position[i] << " ";
@@ -46,8 +44,8 @@ void CellVelocityWriter<ELEMENT_DIM, SPACE_DIM>::VisitCell(CellPtr pCell, Abstra
 
         // Write the cell's velocity to file
         double time_step = SimulationTime::Instance()->GetTimeStep();
-        double damping_constant = pCellPopulation->GetDampingConstant(node_index);
-        c_vector<double, SPACE_DIM> velocity = time_step * node_iter->rGetAppliedForce() / damping_constant;
+        double damping_constant = static_cast<NodeBasedCellPopulation<SPACE_DIM>*>(pCellPopulation)->GetDampingConstant(node_index);
+        c_vector<double, SPACE_DIM> velocity = time_step * p_node->rGetAppliedForce() / damping_constant;
         for (unsigned i=0; i<SPACE_DIM; i++)
         {
             *this->mpOutStream << velocity[i] << " ";
