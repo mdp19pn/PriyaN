@@ -45,7 +45,7 @@ public:
      *
      * @param colour  what colour cells with this mutation state should be in the visualizer
      */
-    MyoepithelialCellProperty(unsigned colour);
+    MyoepithelialCellProperty(unsigned colour=5);
 
     /**
      * Virtual destructor, to make this class polymorphic.

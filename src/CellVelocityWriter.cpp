@@ -44,12 +44,16 @@ void CellVelocityWriter<ELEMENT_DIM, SPACE_DIM>::VisitCell(CellPtr pCell, Abstra
 
         // Write the cell's velocity to file
         double time_step = SimulationTime::Instance()->GetTimeStep();
-        double damping_constant = static_cast<NodeBasedCellPopulation<SPACE_DIM>*>(pCellPopulation)->GetDampingConstant(node_index);
+
+        void* pCellPopulation;
+        NodeBasedCellPopulation<SPACE_DIM>* p = static_cast<NodeBasedCellPopulation<SPACE_DIM>*>(pCellPopulation);
+        double damping_constant = p->GetDampingConstant(node_index);
         c_vector<double, SPACE_DIM> velocity = time_step * p_node->rGetAppliedForce() / damping_constant;
         for (unsigned i=0; i<SPACE_DIM; i++)
         {
             *this->mpOutStream << velocity[i] << " ";
-        }      
+        }   
+   
     }
     else
     {
