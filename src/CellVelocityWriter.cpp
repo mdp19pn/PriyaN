@@ -1,7 +1,5 @@
 #include "CellVelocityWriter.hpp"
 #include "AbstractCellPopulation.hpp"
-
-
 #include "CellVolumesWriter.hpp"
 #include "NodeBasedCellPopulation.hpp"
 #include "Exception.hpp"
@@ -35,8 +33,7 @@ void CellVelocityWriter<ELEMENT_DIM, SPACE_DIM>::VisitCell(CellPtr pCell, Abstra
         }
         
         unsigned cell_id = pCell->GetCellId();
-        
-        
+       
         // Write the cell's ID to file
         *this->mpOutStream << cell_id << " ";
 
