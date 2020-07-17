@@ -50,7 +50,7 @@ void CellVelocityWriter<ELEMENT_DIM, SPACE_DIM>::VisitCell(CellPtr pCell, Abstra
         // Write the cell's velocity to file
         double time_step = SimulationTime::Instance()->GetTimeStep();
         double damping_constant = pCellPopulation->GetDampingConstant(node_index);
-        c_vector<double, SPACE_DIM> velocity = time_step * node_iter->rGetAppliedForce() / damping_constant;
+        c_vector<double, SPACE_DIM> velocity = time_step * node_index->rGetAppliedForce() / damping_constant;
         for (unsigned i=0; i<SPACE_DIM; i++)
         {
             *this->mpOutStream << velocity[i] << " ";
@@ -58,7 +58,7 @@ void CellVelocityWriter<ELEMENT_DIM, SPACE_DIM>::VisitCell(CellPtr pCell, Abstra
     }
     else
     {
-        EXCEPTION("This method is implemented only for a NodeBasedCellPopulation")
+        EXCEPTION("This method is implemented only for a NodeBasedCellPopulation");
     }
 }
 

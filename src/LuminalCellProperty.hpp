@@ -4,29 +4,33 @@
 /*
  * = Include necessary header files
  */
-#include <cxxtest/TestSuite.h>
-#include "CheckpointArchiveTypes.hpp"
-#include "AbstractCellBasedTestSuite.hpp"
+#include <boost/shared_ptr.hpp>
+#include "AbstractCellProperty.hpp"
+#include "ChasteSerialization.hpp"
+#include <boost/serialization/base_object.hpp>
 
 /*
  * == Defining the cell property class ==
- *
- * Note that usually this code would be separated out into a separate declaration
- * in a .hpp file and definition in a .cpp file.
  */
 class LuminalCellProperty : public AbstractCellProperty
 {
-private:
+protected:
 
-    /* We define a member variable {{{mColour}}}, which can be used by visualization tools
-     * to paint cells with this mutation state a distinct colour if required. */
+    /**
+     * Colour for use by visualizer.
+     */
     unsigned mColour;
 
-    /* The next block of code allows us to archive (save or load) the cell property object
-     * in a cell-based simulation. The code consists of a serialize() method, in which we first
-     * archive the cell property using the serialization code defined in the base class
-     * {{{AbstractCellProperty}}}, then archive the member variable {{{mColour}}}. */
+private:
+
+    /** Needed for serialization. */
     friend class boost::serialization::access;
+    /**
+     * Archive the member variables.
+     *
+     * @param archive the archive
+     * @param version the current version of this class
+     */
     template<class Archive>
     void serialize(Archive & archive, const unsigned int version)
     {
@@ -36,22 +40,22 @@ private:
 
 public:
 
-    /* The default constructor allows us to specify a value for the member variable {{{mColour}}},
-     * or leave it with a default value. */
-    LuminalCellProperty(unsigned colour=5)
-        : AbstractCellProperty(),
-          mColour(colour)
-    {
-    }
+    /**
+     * Constructor.
+     *
+     * @param colour  what colour cells with this mutation state should be in the visualizer
+     */
+    LuminalCellProperty(unsigned colour);
 
-    /* We then define a destructor and a get method for the member variable {{{mColour}}}. */
-    ~LuminalCellProperty()
-    {}
+    /**
+     * Virtual destructor, to make this class polymorphic.
+     */
+    virtual ~LuminalCellProperty();
 
-    unsigned GetColour() const
-    {
-        return mColour;
-    }
+    /**
+     * @return #mColour.
+     */
+    unsigned GetColour() const;
 };
 
 #include "SerializationExportWrapper.hpp"

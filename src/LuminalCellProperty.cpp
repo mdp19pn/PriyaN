@@ -1,8 +1,19 @@
 #include "LuminalCellProperty.hpp"
 
-LuminalCellProperty::LuminalCellProperty()
-    : AbstractCellMutationState(0)
-{}
+LuminalCellProperty::LuminalCellProperty(unsigned colour)
+    : AbstractCellProperty(),
+      mColour(colour)
+{
+}
+
+LuminalCellProperty::~LuminalCellProperty()
+{
+}
+
+unsigned LuminalCellProperty::GetColour() const
+{
+    return mColour;
+}
 
 #include "SerializationExportWrapperForCpp.hpp"
 // Declare identifier for the serializer
