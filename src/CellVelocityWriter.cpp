@@ -14,8 +14,8 @@ CellVelocityWriter<ELEMENT_DIM, SPACE_DIM>::CellVelocityWriter()
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 double CellVelocityWriter<ELEMENT_DIM, SPACE_DIM>::GetCellDataForVtkOutput(CellPtr pCell, AbstractCellPopulation<ELEMENT_DIM, SPACE_DIM>* pCellPopulation)
 {
-    double volume = pCellPopulation->GetVolumeOfCell(pCell);
-    return volume;
+    // This method is not yet implemented
+    return 0.0;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
