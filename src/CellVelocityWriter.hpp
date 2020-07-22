@@ -6,12 +6,7 @@
 #include <boost/serialization/base_object.hpp>
 
 /**
- * A class written using the visitor pattern for writing the velocities of the cell
- * associated with a cell population to file.
- *
- * The output file is called cellsvelocities.dat by default.
- *
- * \todo some code duplication in methods; potential for refactoring (#2404)
+ * A class for writing cell velocities to file.
  */
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 class CellVelocityWriter : public AbstractCellWriter<ELEMENT_DIM, SPACE_DIM>

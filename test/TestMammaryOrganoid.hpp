@@ -18,23 +18,7 @@
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
 #include "CellVelocityWriter.hpp"
-
-/*
- * The next block of code is included to be able to archive the cell property and force objects in a cell-based simulation,
- * and to obtain a unique identifier for our new classes for when writing results to file. 
- * Identifiers for all classes are defined together here, since we can only have each #include once in this source file. 
- * 
- * The first include and export would go in the class' header, 
- * and the second include and export in the .cpp file for each respective class.
- */
-#include "SerializationExportWrapper.hpp"
-CHASTE_CLASS_EXPORT(LuminalCellProperty)
-CHASTE_CLASS_EXPORT(MyoepithelialCellProperty)
-CHASTE_CLASS_EXPORT(CellVelocityWriter)
-#include "SerializationExportWrapperForCpp.hpp"
-CHASTE_CLASS_EXPORT(LuminalCellProperty)
-CHASTE_CLASS_EXPORT(MyoepithelialCellProperty)
-CHASTE_CLASS_EXPORT(CellVelocityWriter)
+#include "Debug.hpp"
 
 /*
  * To visualize the results of each test below, use Paraview or Chaste's 
@@ -47,24 +31,31 @@ public:
     void TestMammaryMonolayer()
     {
         EXIT_IF_PARALLEL;
-
-        // Create a 2D 'nodes only' mesh using the helper class HoneycombMeshGenerator
-        HoneycombMeshGenerator generator(2, 2);
-        MutableMesh<2,2>* p_generating_mesh = generator.GetMesh();
+TRACE("1")
+        // Creates nodes and mesh
+        std::vector<Node<2>*> nodes;
+        nodes.push_back(new Node<2>(0,  false,  0.0, 0.0));
+        nodes.push_back(new Node<2>(1,  false,  1.0, 0.0));
         NodesOnlyMesh<2> mesh;
-        mesh.ConstructNodesWithoutMesh(*p_generating_mesh, 1.5);
-
+        mesh.ConstructNodesWithoutMesh(nodes, 1.5);    // Large cut off as larger cells.
+        // // Create a 2D 'nodes only' mesh using the helper class HoneycombMeshGenerator
+        // HoneycombMeshGenerator generator(4, 4, 0);
+        // MutableMesh<2,2>* p_generating_mesh = generator.GetMesh();
+        // NodesOnlyMesh<2> mesh;
+        // mesh.ConstructNodesWithoutMesh(*p_generating_mesh, 1.5);
+TRACE("2")
         // Create a vector of proliferative cells using the helper CellsGenerator
         std::vector<CellPtr> cells;
         MAKE_PTR(LuminalCellProperty, p_luminal);
         MAKE_PTR(CellLabel, p_label);
         CellsGenerator<UniformCellCycleModel, 2> cells_generator;
         cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes(), p_luminal);
-
+TRACE("3")
         // Use the mesh and cells to create a cell population, and specify which results to output to file.
         NodeBasedCellPopulation<2> cell_population(mesh, cells);
+TRACE("4")
         cell_population.AddCellWriter<CellVelocityWriter>();
-
+TRACE("5")
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<2> simulator(cell_population);
         simulator.SetOutputDirectory("NodeBasedMonolayer");
