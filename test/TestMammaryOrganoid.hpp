@@ -28,37 +28,40 @@ class TestMammaryOrganoid : public AbstractCellBasedTestSuite
 {
 public:
 
-    void TestMammaryMonolayer()
+    void TestMonolayer()
     {
         EXIT_IF_PARALLEL;
-TRACE("1")
-        // Creates nodes and mesh
+
+        // Create nodes and mesh
         std::vector<Node<2>*> nodes;
         nodes.push_back(new Node<2>(0,  false,  0.0, 0.0));
         nodes.push_back(new Node<2>(1,  false,  1.0, 0.0));
         NodesOnlyMesh<2> mesh;
-        mesh.ConstructNodesWithoutMesh(nodes, 1.5);    // Large cut off as larger cells.
-        // // Create a 2D 'nodes only' mesh using the helper class HoneycombMeshGenerator
-        // HoneycombMeshGenerator generator(4, 4, 0);
-        // MutableMesh<2,2>* p_generating_mesh = generator.GetMesh();
-        // NodesOnlyMesh<2> mesh;
-        // mesh.ConstructNodesWithoutMesh(*p_generating_mesh, 1.5);
-TRACE("2")
+        mesh.ConstructNodesWithoutMesh(nodes, 1.5);
+        
         // Create a vector of proliferative cells using the helper CellsGenerator
         std::vector<CellPtr> cells;
-        MAKE_PTR(LuminalCellProperty, p_luminal);
-        MAKE_PTR(CellLabel, p_label);
         CellsGenerator<UniformCellCycleModel, 2> cells_generator;
-        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes(), p_luminal);
-TRACE("3")
-        // Use the mesh and cells to create a cell population, and specify which results to output to file.
+        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
+
+        // Use the mesh and cells to create a cell population
         NodeBasedCellPopulation<2> cell_population(mesh, cells);
-TRACE("4")
+
+        // Create the luminal/myoepithelial cell properties (we do it this way
+        // to make sure they're tracked correctly in the simulation)
+        boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
+        boost::shared_ptr<AbstractCellProperty> p_myo(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>());
+
+        // Assign these properties to cells (change these lines if you want e.g. only luminal cells)
+        cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_myo);
+
+        // Add a cell writer so that cell velocities are written to file
         cell_population.AddCellWriter<CellVelocityWriter>();
-TRACE("5")
+
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("NodeBasedMonolayer");
+        simulator.SetOutputDirectory("TestMammaryMonolayer");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(10.0);
 
@@ -85,18 +88,27 @@ TRACE("5")
 
         // Create a vector of proliferative cells using the helper CellsGenerator
         std::vector<CellPtr> cells;
-        MAKE_PTR(LuminalCellProperty, p_luminal);
-        MAKE_PTR(CellLabel, p_label);
         CellsGenerator<UniformCellCycleModel, 3> cells_generator;
-        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes(), p_luminal);
+        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
 
-        // Use the mesh and cells to create a cell population, and specify which results to output to file.
+        // Use the mesh and cells to create a cell population
         NodeBasedCellPopulation<3> cell_population(mesh, cells);
+
+        // Create the luminal/myoepithelial cell properties (we do it this way
+        // to make sure they're tracked correctly in the simulation)
+        boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
+        boost::shared_ptr<AbstractCellProperty> p_myo(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>());
+
+        // Assign these properties to cells (change these lines if you want e.g. only luminal cells)
+        cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_myo);
+
+        // Add a cell writer so that cell velocities are written to file
         cell_population.AddCellWriter<CellVelocityWriter>();
 
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("NodeBasedSpheroid");
+        simulator.SetOutputDirectory("TestMammaryOrganoid");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(10.0);
 
