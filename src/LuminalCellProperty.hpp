@@ -17,9 +17,14 @@ class LuminalCellProperty : public AbstractCellProperty
 protected:
 
     /**
-     * Colour for use by visualizer.
+     * Boolean encoding whether B1 integrin is expressed in luminal cells.
      */
-    unsigned mColour;
+    bool mB1IntegrinExpression;
+
+    /**
+     * Boolean encoding whether B4 integrin is expressed in luminal cells.
+     */
+    bool mB4IntegrinExpression;
 
 private:
 
@@ -35,7 +40,8 @@ private:
     void serialize(Archive & archive, const unsigned int version)
     {
         archive & boost::serialization::base_object<AbstractCellProperty>(*this);
-        archive & mColour;
+        archive & mB1IntegrinExpression;
+        archive & mB4IntegrinExpression;
     }
 
 public:
@@ -43,9 +49,10 @@ public:
     /**
      * Constructor.
      *
-     * @param colour  what colour cells with this mutation state should be in the visualizer
+     * @param b1IntegrinExpression  whether B1 integrin is expressed in luminal cells
+     * @param b4IntegrinExpression  whether B4 integrin is expressed in luminal cells
      */
-    LuminalCellProperty(unsigned colour=5);
+    LuminalCellProperty(bool b1IntegrinExpression=true, bool b4IntegrinExpression=true);
 
     /**
      * Virtual destructor, to make this class polymorphic.
@@ -56,6 +63,16 @@ public:
      * @return #mColour.
      */
     unsigned GetColour() const;
+
+    /**
+     * @return #mB1IntegrinExpression.
+     */
+    bool GetB1IntegrinExpression() const;
+
+    /**
+     * @return #mB4IntegrinExpression.
+     */
+    bool GetB4IntegrinExpression() const;
 };
 
 #include "SerializationExportWrapper.hpp"
