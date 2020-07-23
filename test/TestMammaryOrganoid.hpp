@@ -18,6 +18,7 @@
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
 #include "CellVelocityWriter.hpp"
+#include "MammaryCellTypeWriter.hpp"
 #include "Debug.hpp"
 
 /*
@@ -58,6 +59,9 @@ public:
 
         // Add a cell writer so that cell velocities are written to file
         cell_population.AddCellWriter<CellVelocityWriter>();
+
+        // Add a cell writer so that mammary cell types are written to file
+        cell_population.AddCellWriter<MammaryCellTypeWriter>();
 
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<2> simulator(cell_population);
@@ -105,6 +109,9 @@ public:
 
         // Add a cell writer so that cell velocities are written to file
         cell_population.AddCellWriter<CellVelocityWriter>();
+
+        // Add a cell writer so that mammary cell types are written to file
+        cell_population.AddCellWriter<MammaryCellTypeWriter>();
 
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
