@@ -7,7 +7,7 @@
 #include "AbstractCellBasedTestSuite.hpp"
 #include "PetscSetupAndFinalize.hpp"
 #include "CellsGenerator.hpp"
-#include "UniformCellCycleModel.hpp"
+#include "MammaryCellCycleModel.hpp"
 #include "HoneycombMeshGenerator.hpp"
 #include "GeneralisedLinearSpringForce.hpp"
 #include "OffLatticeSimulation.hpp"
@@ -22,8 +22,7 @@
 #include "Debug.hpp"
 
 /*
- * To visualize the results of each test below, use Paraview or Chaste's 
- * Java visualizer.
+ * To results of each test below can be visualised using Paraview. 
  */
 class TestMammaryOrganoid : public AbstractCellBasedTestSuite
 {
@@ -42,7 +41,7 @@ public:
         
         // Create a vector of proliferative cells using the helper CellsGenerator
         std::vector<CellPtr> cells;
-        CellsGenerator<UniformCellCycleModel, 2> cells_generator;
+        CellsGenerator<MammaryCellCycleModel, 2> cells_generator;
         cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
 
         // Use the mesh and cells to create a cell population
@@ -67,7 +66,7 @@ public:
         OffLatticeSimulation<2> simulator(cell_population);
         simulator.SetOutputDirectory("TestMammaryMonolayer");
         simulator.SetSamplingTimestepMultiple(12);
-        simulator.SetEndTime(10.0);
+        simulator.SetEndTime(96.0); // Hours
 
         // Create a force law and pass it to the simulation
         MAKE_PTR(CellCellAdhesionForce<2>, p_differential_adhesion_force);
@@ -99,7 +98,7 @@ public:
 
         // Create a vector of proliferative cells using the helper CellsGenerator
         std::vector<CellPtr> cells;
-        CellsGenerator<UniformCellCycleModel, 3> cells_generator;
+        CellsGenerator<MammaryCellCycleModel, 3> cells_generator;
         cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
 
         // Use the mesh and cells to create a cell population
@@ -124,7 +123,7 @@ public:
         OffLatticeSimulation<3> simulator(cell_population);
         simulator.SetOutputDirectory("TestMammaryOrganoid");
         simulator.SetSamplingTimestepMultiple(12);
-        simulator.SetEndTime(10.0);
+        simulator.SetEndTime(96.0); // Hours
 
         // Create a force law and pass it to the simulation
         MAKE_PTR(CellCellAdhesionForce<3>, p_differential_adhesion_force);
