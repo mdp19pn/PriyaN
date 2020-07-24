@@ -14,11 +14,11 @@
 #include "SmartPointers.hpp"
 #include "NodesOnlyMesh.hpp"
 #include "NodeBasedCellPopulation.hpp"
-#include "CellLabel.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
 #include "CellVelocityWriter.hpp"
 #include "MammaryCellTypeWriter.hpp"
+#include "CellCellAdhesionForce.hpp"
 #include "Debug.hpp"
 
 /*
@@ -69,6 +69,13 @@ public:
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(10.0);
 
+        // Create a force law and pass it to the simulation
+        MAKE_PTR(CellCellAdhesionForce<2>, p_differential_adhesion_force);
+        p_differential_adhesion_force->SetMeinekeSpringStiffness(50.0);
+        p_differential_adhesion_force->SetHomotypicLabelledSpringConstantMultiplier(1.0);
+        p_differential_adhesion_force->SetHeterotypicSpringConstantMultiplier(0.1);
+        simulator.AddForce(p_differential_adhesion_force);
+
         // Pass a force law for cell mechanics to the simulation
         MAKE_PTR(GeneralisedLinearSpringForce<2>, p_force);
         simulator.AddForce(p_force);
@@ -118,6 +125,13 @@ public:
         simulator.SetOutputDirectory("TestMammaryOrganoid");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(10.0);
+
+        // Create a force law and pass it to the simulation
+        MAKE_PTR(CellCellAdhesionForce<3>, p_differential_adhesion_force);
+        p_differential_adhesion_force->SetMeinekeSpringStiffness(50.0);
+        p_differential_adhesion_force->SetHomotypicLabelledSpringConstantMultiplier(1.0);
+        p_differential_adhesion_force->SetHeterotypicSpringConstantMultiplier(0.1);
+        simulator.AddForce(p_differential_adhesion_force);
 
         // Pass a force law for cell mechanics to the simulation
         MAKE_PTR(GeneralisedLinearSpringForce<3>, p_force);

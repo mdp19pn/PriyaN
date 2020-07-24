@@ -776,3 +776,7 @@ Linking C executable cmTC_7a71f
 make[1]: Leaving directory '/home/chaste/src/projects/PriyaN/CMakeFiles/CMakeTmp'
 
 
+Determing location of ParMETIS succeded:
+Include directory: /usr/include
+Library directory: /usr/lib/libparmetis.so;/usr/lib/x86_64-linux-gnu/libmetis.so
+
