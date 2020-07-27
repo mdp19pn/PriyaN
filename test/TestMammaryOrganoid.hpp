@@ -121,7 +121,7 @@ public:
         OffLatticeSimulation<3> simulator(cell_population);
         simulator.SetOutputDirectory("TestMammaryOrganoid");
         simulator.SetSamplingTimestepMultiple(1);
-        simulator.SetEndTime(20.0); // Hours
+        simulator.SetEndTime(60.0); // Hours
        
         // Create a force law and pass it to the simulation
         MAKE_PTR(CellCellAdhesionForce<3>, p_differential_adhesion_force);
