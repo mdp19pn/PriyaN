@@ -108,6 +108,8 @@ public:
         // Assign these properties to cells (change these lines if you want e.g. only luminal cells)
         cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_myo);
         
         // Add a cell writer so that cell velocities are written to file
         cell_population.AddCellWriter<CellVelocityWriter>();
@@ -119,7 +121,7 @@ public:
         OffLatticeSimulation<3> simulator(cell_population);
         simulator.SetOutputDirectory("TestMammaryOrganoid");
         simulator.SetSamplingTimestepMultiple(1);
-        simulator.SetEndTime(60.0); // Hours
+        simulator.SetEndTime(20.0); // Hours
        
         // Create a force law and pass it to the simulation
         MAKE_PTR(CellCellAdhesionForce<3>, p_differential_adhesion_force);
