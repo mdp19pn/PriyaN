@@ -17,12 +17,12 @@ class MyoepithelialCellProperty : public AbstractCellProperty
 protected:
 
     /**
-     * Boolean encoding whether B1 integrin is expressed in luminal cells.
+     * Boolean encoding whether B1 integrin is expressed in myoepithelial cells.
      */
     bool mB1IntegrinExpression;
 
     /**
-     * Boolean encoding whether B4 integrin is expressed in luminal cells.
+     * Boolean encoding whether B4 integrin is expressed in myoepithelial cells.
      */
     bool mB4IntegrinExpression;
 
@@ -49,8 +49,8 @@ public:
     /**
      * Constructor.
      *
-     * @param b1IntegrinExpression  whether B1 integrin is expressed in luminal cells
-     * @param b4IntegrinExpression  whether B4 integrin is expressed in luminal cells
+     * @param b1IntegrinExpression  whether B1 integrin is expressed in myoepithelial cells
+     * @param b4IntegrinExpression  whether B4 integrin is expressed in myoepithelial cells
      */
     MyoepithelialCellProperty(bool b1IntegrinExpression=true, bool b4IntegrinExpression=true);
 
