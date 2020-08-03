@@ -8,7 +8,6 @@
 #include "PetscSetupAndFinalize.hpp"
 #include "CellsGenerator.hpp"
 #include "MammaryCellCycleModel.hpp"
-#include "HoneycombMeshGenerator.hpp"
 #include "GeneralisedLinearSpringForce.hpp"
 #include "OffLatticeSimulation.hpp"
 #include "SmartPointers.hpp"
