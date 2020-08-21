@@ -52,7 +52,7 @@ public:
      * @param b1IntegrinExpression  whether B1 integrin is expressed in myoepithelial cells
      * @param b4IntegrinExpression  whether B4 integrin is expressed in myoepithelial cells
      */
-    MyoepithelialCellProperty(bool b1IntegrinExpression=true, bool b4IntegrinExpression=true);
+    MyoepithelialCellProperty(bool b1IntegrinExpression=false, bool b4IntegrinExpression=true);
 
     /**
      * Virtual destructor, to make this class polymorphic.
