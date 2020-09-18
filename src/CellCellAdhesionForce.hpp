@@ -64,8 +64,8 @@ public :
      * Overridden VariableSpringConstantMultiplicationFactor() method.
      *
      * This method takes account of the distinct spring constants present
-     * for homotypic (labelled-labelled and unlabelled-unlabelled) and
-     * heterotypic (labelled-unlabelled) interactions between neighbouring
+     * for homotypic (luminal-luminal and myoepithelial-myoepithelial) and
+     * heterotypic (luminal-myoepithelial) interactions between neighbouring
      * cells.
      *
      * @param nodeAGlobalIndex index of one neighbouring node

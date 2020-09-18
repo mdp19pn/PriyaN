@@ -16,6 +16,7 @@
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
 #include "CellVelocityWriter.hpp"
+#include "HeterotypicBoundaryLengthWriter.hpp"
 #include "MammaryCellTypeWriter.hpp"
 #include "CellCellAdhesionForce.hpp"
 #include "Debug.hpp"
@@ -33,10 +34,10 @@ void TestOrganoid()
 
         // Create a 3D 'nodes only' mesh, specifying nodes manually
         std::vector<Node<3>*> nodes;
-        nodes.push_back(new Node<3>(0u,  false,  0.5, 0.0, 0.0));
-        nodes.push_back(new Node<3>(1u,  false,  -0.5, 0.0, 0.0));
-        nodes.push_back(new Node<3>(2u,  false,  0.0, 0.5, 0.0));
-        nodes.push_back(new Node<3>(3u,  false,  0.0, -0.5, 0.0));
+        nodes.push_back(new Node<3>(0,  false,  0.5, 0.0, 0.0));
+        nodes.push_back(new Node<3>(1,  false,  -0.5, 0.0, 0.0));
+        nodes.push_back(new Node<3>(2,  false,  0.0, 0.5, 0.0));
+        nodes.push_back(new Node<3>(3,  false,  0.0, -0.5, 0.0));
         NodesOnlyMesh<3> mesh;
         mesh.ConstructNodesWithoutMesh(nodes, 1.5);
        
@@ -64,6 +65,9 @@ void TestOrganoid()
        
         // Add a cell writer so that mammary cell types are written to file
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
+
+        // Add a cell writer so that cell sorting (bilayer formation) is written to file
+        cell_population.AddCellWriter<HeterotypicBoundaryLengthWriter>();
       
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);

@@ -16,6 +16,7 @@
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
 #include "CellVelocityWriter.hpp"
+#include "HeterotypicBoundaryLengthWriter.hpp"
 #include "MammaryCellTypeWriter.hpp"
 #include "CellCellAdhesionForce.hpp"
 #include "Debug.hpp"
@@ -66,6 +67,9 @@ public:
         
         // Add a cell writer so that mammary cell types are written to file
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
+
+        // Add a cell writer so that cell sorting (bilayer formation) is written to file
+        cell_population.AddCellWriter<HeterotypicBoundaryLengthWriter>();
         
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<2> simulator(cell_population);
