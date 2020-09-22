@@ -3,6 +3,9 @@
 
 // Include necessary header files
 #include <cxxtest/TestSuite.h>
+
+#include "CellBasedSimulationArchiver.hpp"
+
 #include "CheckpointArchiveTypes.hpp"
 #include "AbstractCellBasedTestSuite.hpp"
 #include "PetscSetupAndFinalize.hpp"
@@ -68,8 +71,8 @@ public:
         // Add a cell writer so that mammary cell types are written to file
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
 
-        // Add a cell writer so that cell sorting (bilayer formation) is written to file
-        cell_population.AddCellWriter<HeterotypicBoundaryLengthWriter>();
+        // Add a population writer so that cell sorting (bilayer formation) is written to file
+        cell_population.AddPopulationWriter<HeterotypicBoundaryLengthWriter>();
         
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<2> simulator(cell_population);

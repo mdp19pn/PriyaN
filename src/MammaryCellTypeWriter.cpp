@@ -7,7 +7,7 @@ template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 MammaryCellTypeWriter<ELEMENT_DIM, SPACE_DIM>::MammaryCellTypeWriter()
     : AbstractCellWriter<ELEMENT_DIM, SPACE_DIM>("results.viztypes")
 {
-    this->mVtkCellDataName = "Mammary cell types";
+    this->mVtkCellDataName = "Mammary Cell Types";
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
