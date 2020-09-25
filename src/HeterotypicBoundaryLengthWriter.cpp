@@ -375,24 +375,21 @@ void HeterotypicBoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(PottsBasedCe
                         if (cell_is_luminal != neighbour_is_luminal)
                         {
                             // ... then increment the fractional boundary length
-                            heterotypic_boundary_length += edge_length;
-                            num_heterotypic_pairs += 1.0;
+                            heterotypic_boundary_length += 1.0;
                         }
                         
                         // If this cell is luminal and its neighbour is not, or vice versa...
                         if (cell_is_luminal != neighbour_is_myoepithelial)
                         {
                             // ... then increment the fractional boundary length
-                            heterotypic_boundary_length += 0;
-                            num_heterotypic_pairs += 1.0;
+                            heterotypic_boundary_length += 1.0;
                         }
                         
                         // If this cell is myoepithelial and its neighbour is not, or vice versa...
                         if (cell_is_myoepithelial != neighbour_is_luminal)
                         {
                             // ... then increment the fractional boundary length
-                            heterotypic_boundary_length += 0;
-                            num_heterotypic_pairs += 1.0;
+                            heterotypic_boundary_length += 1.0;
                         }
                         
                         // If this cell is myoepithelial and its neighbour is not, or vice versa...
@@ -429,7 +426,6 @@ void HeterotypicBoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(PottsBasedCe
             if (cell_is_luminal != neighbour_is_luminal)
             {
                 // ... then increment the fractional boundary length
-                heterotypic_boundary_length += edge_length;
                 num_heterotypic_pairs += 1.0;
             }
                 
@@ -437,7 +433,6 @@ void HeterotypicBoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(PottsBasedCe
             if (cell_is_luminal != neighbour_is_myoepithelial)
             {
                 // ... then increment the fractional boundary length
-                heterotypic_boundary_length += 0;
                 num_heterotypic_pairs += 1.0;
             }
                 
@@ -445,7 +440,6 @@ void HeterotypicBoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(PottsBasedCe
             if (cell_is_myoepithelial != neighbour_is_luminal)
             {
                 // ... then increment the fractional boundary length
-                heterotypic_boundary_length += 0;
                 num_heterotypic_pairs += 1.0;
             }
                 
