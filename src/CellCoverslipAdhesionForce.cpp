@@ -1,5 +1,5 @@
 #include "CellCoverslipAdhesionForce.hpp"
-#include "VertexBasedCellPopulation.hpp"
+#include "NodeBasedCellPopulation.hpp"
 
 template<unsigned DIM>
 CellCoverslipAdhesionForce<DIM>::CellCoverslipAdhesionForce(double diffusionConstant)
@@ -23,13 +23,13 @@ template<unsigned DIM>
 void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulation<DIM>& rCellPopulation)
 {
     // Throw an exception message if not using a VertexBasedCellPopulation
-    if (dynamic_cast<VertexBasedCellPopulation<DIM>*>(&rCellPopulation) == NULL)
+    if (dynamic_cast<NodeBasedCellPopulation<DIM>*>(&rCellPopulation) == nullptr)
     {
         EXCEPTION("CellCoverslipAdhesionForce is to be used with a VertexBasedCellPopulation only");
     }
 
     // Helper variable that is a static cast of the cell population
-    VertexBasedCellPopulation<DIM>* p_cell_population = static_cast<VertexBasedCellPopulation<DIM>*>(&rCellPopulation);
+    NodeBasedCellPopulation<DIM>* p_cell_population = static_cast<NodeBasedCellPopulation<DIM>*>(&rCellPopulation);
 
     double dt = SimulationTime::Instance()->GetTimeStep();
 

@@ -34,12 +34,12 @@ public :
      *
      * @params diffusionConstant the value to assign to the diffusion constant (defaults to 0.01)
      */
-    RandomForce(double diffusionConstant=0.01);
+    CellCoverslipAdhesionForce(double diffusionConstant=0.01);
 
     /**
      * Destructor.
      */
-    ~RandomForce();
+    ~CellCoverslipAdhesionForce();
 
     /*
      * Method to set the diffusion constant.
