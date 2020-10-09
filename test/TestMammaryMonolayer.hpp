@@ -22,6 +22,8 @@
 #include "HeterotypicBoundaryLengthWriter.hpp"
 #include "MammaryCellTypeWriter.hpp"
 #include "CellCellAdhesionForce.hpp"
+#include "CellCoverslipAdhesionForce.hpp"
+#include "PlaneBoundaryCondition.hpp"
 #include "Debug.hpp"
 
 /*
@@ -31,7 +33,7 @@ class TestMammaryMonolayer : public AbstractCellBasedTestSuite
 {
 public:
 
-    void TestMonolayer()
+    void TestMonolayer2D()
     {
         EXIT_IF_PARALLEL;
         
@@ -76,11 +78,11 @@ public:
         
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryMonolayer");
+        simulator.SetOutputDirectory("TestMammaryMonolayer2D");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(96.0); // Hours
         
-        // Create an adhesion force law and pass it to the simulation
+        // Create a differential cell-cell adhesion force law and pass it to the simulation
         MAKE_PTR(CellCellAdhesionForce<2>, p_differential_adhesion_force);
         p_differential_adhesion_force->SetMeinekeSpringStiffness(50.0);
         p_differential_adhesion_force->SetHomotypicLabelledSpringConstantMultiplier(1.0);
@@ -89,6 +91,83 @@ public:
         
         // Run the simulation
         simulator.Solve();
+    }
+
+    void TestMonolayer3D()
+    {
+        EXIT_IF_PARALLEL;
+        
+        // Create a 3D 'nodes only' mesh, specifying nodes manually
+        std::vector<Node<3>*> nodes;
+        nodes.push_back(new Node<3>(0,  false,  0.5, 0.0, 0.0));
+        nodes.push_back(new Node<3>(1,  false,  -0.5, 0.0, 0.0));
+        nodes.push_back(new Node<3>(2,  false,  0.0, 0.5, 0.0));
+        nodes.push_back(new Node<3>(3,  false,  0.0, -0.5, 0.0));
+        NodesOnlyMesh<3> mesh;
+        mesh.ConstructNodesWithoutMesh(nodes, 1.5);
+       
+        // Create a vector of proliferative cells using the helper CellsGenerator
+        std::vector<CellPtr> cells;
+        CellsGenerator<MammaryCellCycleModel, 3> cells_generator;
+        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
+      
+        // Use the mesh and cells to create a cell population
+        NodeBasedCellPopulation<3> cell_population(mesh, cells);
+        
+        // Create the luminal/myoepithelial cell properties (we do it this way
+        // to make sure they're tracked correctly in the simulation)
+        boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
+        boost::shared_ptr<AbstractCellProperty> p_myo(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>());
+        
+        // Assign these properties to cells (change these lines if you want e.g. only luminal cells)
+        cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_myo);
+        
+        // Add a cell writer so that cell velocities are written to file
+        cell_population.AddCellWriter<CellVelocityWriter>();
+       
+        // Add a cell writer so that mammary cell types are written to file
+        cell_population.AddCellWriter<MammaryCellTypeWriter>();
+
+        // Add a population writer so that cell sorting (bilayer formation) is written to file
+        cell_population.AddPopulationWriter<HeterotypicBoundaryLengthWriter>();
+      
+        // Pass the cell population to the simulation and specify duration and output parameters
+        OffLatticeSimulation<3> simulator(cell_population);
+        simulator.SetOutputDirectory("TestMammaryMonolayer3D");
+        simulator.SetSamplingTimestepMultiple(12);
+        simulator.SetEndTime(96.0); // Hours
+       
+        // Create a differential cell-cell adhesion force law and pass it to the simulation
+        MAKE_PTR(CellCellAdhesionForce<3>, p_differential_adhesion_force);
+        p_differential_adhesion_force->SetMeinekeSpringStiffness(50.0);
+        p_differential_adhesion_force->SetHomotypicLabelledSpringConstantMultiplier(1.0);
+        p_differential_adhesion_force->SetHeterotypicSpringConstantMultiplier(0.1);
+        simulator.AddForce(p_differential_adhesion_force);
+
+        // Create a cell-coverslip adhesion force law and pass it to the simulation
+        MAKE_PTR(CellCoverslipAdhesionForce<3>, p_cell_coverslip_force);
+        simulation.AddForce(p_cell_coverslip_force);
+
+        // Define a point on the plane boundary and a normal to the plane.
+        c_vector<double,2> point = zero_vector<double>(2);
+        c_vector<double,2> normal = zero_vector<double>(2);
+        normal(1) = -1.0;
+        
+        // Make a pointer to a PlaneBoundaryCondition (passing the point and normal to the plane) and pass it to the OffLatticeSimulation.
+        MAKE_PTR_ARGS(PlaneBoundaryCondition<2>, p_bc, (&cell_population, point, normal));
+        simulator.AddCellPopulationBoundaryCondition(p_bc);
+       
+        // Run the simulation
+        simulator.Solve();
+      
+        // Since we created pointers to nodes, we delete them here to avoid memory leaks
+        for (unsigned i=0; i<nodes.size(); i++)
+        {
+            delete nodes[i];
+        }
     }
 };
 
