@@ -1,31 +1,16 @@
 #ifndef LUMINALCELLPROPERTY_HPP_
 #define LUMINALCELLPROPERTY_HPP_
 
-/*
- * = Include necessary header files
- */
 #include <boost/shared_ptr.hpp>
-#include "AbstractCellProperty.hpp"
+#include "AbstractMammaryCellProperty.hpp"
 #include "ChasteSerialization.hpp"
 #include <boost/serialization/base_object.hpp>
 
-/*
- * == Defining the cell property class ==
+/**
+ * Subclass of AbstractMammaryCellProperty defining a luminal cell.
  */
-class LuminalCellProperty : public AbstractCellProperty
+class LuminalCellProperty : public AbstractMammaryCellProperty
 {
-protected:
-
-    /**
-     * Boolean encoding whether B1 integrin is expressed in luminal cells.
-     */
-    bool mB1IntegrinExpression;
-
-    /**
-     * Boolean encoding whether B4 integrin is expressed in luminal cells.
-     */
-    bool mB4IntegrinExpression;
-
 private:
 
     /** Needed for serialization. */
@@ -39,9 +24,7 @@ private:
     template<class Archive>
     void serialize(Archive & archive, const unsigned int version)
     {
-        archive & boost::serialization::base_object<AbstractCellProperty>(*this);
-        archive & mB1IntegrinExpression;
-        archive & mB4IntegrinExpression;
+        archive & boost::serialization::base_object<AbstractMammaryCellProperty>(*this);
     }
 
 public:
@@ -49,8 +32,8 @@ public:
     /**
      * Constructor.
      *
-     * @param b1IntegrinExpression  whether B1 integrin is expressed in luminal cells
-     * @param b4IntegrinExpression  whether B4 integrin is expressed in luminal cells
+     * @param b1IntegrinExpression  whether B1 integrin by this luminal cell
+     * @param b4IntegrinExpression  whether B4 integrin by this luminal cell
      */
     LuminalCellProperty(bool b1IntegrinExpression=true, bool b4IntegrinExpression=true);
 
@@ -58,21 +41,6 @@ public:
      * Virtual destructor, to make this class polymorphic.
      */
     virtual ~LuminalCellProperty();
-
-    /**
-     * @return #mColour.
-     */
-    unsigned GetColour() const;
-
-    /**
-     * @return #mB1IntegrinExpression.
-     */
-    bool GetB1IntegrinExpression() const;
-
-    /**
-     * @return #mB4IntegrinExpression.
-     */
-    bool GetB4IntegrinExpression() const;
 };
 
 #include "SerializationExportWrapper.hpp"

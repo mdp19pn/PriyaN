@@ -5,36 +5,34 @@
 #include <boost/serialization/base_object.hpp>
 
 #include "AbstractForce.hpp"
-#include "RandomNumberGenerator.hpp"
 
-/**
- * A force class to model the random motion of vertices.
- * For use with a VertexBasedCellPopulation only.
- */
+///\todo Document this class
 template<unsigned DIM>
 class CellCoverslipAdhesionForce : public AbstractForce<DIM>
 {
 private:
 
-    /** Diffusion constant */
-    double mDiffusionConstant;
+    /** Spring stiffness. */
+    double mStiffness;
+
+    /** Spring equilibrium length. */
+    double mEquilibriumLength;
 
     friend class boost::serialization::access;
     template<class Archive>
     void serialize(Archive & archive, const unsigned int version)
     {
         archive & boost::serialization::base_object<AbstractForce<DIM> >(*this);
-        archive & mDiffusionConstant;
+        archive & mStiffness;
+        archive & mEquilibriumLength;
     }
 
-public :
+public:
 
     /**
      * Constructor.
-     *
-     * @params diffusionConstant the value to assign to the diffusion constant (defaults to 0.01)
      */
-    CellCoverslipAdhesionForce(double diffusionConstant=0.01);
+    CellCoverslipAdhesionForce();
 
     /**
      * Destructor.
@@ -42,11 +40,18 @@ public :
     ~CellCoverslipAdhesionForce();
 
     /*
-     * Method to set the diffusion constant.
+     * Set the spring stiffness.
      *
-     * @params diffusionConstant the value to assign to the diffusion constant.
+     * @params springStiffness the value to assign to the spring stiffness.
      */
-    void SetDiffusionConstant(double diffusionConstant);
+    void SetStiffness(double stiffness);
+
+    /*
+     * Set the spring equilibrium length.
+     *
+     * @params equilibriumLength the value to assign to the spring equilibrium length.
+     */
+    void SetEquilibriumLength(double equilibriumLength);
 
     /**
      * Overridden AddForceContribution() method.

@@ -12,7 +12,7 @@
 template<unsigned  ELEMENT_DIM, unsigned SPACE_DIM=ELEMENT_DIM>
 class CellCellAdhesionForce : public GeneralisedLinearSpringForce<ELEMENT_DIM, SPACE_DIM>
 {
-private :
+private:
 
     /**
      * A scalar determining the relative spring constant for homotypic
@@ -53,7 +53,7 @@ private :
         archive & mHeterotypicSpringConstantMultiplier;
     }
 
-public :
+public:
 
     /**
      * Constructor.
