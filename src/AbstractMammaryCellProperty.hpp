@@ -1,6 +1,6 @@
 
-#ifndef ABSTRACTMAMMARYCELLPROPERT_HPP_
-#define ABSTRACTMAMMARYCELLPROPERT_HPP_
+#ifndef ABSTRACTMAMMARYCELLPROPERTY_HPP_
+#define ABSTRACTMAMMARYCELLPROPERTY_HPP_
 
 #include <boost/shared_ptr.hpp>
 #include "AbstractCellProperty.hpp"
@@ -71,4 +71,4 @@ public:
     bool GetB4IntegrinExpression() const;
 };
 
-#endif /*ABSTRACTMAMMARYCELLPROPERT_HPP_*/
+#endif /*ABSTRACTMAMMARYCELLPROPERTY_HPP_*/
