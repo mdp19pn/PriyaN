@@ -70,7 +70,6 @@ double CellCellAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMult
         // For heterotypic interactions, scale the spring constant by mHeterotypicSpringConstantMultiplier
         if (cell_A_is_luminal != cell_B_is_luminal)
         {
-            ///\todo What about cell_B_b1_expn and cell_B_b4_expn? 
            if ((cell_A_b1_expn && cell_A_b4_expn) || (cell_B_b1_expn && cell_B_b4_expn))
             {
                 return 1.0*mHeterotypicSpringConstantMultiplier;
@@ -87,7 +86,6 @@ double CellCellAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMult
         else
         {
             // For homotypic interactions between cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
-            ///\todo What about cell_B_b1_expn and cell_B_b4_expn?
             if ((cell_A_b1_expn && cell_A_b4_expn) || (cell_B_b1_expn && cell_B_b4_expn))
             {
                 return 1.0*mHomotypicLabelledSpringConstantMultiplier;
