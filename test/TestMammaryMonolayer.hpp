@@ -55,15 +55,14 @@ public:
         // Use the mesh and cells to create a cell population
         NodeBasedCellPopulation<2> cell_population(mesh, cells);
         
-        // Create the luminal/myoepithelial cell properties (we do it this way
-        // to make sure they're tracked correctly in the simulation)
+        // Create the luminal/myoepithelial cell properties (we do it this way to make sure they're tracked correctly in the simulation)
         boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
         boost::shared_ptr<AbstractCellProperty> p_myo(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>());
         
         // Assign these properties to cells (change these lines if you want e.g. only luminal cells)
         cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
         
@@ -101,6 +100,8 @@ public:
         std::vector<Node<3>*> nodes;
         nodes.push_back(new Node<3>(0,  false,  0.5, 0.0, 0.0));
         nodes.push_back(new Node<3>(1,  false,  -0.5, 0.0, 0.0));
+        nodes.push_back(new Node<3>(2,  false,  0.0, 0.5, 0.0));
+        nodes.push_back(new Node<3>(3,  false,  0.0, -0.5, 0.0));
         NodesOnlyMesh<3> mesh;
         mesh.ConstructNodesWithoutMesh(nodes, 1.5);
        
@@ -112,14 +113,15 @@ public:
         // Use the mesh and cells to create a cell population
         NodeBasedCellPopulation<3> cell_population(mesh, cells);
         
-        // Create the luminal/myoepithelial cell properties (we do it this way
-        // to make sure they're tracked correctly in the simulation)
+        // Create the luminal/myoepithelial cell properties (we do it this way to make sure they're tracked correctly in the simulation)
         boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
         boost::shared_ptr<AbstractCellProperty> p_myo(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>());
         
         // Assign these properties to cells (change these lines if you want e.g. only luminal cells)
         cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_myo);
         
         // Add a cell writer so that cell velocities are written to file
         cell_population.AddCellWriter<CellVelocityWriter>();

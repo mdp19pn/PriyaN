@@ -70,33 +70,65 @@ double CellCellAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMult
         // For heterotypic interactions, scale the spring constant by mHeterotypicSpringConstantMultiplier
         if (cell_A_is_luminal != cell_B_is_luminal)
         {
-           if ((cell_A_b1_expn && cell_A_b4_expn) || (cell_B_b1_expn && cell_B_b4_expn))
+            if (cell_A_b1_expn && cell_A_b4_expn)
             {
                 return 1.0*mHeterotypicSpringConstantMultiplier;
             }
-            else if ((cell_A_b1_expn != cell_A_b4_expn) || (cell_B_b1_expn != cell_B_b4_expn))
+            else if (cell_A_b1_expn != cell_A_b4_expn)
             {
                 return 0.5*mHeterotypicSpringConstantMultiplier;
             }
             else
             {
-                return 1.0; //Should this be 1.0 OR 0.0?
+                return 0.0;
             }
         }
         else
         {
             // For homotypic interactions between cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
-            if ((cell_A_b1_expn && cell_A_b4_expn) || (cell_B_b1_expn && cell_B_b4_expn))
+            if (cell_A_b1_expn && cell_A_b4_expn)
             {
                 return 1.0*mHomotypicLabelledSpringConstantMultiplier;
             }
-            else if ((cell_A_b1_expn != cell_A_b4_expn) || (cell_B_b1_expn != cell_B_b4_expn))
+            else if (cell_A_b1_expn != cell_A_b4_expn)
             {
                 return 0.5*mHomotypicLabelledSpringConstantMultiplier;
             }   
             else
             {
-                return 1.0; //Should this be 1.0 OR 0.0?
+                return 0.0; 
+            }
+        }
+         
+         if (cell_A_is_luminal != cell_B_is_luminal)
+        {
+            if (cell_B_b1_expn && cell_B_b4_expn)
+            {
+                return 1.0*mHeterotypicSpringConstantMultiplier;
+            }
+            else if (cell_B_b1_expn != cell_B_b4_expn)
+            {
+                return 0.5*mHeterotypicSpringConstantMultiplier;
+            }
+            else
+            {
+                return 0.0;
+            }
+        }
+        else
+        {
+            // For homotypic interactions between cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
+            if (cell_B_b1_expn && cell_B_b4_expn)
+            {
+                return 1.0*mHomotypicLabelledSpringConstantMultiplier;
+            }
+            else if (cell_B_b1_expn != cell_B_b4_expn)
+            {
+                return 0.5*mHomotypicLabelledSpringConstantMultiplier;
+            }   
+            else
+            {
+                return 0.0;
             }
         }
     }
