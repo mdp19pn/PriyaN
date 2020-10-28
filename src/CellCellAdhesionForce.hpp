@@ -16,13 +16,13 @@ private:
 
     /**
      * A scalar determining the relative spring constant for homotypic
-     * interactions between neighbouring labelled cells, used in the
+     * interactions between neighbouring luminal cells, used in the
      * overridden method VariableSpringConstantMultiplicationFactor().
      *
      * Defaults to 1.0 in the constructor.
      *
      * Note that for homotypic interactions between neighbouring
-     * unlabelled cells, we use the multiplier value 1.0 that is
+     * myoepithelial  cells, we use the multiplier value 1.0 that is
      * returned by the method VariableSpringConstantMultiplicationFactor()
      * in the parent class GeneralisedLinearSpringForce.
      */
@@ -30,7 +30,7 @@ private:
 
     /**
      * A scalar determining the relative spring constant for heterotypic
-     * (labelled-unlabelled) interactions between neighbouring cells, used
+     * (luminal-myoepithelial) interactions between neighbouring cells, used
      * in the overridden method VariableSpringConstantMultiplicationFactor().
      *
      * Defaults to 1.0 in the constructor.
