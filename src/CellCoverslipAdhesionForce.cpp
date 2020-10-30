@@ -1,5 +1,7 @@
 #include "CellCoverslipAdhesionForce.hpp"
 #include "NodeBasedCellPopulation.hpp"
+#include "LuminalCellProperty.hpp"
+#include "MyoepithelialCellProperty.hpp"
 
 template<unsigned DIM>
 CellCoverslipAdhesionForce<DIM>::CellCoverslipAdhesionForce()
@@ -46,10 +48,63 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
         {
             ///\todo use spring stiffness and equilibrium length here
             double cell_height = p_cell_population->GetNode(node_index)->rGetLocation()[2];
+            
+            // Determine if cell is luminal (if not, assume it is myoepithelial)
+            CellPtr p_cell = p_cell_population->GetCellUsingLocationIndex(node_index);
+            bool cell_is_luminal = p_cell->template HasCellProperty<LuminalCellProperty>();
+
+            // Determine if cell expresses b1 and/or b4 integrin
+            bool cell_A_b1_expn = true;
+            bool cell_A_b4_expn = true;
+            if (cell_is_luminal)
+            {
+                CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
+                boost::shared_ptr<LuminalCellProperty> p_prop = boost::static_pointer_cast<LuminalCellProperty>(collection_A.GetProperty());
+                cell_b1_expn = p_prop->GetB1IntegrinExpression();
+                cell_b4_expn = p_prop->GetB4IntegrinExpression();
+            }
+            else
+            {
+                CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<MyoepithelialCellProperty>();
+                boost::shared_ptr<MyoepithelialCellProperty> p_prop = boost::static_pointer_cast<MyoepithelialCellProperty>(collection_A.GetProperty());
+                cell_b1_expn = p_prop->GetB1IntegrinExpression();
+                cell_b4_expn = p_prop->GetB4IntegrinExpression();
+            }
+            
             c_vector<double, DIM> force_contribution;
             force_contribution[0] = 0.0;
             force_contribution[1] = 0.0;
-            force_contribution[2] = -10*cell_height;
+            force_contribution[2] = 10;
+            
+            if (cell_is_luminal)
+            {
+                if (cell_b1_expn && cell_b4_expn)
+                {
+                    strength = 1;
+                }
+                else if (cell_b1_expn != cell_b4_expn)
+                {
+                    strength = 1;
+                }
+                else
+                {
+                    strength = 1;
+                }
+            }
+          else
+          {
+              if (cell_b1_expn && cell_b4_expn)
+                {
+                    strength = 1;
+                }
+                else if (cell_b1_expn != cell_b4_expn)
+                {
+                    strength = 1;
+                }
+                else
+                {
+                    strength = 1;
+                }
         }
         rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force_contribution);
     }
