@@ -60,14 +60,14 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
             if (cell_is_luminal)
             {
                 CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
-                boost::shared_ptr<LuminalCellProperty> p_prop = boost::static_pointer_cast<LuminalCellProperty>(collection_A.GetProperty());
+                boost::shared_ptr<LuminalCellProperty> p_prop = boost::static_pointer_cast<LuminalCellProperty>(collection.GetProperty());
                 cell_b1_expn = p_prop->GetB1IntegrinExpression();
                 cell_b4_expn = p_prop->GetB4IntegrinExpression();
             }
             else
             {
                 CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<MyoepithelialCellProperty>();
-                boost::shared_ptr<MyoepithelialCellProperty> p_prop = boost::static_pointer_cast<MyoepithelialCellProperty>(collection_A.GetProperty());
+                boost::shared_ptr<MyoepithelialCellProperty> p_prop = boost::static_pointer_cast<MyoepithelialCellProperty>(collection.GetProperty());
                 cell_b1_expn = p_prop->GetB1IntegrinExpression();
                 cell_b4_expn = p_prop->GetB4IntegrinExpression();
             }
@@ -75,49 +75,52 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
             c_vector<double, DIM> force_contribution;
             force_contribution[0] = 0.0;
             force_contribution[1] = 0.0;
-            force_contribution[2] = 10;
+            force_contribution[2] = -10*cell_height;
             
+            // double strength = 10; 
             if (cell_is_luminal)
             {
                 if (cell_b1_expn && cell_b4_expn)
                 {
-                    strength = 1;
+                    mStiffness = 1.0;
                 }
                 else if (cell_b1_expn != cell_b4_expn)
                 {
-                    strength = 0.5;
+                    mStiffness = 0.5;
                 }
                 else
                 {
-                    strength = 0;
+                    mStiffness = 0.0;
                 }
             }
-          else // cell is myoepithelial
+          else // if cell is myoepithelial
           {
-              if (cell_b1_expn && cell_b4_expn)
+                if (cell_b1_expn && cell_b4_expn)
                 {
-                    strength = 2;
+                    mStiffness = 2.0;
                 }
                 else if (cell_b1_expn != cell_b4_expn)
                 {
-                    strength = 1;
+                    mStiffness = 1.0;
                 }
                 else
                 {
-                    strength = 0.5;
+                    mStiffness = 0.5;
                 }
         }
         rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force_contribution);
     }
 }
+} // This close bracket fixed a compilation issue supposedly??
 
 template<unsigned DIM>
 void CellCoverslipAdhesionForce<DIM>::OutputForceParameters(out_stream& rParamsFile)
 {
-    // Output member variable then call method on direct parent class
+    // Output member variable
     *rParamsFile << "\t\t\t<Stiffness>" << mStiffness << "</Stiffness> \n";
     *rParamsFile << "\t\t\t<EquilibriumLength>" << mEquilibriumLength << "</EquilibriumLength> \n";
 
+    // Call direct parent class
     AbstractForce<DIM>::OutputForceParameters(rParamsFile);
 }
 
