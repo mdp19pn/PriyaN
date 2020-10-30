@@ -54,8 +54,9 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
             bool cell_is_luminal = p_cell->template HasCellProperty<LuminalCellProperty>();
 
             // Determine if cell expresses b1 and/or b4 integrin
-            bool cell_A_b1_expn = true;
-            bool cell_A_b4_expn = true;
+            bool cell_b1_expn = true;
+            bool cell_b4_expn = true;
+            
             if (cell_is_luminal)
             {
                 CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
@@ -84,18 +85,18 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
                 }
                 else if (cell_b1_expn != cell_b4_expn)
                 {
-                    strength = 1;
+                    strength = 0.5;
                 }
                 else
                 {
-                    strength = 1;
+                    strength = 0;
                 }
             }
-          else
+          else // cell is myoepithelial
           {
               if (cell_b1_expn && cell_b4_expn)
                 {
-                    strength = 1;
+                    strength = 2;
                 }
                 else if (cell_b1_expn != cell_b4_expn)
                 {
@@ -103,7 +104,7 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
                 }
                 else
                 {
-                    strength = 1;
+                    strength = 0.5;
                 }
         }
         rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force_contribution);
