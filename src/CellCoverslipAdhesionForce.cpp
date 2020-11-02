@@ -82,7 +82,7 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
             {
                 if (cell_b1_expn && cell_b4_expn)
                 {
-                    mStiffness = 1.0;
+                    mStiffness = 0;
                 }
                 else if (cell_b1_expn != cell_b4_expn)
                 {
@@ -97,7 +97,7 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
           {
                 if (cell_b1_expn && cell_b4_expn)
                 {
-                    mStiffness = 2.0;
+                    mStiffness = 1;
                 }
                 else if (cell_b1_expn != cell_b4_expn)
                 {

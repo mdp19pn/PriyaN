@@ -99,9 +99,10 @@ public:
         // Create a 3D 'nodes only' mesh, specifying nodes manually
         std::vector<Node<3>*> nodes;
         nodes.push_back(new Node<3>(0,  false,  0.5, 0.0, 0.0));
-        nodes.push_back(new Node<3>(1,  false,  -0.5, 0.0, 0.0));
-        nodes.push_back(new Node<3>(2,  false,  0.0, 0.5, 0.0));
-        nodes.push_back(new Node<3>(3,  false,  0.0, -0.5, 0.0));
+        nodes.push_back(new Node<3>(1,  false,  0.0, 0.5, 0.0));
+        nodes.push_back(new Node<3>(2,  false,  1.0, 0.0, 0.0));
+        nodes.push_back(new Node<3>(3,  false,  0.5, 1.0, 0.0));
+        nodes.push_back(new Node<3>(4,  false,  1.0, 0.5, 0.0));
         NodesOnlyMesh<3> mesh;
         mesh.ConstructNodesWithoutMesh(nodes, 1.5);
        
@@ -120,8 +121,9 @@ public:
         // Assign these properties to cells (change these lines if you want e.g. only luminal cells)
         cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
         
         // Add a cell writer so that cell velocities are written to file
         cell_population.AddCellWriter<CellVelocityWriter>();
