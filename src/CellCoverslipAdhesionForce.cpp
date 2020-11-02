@@ -40,7 +40,7 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
     // Helper variable that is a static cast of the cell population
     NodeBasedCellPopulation<DIM>* p_cell_population = static_cast<NodeBasedCellPopulation<DIM>*>(&rCellPopulation);
 
-    // Iterate over vertices in the cell population
+    // Iterate over nodes in the cell population
     for (unsigned node_index=0; node_index<p_cell_population->GetNumNodes(); node_index++)
     {
         c_vector<double, DIM> force_contribution;
@@ -83,6 +83,9 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
                 if (cell_b1_expn && cell_b4_expn)
                 {
                     mStiffness = 0;
+                    // c_vector<double, DIM> boundary_force = zero_vector<double>(DIM);
+                    // boundary_force[2] = mStiffness*SmallPow(z, 2);
+                    // rForces[node_iter->GetIndex()] += boundary_force;
                 }
                 else if (cell_b1_expn != cell_b4_expn)
                 {
