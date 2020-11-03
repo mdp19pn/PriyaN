@@ -84,10 +84,9 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
             {
                 if (cell_b1_expn && cell_b4_expn)
                 {
-                    mStiffness = 0;
-                    // c_vector<double, DIM> boundary_force = zero_vector<double>(DIM);
-                    // boundary_force[2] = mStiffness*SmallPow(z, 2);
-                    // rForces[node_iter->GetIndex()] += boundary_force;
+                    c_vector<double, DIM> boundary_force = zero_vector<double>(DIM);
+                    boundary_force[2] = mStiffness*1(z, 2);
+                    rForces[node_iter->GetIndex()] += boundary_force;
                 }
                 else if (cell_b1_expn != cell_b4_expn)
                 {
@@ -102,7 +101,9 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
           {
                 if (cell_b1_expn && cell_b4_expn)
                 {
-                    mStiffness = 1;
+                    c_vector<double, DIM> boundary_force = zero_vector<double>(DIM);
+                    boundary_force[2] = mStiffness*5(z, 2);
+                    rForces[node_iter->GetIndex()] += boundary_force;
                 }
                 else if (cell_b1_expn != cell_b4_expn)
                 {
