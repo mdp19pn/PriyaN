@@ -27,45 +27,45 @@ double CellCellAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMult
         CellPtr p_cell_A = rCellPopulation.GetCellUsingLocationIndex(nodeAGlobalIndex);
         bool cell_A_is_luminal = p_cell_A->template HasCellProperty<LuminalCellProperty>();
 
-        // Determine if cell A expresses b1 and/or b4 integrin
-        bool cell_A_b1_expn = true;
-        bool cell_A_b4_expn = true;
-        if (cell_A_is_luminal)
-        {
-            CellPropertyCollection collection_A = p_cell_A->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
-            boost::shared_ptr<LuminalCellProperty> p_prop_A = boost::static_pointer_cast<LuminalCellProperty>(collection_A.GetProperty());
-            cell_A_b1_expn = p_prop_A->GetB1IntegrinExpression();
-            cell_A_b4_expn = p_prop_A->GetB4IntegrinExpression();
-        }
-        else
-        {
-            CellPropertyCollection collection_A = p_cell_A->rGetCellPropertyCollection().GetProperties<MyoepithelialCellProperty>();
-            boost::shared_ptr<MyoepithelialCellProperty> p_prop_A = boost::static_pointer_cast<MyoepithelialCellProperty>(collection_A.GetProperty());
-            cell_A_b1_expn = p_prop_A->GetB1IntegrinExpression();
-            cell_A_b4_expn = p_prop_A->GetB4IntegrinExpression();
-        }
+        // // Determine if cell A expresses b1 and/or b4 integrin
+        // bool cell_A_b1_expn = true;
+        // bool cell_A_b4_expn = true;
+        // if (cell_A_is_luminal)
+        // {
+        //     CellPropertyCollection collection_A = p_cell_A->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
+        //     boost::shared_ptr<LuminalCellProperty> p_prop_A = boost::static_pointer_cast<LuminalCellProperty>(collection_A.GetProperty());
+        //     cell_A_b1_expn = p_prop_A->GetB1IntegrinExpression();
+        //     cell_A_b4_expn = p_prop_A->GetB4IntegrinExpression();
+        // }
+        // else
+        // {
+        //     CellPropertyCollection collection_A = p_cell_A->rGetCellPropertyCollection().GetProperties<MyoepithelialCellProperty>();
+        //     boost::shared_ptr<MyoepithelialCellProperty> p_prop_A = boost::static_pointer_cast<MyoepithelialCellProperty>(collection_A.GetProperty());
+        //     cell_A_b1_expn = p_prop_A->GetB1IntegrinExpression();
+        //     cell_A_b4_expn = p_prop_A->GetB4IntegrinExpression();
+        // }
 
         // Determine if cell B is luminal (if not, assume it is myoepithelial)
         CellPtr p_cell_B = rCellPopulation.GetCellUsingLocationIndex(nodeBGlobalIndex);
         bool cell_B_is_luminal = p_cell_B->template HasCellProperty<LuminalCellProperty>();
 
-        // Determine if cell B expresses b1 and/or b4 integrin
-        bool cell_B_b1_expn = true;
-        bool cell_B_b4_expn = true;
-        if (cell_B_is_luminal)
-        {
-        CellPropertyCollection collection_B = p_cell_B->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
-        boost::shared_ptr<LuminalCellProperty> p_prop_B = boost::static_pointer_cast<LuminalCellProperty>(collection_B.GetProperty());
-        cell_B_b1_expn = p_prop_B->GetB1IntegrinExpression();
-        cell_B_b4_expn = p_prop_B->GetB4IntegrinExpression();
-        }
-        else
-        {
-        CellPropertyCollection collection_B = p_cell_B->rGetCellPropertyCollection().GetProperties<MyoepithelialCellProperty>();
-        boost::shared_ptr<MyoepithelialCellProperty> p_prop_B = boost::static_pointer_cast<MyoepithelialCellProperty>(collection_B.GetProperty());
-        cell_B_b1_expn = p_prop_B->GetB1IntegrinExpression();
-        cell_B_b4_expn = p_prop_B->GetB4IntegrinExpression();
-        }
+        // // Determine if cell B expresses b1 and/or b4 integrin
+        // bool cell_B_b1_expn = true;
+        // bool cell_B_b4_expn = true;
+        // if (cell_B_is_luminal)
+        // {
+        // CellPropertyCollection collection_B = p_cell_B->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
+        // boost::shared_ptr<LuminalCellProperty> p_prop_B = boost::static_pointer_cast<LuminalCellProperty>(collection_B.GetProperty());
+        // cell_B_b1_expn = p_prop_B->GetB1IntegrinExpression();
+        // cell_B_b4_expn = p_prop_B->GetB4IntegrinExpression();
+        // }
+        // else
+        // {
+        // CellPropertyCollection collection_B = p_cell_B->rGetCellPropertyCollection().GetProperties<MyoepithelialCellProperty>();
+        // boost::shared_ptr<MyoepithelialCellProperty> p_prop_B = boost::static_pointer_cast<MyoepithelialCellProperty>(collection_B.GetProperty());
+        // cell_B_b1_expn = p_prop_B->GetB1IntegrinExpression();
+        // cell_B_b4_expn = p_prop_B->GetB4IntegrinExpression();
+        // }
 
         // For heterotypic interactions, scale the spring constant by mHeterotypicSpringConstantMultiplier
         if (cell_A_is_luminal != cell_B_is_luminal)

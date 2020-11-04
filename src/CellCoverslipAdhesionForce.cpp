@@ -28,8 +28,6 @@ void CellCoverslipAdhesionForce<DIM>::SetEquilibriumLength(double equilibriumLen
     mEquilibriumLength = equilibriumLength;
 }
 
-// https://chaste.cs.ox.ac.uk/chaste/docs/release_2.1/CryptProjectionForce_8cpp-source.html
-
 template<unsigned DIM>
 void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulation<DIM>& rCellPopulation)
 {
@@ -74,19 +72,11 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
                 cell_b4_expn = p_prop->GetB4IntegrinExpression();
             }
             
-            c_vector<double, DIM> force_contribution;
-            force_contribution[0] = 0.0;
-            force_contribution[1] = 0.0;
-            force_contribution[2] = -10*cell_height;
-            
-            // double strength = 10; 
             if (cell_is_luminal)
             {
                 if (cell_b1_expn && cell_b4_expn)
                 {
-                    c_vector<double, DIM> boundary_force = zero_vector<double>(DIM);
-                    boundary_force[2] = mStiffness*1(z, 2);
-                    rForces[node_iter->GetIndex()] += boundary_force;
+                    mStiffness = 1.0;
                 }
                 else if (cell_b1_expn != cell_b4_expn)
                 {
@@ -97,13 +87,11 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
                     mStiffness = 0.0;
                 }
             }
-          else // if cell is myoepithelial
-          {
+            else // if cell is myoepithelial
+            {
                 if (cell_b1_expn && cell_b4_expn)
                 {
-                    c_vector<double, DIM> boundary_force = zero_vector<double>(DIM);
-                    boundary_force[2] = mStiffness*5(z, 2);
-                    rForces[node_iter->GetIndex()] += boundary_force;
+                    mStiffness = 2.0;
                 }
                 else if (cell_b1_expn != cell_b4_expn)
                 {
@@ -113,11 +101,16 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
                 {
                     mStiffness = 0.5;
                 }
+            }
+        
+        c_vector<double, DIM> force_contribution;
+        force_contribution[0] = 0.0;
+        force_contribution[1] = 0.0;
+        force_contribution[2] = mStiffness*cell_height;
         }
         rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force_contribution);
     }
 }
-} // This close bracket fixed a compilation issue supposedly??
 
 template<unsigned DIM>
 void CellCoverslipAdhesionForce<DIM>::OutputForceParameters(out_stream& rParamsFile)
