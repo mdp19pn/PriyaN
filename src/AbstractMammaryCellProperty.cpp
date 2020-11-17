@@ -4,7 +4,7 @@
 AbstractMammaryCellProperty::AbstractMammaryCellProperty(bool b1IntegrinExpression, bool b4IntegrinExpression)
     : AbstractCellProperty(),
       mB1IntegrinExpression(b1IntegrinExpression),
-      mB4IntegrinExpression(b1IntegrinExpression)
+      mB4IntegrinExpression(b4IntegrinExpression)
 {
 }
 
