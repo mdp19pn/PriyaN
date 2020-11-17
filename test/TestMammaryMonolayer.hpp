@@ -15,7 +15,7 @@
 #include "OffLatticeSimulation.hpp"
 #include "SmartPointers.hpp"
 #include "NodesOnlyMesh.hpp"
-#include "NodeBasedCellPopulation.hpp"
+#include "NodeBasedCellPopulationWithVariableDamping.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
 #include "CellVelocityWriter.hpp"
@@ -110,7 +110,7 @@ public:
         cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
       
         // Use the mesh and cells to create a cell population
-        NodeBasedCellPopulation<3> cell_population(mesh, cells);
+        NodeBasedCellPopulationWithVariableDamping<3> cell_population(mesh, cells);
         
         // Create the luminal/myoepithelial cell properties (we do it this way
         // to make sure they're tracked correctly in the simulation)
