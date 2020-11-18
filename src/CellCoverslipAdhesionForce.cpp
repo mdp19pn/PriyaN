@@ -46,7 +46,7 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
         c_vector<double, DIM> force_contribution;
         for (unsigned i=0; i<DIM; i++)
         {
-            ///\todo use spring stiffness and equilibrium length here
+            //
             double cell_height = p_cell_population->GetNode(node_index)->rGetLocation()[2];
             
             // Determine if cell is luminal (if not, assume it is myoepithelial)
@@ -72,7 +72,7 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
                 cell_b4_expn = p_prop->GetB4IntegrinExpression();
             }
             
-            if (cell_is_luminal)
+            if (cell_is_luminal) // if cell is luminal
             {
                 if (cell_b1_expn && cell_b4_expn)
                 {
