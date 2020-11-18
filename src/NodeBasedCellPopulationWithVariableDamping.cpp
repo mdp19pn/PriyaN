@@ -1,5 +1,6 @@
 #include "NodeBasedCellPopulationWithVariableDamping.hpp"
 #include "LuminalCellProperty.hpp"
+#include "MyoepithelialCellProperty.hpp"
 
 template<unsigned DIM>
 NodeBasedCellPopulationWithVariableDamping<DIM>::NodeBasedCellPopulationWithVariableDamping(NodesOnlyMesh<DIM>& rMesh,
@@ -22,14 +23,58 @@ NodeBasedCellPopulationWithVariableDamping<DIM>::NodeBasedCellPopulationWithVari
 template<unsigned DIM>
 double NodeBasedCellPopulationWithVariableDamping<DIM>::GetDampingConstant(unsigned nodeIndex)
 {
+    // Determine if cell is luminal (if not, assume it is myoepithelial)
     CellPtr p_cell = this->GetCellUsingLocationIndex(nodeIndex);
-    if (p_cell->template HasCellProperty<LuminalCellProperty>())
+    bool cell_is_luminal = p_cell->template HasCellProperty<LuminalCellProperty>();
+
+    // Determine if cell expresses b1 and/or b4 integrin
+    bool cell_b1_expn = true;
+    bool cell_b4_expn = true;
+    
+    if (cell_is_luminal)
     {
-        return mLuminalCellDampingConstant;
+        CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
+        boost::shared_ptr<LuminalCellProperty> p_prop = boost::static_pointer_cast<LuminalCellProperty>(collection.GetProperty());
+        cell_b1_expn = p_prop->GetB1IntegrinExpression();
+        cell_b4_expn = p_prop->GetB4IntegrinExpression();
     }
     else
     {
-        return mMyoepithelialCellDampingConstant;
+        CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<MyoepithelialCellProperty>();
+        boost::shared_ptr<MyoepithelialCellProperty> p_prop = boost::static_pointer_cast<MyoepithelialCellProperty>(collection.GetProperty());
+        cell_b1_expn = p_prop->GetB1IntegrinExpression();
+        cell_b4_expn = p_prop->GetB4IntegrinExpression();
+    }
+    
+    if (cell_is_luminal) // if cell is luminal
+    {
+        if (cell_b1_expn && cell_b4_expn)
+        {
+            return 1.0*mLuminalCellDampingConstant;
+        }
+        else if (cell_b1_expn != cell_b4_expn)
+        {
+            return 0.5*mLuminalCellDampingConstant;
+        }
+        else
+        {
+            return 1.0;
+        }
+    }
+    else // if cell is myoepithelial
+    {
+        if (cell_b1_expn && cell_b4_expn)
+        {
+            return 1.0*mMyoepithelialCellDampingConstant;
+        }
+        else if (cell_b1_expn != cell_b4_expn)
+        {
+            return 1.0*mMyoepithelialCellDampingConstant;
+        }
+        else
+        {
+            return 1.0;
+        }
     }
 }
 
