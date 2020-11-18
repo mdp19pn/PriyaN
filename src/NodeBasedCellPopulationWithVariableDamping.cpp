@@ -79,27 +79,27 @@ double NodeBasedCellPopulationWithVariableDamping<DIM>::GetDampingConstant(unsig
 }
 
 template<unsigned DIM>
-void NodeBasedCellPopulationWithVariableDamping<DIM>::SetLuminalCellDampingConstant(double luminalCellDampingConstant)
-{
-    mLuminalCellDampingConstant = luminalCellDampingConstant;
-}
-
-template<unsigned DIM>
-void NodeBasedCellPopulationWithVariableDamping<DIM>::SetMyoepithelialCellDampingConstant(double myoepithelialCellDampingConstant)
-{
-    mMyoepithelialCellDampingConstant = myoepithelialCellDampingConstant;
-}
-
-template<unsigned DIM>
 double NodeBasedCellPopulationWithVariableDamping<DIM>::GetLuminalCellDampingConstant()
 {
     return mLuminalCellDampingConstant;
 }
 
 template<unsigned DIM>
+void NodeBasedCellPopulationWithVariableDamping<DIM>::SetLuminalCellDampingConstant(double luminalCellDampingConstant)
+{
+    mLuminalCellDampingConstant = luminalCellDampingConstant;
+}
+
+template<unsigned DIM>
 double NodeBasedCellPopulationWithVariableDamping<DIM>::GetMyoepithelialCellDampingConstant()
 {
     return mMyoepithelialCellDampingConstant;
+}
+
+template<unsigned DIM>
+void NodeBasedCellPopulationWithVariableDamping<DIM>::SetMyoepithelialCellDampingConstant(double myoepithelialCellDampingConstant)
+{
+    mMyoepithelialCellDampingConstant = myoepithelialCellDampingConstant;
 }
 
 template<unsigned DIM>

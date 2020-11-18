@@ -88,11 +88,11 @@ public:
     /**
      * @return mLuminalCellDampingConstant
      */
-    double GetLuminalCellDampingConstant()
+    double GetLuminalCellDampingConstant();
 
     /**
      * @return mMyoepithelialCellDampingConstant
-     *
+     */
     double GetMyoepithelialCellDampingConstant();
 
     /**

@@ -56,7 +56,7 @@ public:
         NodeBasedCellPopulationWithVariableDamping<2> cell_population(mesh, cells);
 
         cell_population.SetLuminalCellDampingConstant(3.0); 
-        cell_population.SetMyoeptihelialCellDampingConstant(5.0);
+        cell_population.SetMyoepithelialCellDampingConstant(5.0);
         
         // Create the luminal/myoepithelial cell properties (we do it this way to make sure they're tracked correctly in the simulation)
         boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
@@ -84,7 +84,7 @@ public:
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(96.0); // Hours
         
-        // Create a cell-cell adhesion force law and pass it to the simulation
+        // Create a cell-cell replusion force law and pass it to the simulation
         MAKE_PTR(RepulsionForce<2>, p_force);
         simulator.AddForce(p_force);
         
@@ -115,7 +115,7 @@ public:
         NodeBasedCellPopulationWithVariableDamping<3> cell_population(mesh, cells);
 
         cell_population.SetLuminalCellDampingConstant(3.0); 
-        cell_population.SetMyoeptihelialCellDampingConstant(5.0);
+        cell_population.SetMyoepithelialCellDampingConstant(5.0);
         
         // Create the luminal/myoepithelial cell properties (we do it this way to make sure they're tracked correctly in the simulation)
         boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
@@ -141,10 +141,10 @@ public:
         OffLatticeSimulation<3> simulator(cell_population);
         simulator.SetOutputDirectory("TestMammaryMonolayer3D");
         simulator.SetSamplingTimestepMultiple(12);
-        simulator.SetEndTime(30.0); // Hours
+        simulator.SetEndTime(96.0); // Hours
        
-        // Create a cell-cell adhesion force law and pass it to the simulation
-        MAKE_PTR(RepulsionForce<2>, p_force); 
+        // Create a cell-cell repulsion force law and pass it to the simulation
+        MAKE_PTR(RepulsionForce<3>, p_force); 
         simulator.AddForce(p_force);
 
         // Create a cell-coverslip adhesion force law and pass it to the simulation
