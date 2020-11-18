@@ -21,7 +21,7 @@
 #include "CellVelocityWriter.hpp"
 #include "HeterotypicBoundaryLengthWriter.hpp"
 #include "MammaryCellTypeWriter.hpp"
-#include "CellCellAdhesionForce.hpp"
+#include "RepulsionForce.hpp"
 #include "CellCoverslipAdhesionForce.hpp"
 #include "PlaneBoundaryCondition.hpp"
 #include "Debug.hpp"
@@ -53,7 +53,10 @@ public:
         cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
         
         // Use the mesh and cells to create a cell population
-        NodeBasedCellPopulation<2> cell_population(mesh, cells);
+        NodeBasedCellPopulationWithVariableDamping<2> cell_population(mesh, cells);
+
+        cell_population.SetLuminalCellDampingConstant(3.0); 
+        cell_population.SetMyoeptihelialCellDampingConstant(5.0);
         
         // Create the luminal/myoepithelial cell properties (we do it this way to make sure they're tracked correctly in the simulation)
         boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
@@ -81,12 +84,9 @@ public:
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(96.0); // Hours
         
-        // Create a differential cell-cell adhesion force law and pass it to the simulation
-        MAKE_PTR(CellCellAdhesionForce<2>, p_differential_adhesion_force);
-        p_differential_adhesion_force->SetMeinekeSpringStiffness(50.0);
-        p_differential_adhesion_force->SetHomotypicLabelledSpringConstantMultiplier(1.0);
-        p_differential_adhesion_force->SetHeterotypicSpringConstantMultiplier(0.1);
-        simulator.AddForce(p_differential_adhesion_force);
+        // Create a cell-cell adhesion force law and pass it to the simulation
+        MAKE_PTR(RepulsionForce<2>, p_force);
+        simulator.AddForce(p_force);
         
         // Run the simulation
         simulator.Solve();
@@ -113,6 +113,9 @@ public:
       
         // Use the mesh and cells to create a cell population
         NodeBasedCellPopulationWithVariableDamping<3> cell_population(mesh, cells);
+
+        cell_population.SetLuminalCellDampingConstant(3.0); 
+        cell_population.SetMyoeptihelialCellDampingConstant(5.0);
         
         // Create the luminal/myoepithelial cell properties (we do it this way to make sure they're tracked correctly in the simulation)
         boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
@@ -140,12 +143,9 @@ public:
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(30.0); // Hours
        
-        // Create a differential cell-cell adhesion force law and pass it to the simulation
-        MAKE_PTR(CellCellAdhesionForce<3>, p_differential_adhesion_force);
-        p_differential_adhesion_force->SetMeinekeSpringStiffness(50.0);
-        p_differential_adhesion_force->SetHomotypicLabelledSpringConstantMultiplier(1.0);
-        p_differential_adhesion_force->SetHeterotypicSpringConstantMultiplier(0.1);
-        simulator.AddForce(p_differential_adhesion_force);
+        // Create a cell-cell adhesion force law and pass it to the simulation
+        MAKE_PTR(RepulsionForce<2>, p_force); 
+        simulator.AddForce(p_force);
 
         // Create a cell-coverslip adhesion force law and pass it to the simulation
         MAKE_PTR(CellCoverslipAdhesionForce<3>, p_cell_coverslip_force);
