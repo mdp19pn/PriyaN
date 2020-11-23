@@ -69,7 +69,7 @@ double NodeBasedCellPopulationWithVariableDamping<DIM>::GetDampingConstant(unsig
         }
         else if (cell_b1_expn != cell_b4_expn)
         {
-            return 1.0*mMyoepithelialCellDampingConstant;
+            return 0.5*mMyoepithelialCellDampingConstant;
         }
         else
         {
