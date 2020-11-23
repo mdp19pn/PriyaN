@@ -35,77 +35,77 @@ class TestMammaryMonolayer : public AbstractCellBasedTestSuite
 {
 public:
 
-    // void TestMammaryMonolayer2D()
-    // {
-    //     EXIT_IF_PARALLEL;
+    void TestMammaryMonolayer2D()
+    {
+        EXIT_IF_PARALLEL;
         
-    //     // Create a 2D 'nodes only' mesh, specifying nodes manually
-    //     std::vector<Node<2>*> nodes;
-    //     nodes.push_back(new Node<2>(0, false, 0.5, 0.0));
-    //     nodes.push_back(new Node<2>(1, false, 0.0, 0.5));
-    //     nodes.push_back(new Node<2>(2, false, 1.0, 0.0));
-    //     nodes.push_back(new Node<2>(3, false, 0.5, 1.0));
-    //     nodes.push_back(new Node<2>(4, false, 1.0, 0.5));
-    //     NodesOnlyMesh<2> mesh;
-    //     mesh.ConstructNodesWithoutMesh(nodes, 1.5);
+        // Create a 2D 'nodes only' mesh, specifying nodes manually
+        std::vector<Node<2>*> nodes;
+        nodes.push_back(new Node<2>(0, false, 0.5, 0.0));
+        nodes.push_back(new Node<2>(1, false, 0.0, 0.5));
+        nodes.push_back(new Node<2>(2, false, 1.0, 0.0));
+        nodes.push_back(new Node<2>(3, false, 0.5, 1.0));
+        nodes.push_back(new Node<2>(4, false, 1.0, 0.5));
+        NodesOnlyMesh<2> mesh;
+        mesh.ConstructNodesWithoutMesh(nodes, 1.5);
         
-    //     // Create a vector of proliferative cells using the helper CellsGenerator
-    //     std::vector<CellPtr> cells;
-    //     CellsGenerator<MammaryCellCycleModel, 2> cells_generator;
-    //     cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
+        // Create a vector of proliferative cells using the helper CellsGenerator
+        std::vector<CellPtr> cells;
+        CellsGenerator<MammaryCellCycleModel, 2> cells_generator;
+        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
         
-    //     // Use the mesh and cells to create a cell population
-    //     NodeBasedCellPopulationWithVariableDamping<2> cell_population(mesh, cells);
+        // Use the mesh and cells to create a cell population
+        NodeBasedCellPopulationWithVariableDamping<2> cell_population(mesh, cells);
 
-    //     cell_population.SetLuminalCellDampingConstant(3.0); 
-    //     cell_population.SetMyoepithelialCellDampingConstant(5.0);
+        cell_population.SetLuminalCellDampingConstant(3.0); 
+        cell_population.SetMyoepithelialCellDampingConstant(5.0);
         
-    //     // Create the luminal/myoepithelial cell properties (we do it this way to make sure they're tracked correctly in the simulation)
-    //     boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
-    //     boost::shared_ptr<AbstractCellProperty> p_myo(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>());
+        // Create the luminal/myoepithelial cell properties (we do it this way to make sure they're tracked correctly in the simulation)
+        boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
+        boost::shared_ptr<AbstractCellProperty> p_myo(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>());
         
-    //     // Assign these properties to cells (change these lines if you want e.g. only luminal cells)
-    //     cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
-    //     cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
-    //     cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_luminal);
-    //     cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_myo);
-    //     cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
+        // Assign these properties to cells (change these lines if you want e.g. only luminal cells)
+        cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
         
-    //     // Add a cell writer so that cell velocities are written to file
-    //     cell_population.AddCellWriter<CellVelocityWriter>();
+        // Add a cell writer so that cell velocities are written to file
+        cell_population.AddCellWriter<CellVelocityWriter>();
         
-    //     // Add a cell writer so that mammary cell types are written to file
-    //     cell_population.AddCellWriter<MammaryCellTypeWriter>();
+        // Add a cell writer so that mammary cell types are written to file
+        cell_population.AddCellWriter<MammaryCellTypeWriter>();
 
-    //     // Add a population writer so that cell sorting (bilayer formation) is written to file
-    //     cell_population.AddPopulationWriter<HeterotypicBoundaryLengthWriter>();
+        // Add a population writer so that cell sorting (bilayer formation) is written to file
+        cell_population.AddPopulationWriter<HeterotypicBoundaryLengthWriter>();
 
-    //     // Add a vertex mesh writer so that a rectangular coverslip  is written to file
-    //     std::vector<Node<2>*> coverslip;
-    //     coverslip.push_back(new Node<2>(0, true, -25.0, 25.0));
-    //     coverslip.push_back(new Node<2>(1, true, 25.0, 25.0));
-    //     coverslip.push_back(new Node<2>(2, true, 25.0, -25.0));
-    //     coverslip.push_back(new Node<2>(3, true, -25.0, -25.0));
+        // Add a vertex mesh writer so that a rectangular coverslip  is written to file
+        std::vector<Node<2>*> coverslip;
+        coverslip.push_back(new Node<2>(0, true, -25.0, 25.0));
+        coverslip.push_back(new Node<2>(1, true, 25.0, 25.0));
+        coverslip.push_back(new Node<2>(2, true, 25.0, -25.0));
+        coverslip.push_back(new Node<2>(3, true, -25.0, -25.0));
 
-    //     std::vector<VertexElement<2,2>* > elements = {new VertexElement<2,2>(0, coverslip)};
-    //     MutableVertexMesh<2,2>* p_mesh = new MutableVertexMesh<2,2>(coverslip, elements);
+        std::vector<VertexElement<2,2>* > elements = {new VertexElement<2,2>(0, coverslip)};
+        MutableVertexMesh<2,2>* p_mesh = new MutableVertexMesh<2,2>(coverslip, elements);
         
-    //     VertexMeshWriter<2,2> vertex_mesh_writer("Coverslip 2D", "rectangle", false);
-    //     vertex_mesh_writer.WriteVtkUsingMesh(*p_mesh, "0");
+        VertexMeshWriter<2,2> vertex_mesh_writer("Coverslip 2D", "rectangle", false);
+        vertex_mesh_writer.WriteVtkUsingMesh(*p_mesh, "0");
         
-    //     // Pass the cell population to the simulation and specify duration and output parameters
-    //     OffLatticeSimulation<2> simulator(cell_population);
-    //     simulator.SetOutputDirectory("TestMammaryMonolayer2D");
-    //     simulator.SetSamplingTimestepMultiple(12);
-    //     simulator.SetEndTime(96.0); // Hours
+        // Pass the cell population to the simulation and specify duration and output parameters
+        OffLatticeSimulation<2> simulator(cell_population);
+        simulator.SetOutputDirectory("TestMammaryMonolayer2D");
+        simulator.SetSamplingTimestepMultiple(12);
+        simulator.SetEndTime(96.0); // Hours
         
-    //     // Create a cell-cell replusion force law and pass it to the simulation
-    //     MAKE_PTR(RepulsionForce<2>, p_force);
-    //     simulator.AddForce(p_force);
+        // Create a cell-cell replusion force law and pass it to the simulation
+        MAKE_PTR(RepulsionForce<2>, p_force);
+        simulator.AddForce(p_force);
         
-    //     // Run the simulation
-    //     simulator.Solve();
-    // }
+        // Run the simulation
+        simulator.Solve();
+    }
 
     void TestMammaryMonolayer3D()
     {
