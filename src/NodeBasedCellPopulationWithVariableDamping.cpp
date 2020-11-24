@@ -75,22 +75,32 @@ double NodeBasedCellPopulationWithVariableDamping<DIM>::GetDampingConstant(unsig
         {
             return 1.0;
         }
-
-        c_vector<double, DIM> LE_force_contribution;
-        LE_force_contribution[0] = 0.0;
-        LE_force_contribution[1] = 0.0;
-        LE_force_contribution[2] = mLuminalCellDampingConstant*cell_height;
-        }
-        rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(LE_force_contribution);
-
-        c_vector<double, DIM> ME_force_contribution;
-        ME_force_contribution[0] = 0.0;
-        ME_force_contribution[1] = 0.0;
-        ME_force_contribution[2] = mMyoepithelialCellDampingConstant*cell_height;
-        }
-        rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(ME_force_contribution);
     }
 }
+
+template<unsigned DIM>
+void NodeBasedCellPopulationWithVariableDamping<DIM>::AddForceContribution(AbstractCellPopulation<DIM>& rCellPopulation)
+{
+    // Helper variable that is a static cast of the cell population
+    NodeBasedCellPopulation<DIM>* p_cell_population = static_cast<NodeBasedCellPopulation<DIM>*>(&rCellPopulation);
+    
+    // Iterate over nodes in the cell population
+    for (unsigned node_index=0; node_index<p_cell_population->GetNumNodes(); node_index++)
+    {
+       double cell_height = p_cell_population->GetNode(node_index)->rGetLocation()[2];
+
+        c_vector<double, DIM> force_contribution;
+        for (unsigned i=0; i<DIM; i++)
+        {
+        c_vector<double, DIM> force_contribution;
+        force_contribution[0] = mLuminalCellDampingConstant*cell_height && mMyoepithelialCellDampingConstant*cell_height;
+        force_contribution[1] = mLuminalCellDampingConstant*cell_height && mMyoepithelialCellDampingConstant*cell_height;
+        force_contribution[2] = 0.0;
+        }
+        rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force_contribution);
+
+    }
+}      
 
 template<unsigned DIM>
 double NodeBasedCellPopulationWithVariableDamping<DIM>::GetLuminalCellDampingConstant()
