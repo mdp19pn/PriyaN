@@ -2,6 +2,7 @@
 #define NODEBASEDCELLPOPULATIONWITHVARIABLEDAMPING_HPP_
 
 #include "NodeBasedCellPopulation.hpp"
+#include "AbstractForce.hpp"
 
 #include "ChasteSerialization.hpp"
 #include <boost/serialization/base_object.hpp>
@@ -94,6 +95,13 @@ public:
      * @return mMyoepithelialCellDampingConstant
      */
     double GetMyoepithelialCellDampingConstant();
+
+    /**
+     * Overridden AddForceContribution() method.
+     *
+     * @param rCellPopulation reference to the tissue
+     */
+    void AddForceContribution(AbstractCellPopulation<DIM>& rCellPopulation);
 
     /**
      * Outputs CellPopulation parameters to file
