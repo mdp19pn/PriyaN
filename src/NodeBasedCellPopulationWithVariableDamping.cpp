@@ -75,6 +75,20 @@ double NodeBasedCellPopulationWithVariableDamping<DIM>::GetDampingConstant(unsig
         {
             return 1.0;
         }
+
+        c_vector<double, DIM> LE_force_contribution;
+        LE_force_contribution[0] = 0.0;
+        LE_force_contribution[1] = 0.0;
+        LE_force_contribution[2] = mLuminalCellDampingConstant*cell_height;
+        }
+        rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(LE_force_contribution);
+
+        c_vector<double, DIM> ME_force_contribution;
+        ME_force_contribution[0] = 0.0;
+        ME_force_contribution[1] = 0.0;
+        ME_force_contribution[2] = mMyoepithelialCellDampingConstant*cell_height;
+        }
+        rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(ME_force_contribution);
     }
 }
 
