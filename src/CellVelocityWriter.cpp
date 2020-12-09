@@ -8,7 +8,7 @@ template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 CellVelocityWriter<ELEMENT_DIM, SPACE_DIM>::CellVelocityWriter()
     : AbstractCellWriter<ELEMENT_DIM, SPACE_DIM>("velocity.dat")
 {
-    this->mVtkCellDataName = "Cell velocity";
+    this->mVtkCellDataName = "Cell Velocity";
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
