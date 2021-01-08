@@ -7,7 +7,8 @@ template<unsigned DIM>
 CellCoverslipAdhesionForce<DIM>::CellCoverslipAdhesionForce()
     : AbstractForce<DIM>(),
       mStiffness(1.0),
-      mEquilibriumLength(1.0)
+      mEquilibriumLength(1.0),
+      mGravity(9.81)
 {
 }
 
@@ -26,6 +27,12 @@ template<unsigned DIM>
 void CellCoverslipAdhesionForce<DIM>::SetEquilibriumLength(double equilibriumLength)
 {
     mEquilibriumLength = equilibriumLength;
+}
+
+template<unsigned DIM>
+void CellCoverslipAdhesionForce<DIM>::SetGravity(double gravity)
+{
+    mGravity = gravity;
 }
 
 template<unsigned DIM>
@@ -77,14 +84,17 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
                 if (cell_b1_expn && cell_b4_expn)
                 {
                     mStiffness = 1.0;
+                    mGravity = 9.81;
                 }
                 else if (cell_b1_expn != cell_b4_expn)
                 {
                     mStiffness = 0.5;
+                    mGravity = 9.81;
                 }
                 else
                 {
                     mStiffness = 0.0;
+                    mGravity = 9.81;
                 }
             }
             else // if cell is myoepithelial
@@ -92,21 +102,24 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
                 if (cell_b1_expn && cell_b4_expn)
                 {
                     mStiffness = 2.0;
+                    mGravity = 9.81;
                 }
                 else if (cell_b1_expn != cell_b4_expn)
                 {
                     mStiffness = 1.0;
+                    mGravity = 9.81;
                 }
                 else
                 {
                     mStiffness = 0.5;
+                    mGravity = 9.81;
                 }
             }
         
         c_vector<double, DIM> force_contribution;
         force_contribution[0] = 0.0;
         force_contribution[1] = 0.0;
-        force_contribution[2] = mStiffness*cell_height;
+        force_contribution[2] = (mStiffness*cell_height)+mGravity;
         }
         rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force_contribution);
     }

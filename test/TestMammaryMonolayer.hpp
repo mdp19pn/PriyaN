@@ -121,6 +121,7 @@ public:
         nodes.push_back(new Node<3>(4,  false,  0.5, 1.0, 0.0));
         nodes.push_back(new Node<3>(5,  false,  1.0, 0.5, 0.0));
         nodes.push_back(new Node<3>(6,  false,  1.0, 0.5, 1.0));
+
         NodesOnlyMesh<3> mesh;
         mesh.ConstructNodesWithoutMesh(nodes, 1.5);
        
@@ -141,12 +142,12 @@ public:
         
         // Assign these properties to cells (change these lines if you want e.g. only luminal cells)
         cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(5)->AddCellProperty(p_myo);
-        cell_population.GetCellUsingLocationIndex(6)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(6)->AddCellProperty(p_luminal);
         
         // Add a cell writer so that mammary cell types are written to file
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
@@ -178,7 +179,7 @@ public:
         
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryMonolayer3D");
+        simulator.SetOutputDirectory("TestMammaryMonolayer3DWT");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(96.0); // Hours
        
