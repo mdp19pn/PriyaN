@@ -119,7 +119,8 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
         c_vector<double, DIM> force_contribution;
         force_contribution[0] = 0.0;
         force_contribution[1] = 0.0;
-        force_contribution[2] = (mStiffness*cell_height)+mGravity;
+        force_contribution[2] = mStiffness*cell_height;
+        force_contribution[2] = mGravity;
         }
         rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force_contribution);
     }
