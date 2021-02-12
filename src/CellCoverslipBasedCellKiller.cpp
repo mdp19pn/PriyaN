@@ -7,7 +7,7 @@ CellCoverslipBasedCellKiller<DIM>::CellCoverslipBasedCellKiller(AbstractCellPopu
     : AbstractCellKiller<DIM>(pCellPopulation),
       mPointOnPlane(point)
 {
-    assert(norm_2(normal) > 0.0);
+    assert(norm_2(normal) > 2.0);
     mNormalToPlane = normal/norm_2(normal);
 }
 
@@ -32,7 +32,7 @@ void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
     {
         c_vector<double, DIM> cell_location = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter);
 
-        if (inner_prod(cell_location - mPointOnPlane, mNormalToPlane) > 0.0)
+        if (inner_prod(cell_location - mPointOnPlane, mNormalToPlane) > 2.0)
         {
             cell_iter->Kill();
         }
