@@ -1,5 +1,5 @@
-#ifndef PLANEBASEDCELLKILLER_HPP_
-#define PLANEBASEDCELLKILLER_HPP_
+#ifndef CELLCOVERSLIPBASEDCELLKILLER_HPP_
+#define CELLCOVERLSIPBASEDCELLKILLER_HPP_
 
 #include "AbstractCellKiller.hpp"
 
@@ -12,7 +12,7 @@
  * defined by a point, mPointOnPlane, and an outward pointing normal, mNormalToPlane.
  */
 template<unsigned DIM>
-class PlaneBasedCellKiller : public AbstractCellKiller<DIM>
+class CellCoverslipBasedCellKiller : public AbstractCellKiller<DIM>
 {
 private:
 
@@ -49,7 +49,7 @@ public:
      * @param point point on the plane which nodes cannot cross
      * @param normal the outward pointing unit normal to the boundary plane
      */
-    PlaneBasedCellKiller(AbstractCellPopulation<DIM>* pCellPopulation,
+    CellCoverslipBasedCellKiller(AbstractCellPopulation<DIM>* pCellPopulation,
                           c_vector<double, DIM> point,
                           c_vector<double, DIM> normal);
 
@@ -77,18 +77,18 @@ public:
 };
 
 #include "SerializationExportWrapper.hpp"
-EXPORT_TEMPLATE_CLASS_SAME_DIMS(PlaneBasedCellKiller)
+EXPORT_TEMPLATE_CLASS_SAME_DIMS(CellCoverslipBasedCellKiller)
 
 namespace boost
 {
 namespace serialization
 {
 /**
- * Serialize information required to construct a PlaneBasedCellKiller.
+ * Serialize information required to construct a CellCoverslipBasedCellKiller.
  */
 template<class Archive, unsigned DIM>
 inline void save_construct_data(
-    Archive & ar, const PlaneBasedCellKiller<DIM> * t, const unsigned int file_version)
+    Archive & ar, const CellCoverslipBasedCellKiller<DIM> * t, const unsigned int file_version)
 {
     // Save data required to construct instance
     const AbstractCellPopulation<DIM>* const p_cell_population = t->GetCellPopulation();
@@ -108,11 +108,11 @@ inline void save_construct_data(
 }
 
 /**
- * De-serialize constructor parameters and initialise a PlaneBasedCellKiller.
+ * De-serialize constructor parameters and initialise a CellCoverslipBasedCellKiller.
  */
 template<class Archive, unsigned DIM>
 inline void load_construct_data(
-    Archive & ar, PlaneBasedCellKiller<DIM> * t, const unsigned int file_version)
+    Archive & ar, CellCoverslipBasedCellKiller<DIM> * t, const unsigned int file_version)
 {
     // Retrieve data from archive required to construct new instance
     AbstractCellPopulation<DIM>* p_cell_population;
@@ -131,9 +131,9 @@ inline void load_construct_data(
     }
 
     // Invoke inplace constructor to initialise instance
-    ::new(t)PlaneBasedCellKiller<DIM>(p_cell_population, point, normal);
+    ::new(t)CellCoverslipBasedCellKiller<DIM>(p_cell_population, point, normal);
 }
 }
 } // namespace ...
 
-#endif /*PLANEBASEDCELLKILLER_HPP_*/
+#endif /*CELLCOVERSLIPEBASEDCELLKILLER_HPP_*/
