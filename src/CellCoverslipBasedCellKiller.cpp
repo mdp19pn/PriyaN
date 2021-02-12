@@ -1,7 +1,7 @@
-#include "PlaneBasedCellKiller.hpp"
+#include "CellCoverslipBasedCellKiller.hpp"
 
 template<unsigned DIM>
-PlaneBasedCellKiller<DIM>::PlaneBasedCellKiller(AbstractCellPopulation<DIM>* pCellPopulation,
+CellCoverslipBasedCellKiller<DIM>::CellCoverslipBasedCellKiller(AbstractCellPopulation<DIM>* pCellPopulation,
                                                   c_vector<double, DIM> point,
                                                   c_vector<double, DIM> normal)
     : AbstractCellKiller<DIM>(pCellPopulation),
@@ -12,19 +12,19 @@ PlaneBasedCellKiller<DIM>::PlaneBasedCellKiller(AbstractCellPopulation<DIM>* pCe
 }
 
 template<unsigned DIM>
-const c_vector<double, DIM>& PlaneBasedCellKiller<DIM>::rGetPointOnPlane() const
+const c_vector<double, DIM>& CellCoverslipBasedCellKiller<DIM>::rGetPointOnPlane() const
 {
     return mPointOnPlane;
 }
 
 template<unsigned DIM>
-const c_vector<double, DIM>& PlaneBasedCellKiller<DIM>::rGetNormalToPlane() const
+const c_vector<double, DIM>& CellCoverslipBasedCellKiller<DIM>::rGetNormalToPlane() const
 {
     return mNormalToPlane;
 }
 
 template<unsigned DIM>
-void PlaneBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
+void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
 {
     for (typename AbstractCellPopulation<DIM>::Iterator cell_iter = this->mpCellPopulation->Begin();
          cell_iter != this->mpCellPopulation->End();
@@ -40,7 +40,7 @@ void PlaneBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
 }
 
 template<unsigned DIM>
-void PlaneBasedCellKiller<DIM>::OutputCellKillerParameters(out_stream& rParamsFile)
+void CellCoverslipBasedCellKiller<DIM>::OutputCellKillerParameters(out_stream& rParamsFile)
 {
     *rParamsFile << "\t\t\t<PointOnPlane>";
     for (unsigned index=0; index != DIM-1U; index++) //Note: inequality avoids testing index < 0U when DIM=1
@@ -61,10 +61,10 @@ void PlaneBasedCellKiller<DIM>::OutputCellKillerParameters(out_stream& rParamsFi
 }
 
 // Explicit instantiation
-template class PlaneBasedCellKiller<1>;
-template class PlaneBasedCellKiller<2>;
-template class PlaneBasedCellKiller<3>;
+template class CellCoverslipBasedCellKiller<1>;
+template class CellCoverslipBasedCellKiller<2>;
+template class CellCoverslipBasedCellKiller<3>;
 
 // Serialization for Boost >= 1.36
 #include "SerializationExportWrapperForCpp.hpp"
-EXPORT_TEMPLATE_CLASS_SAME_DIMS(PlaneBasedCellKiller)
+EXPORT_TEMPLATE_CLASS_SAME_DIMS(CellCoverslipBasedCellKiller)
