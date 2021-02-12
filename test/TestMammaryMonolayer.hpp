@@ -11,7 +11,7 @@
 #include "PetscSetupAndFinalize.hpp"
 #include "CellsGenerator.hpp"
 #include "MammaryCellCycleModel.hpp"
-#include "PlaneBasedCellKiller.hpp"
+#include "CellCoverslipBasedCellKiller.hpp"
 #include "GeneralisedLinearSpringForce.hpp"
 #include "OffLatticeSimulation.hpp"
 #include "SmartPointers.hpp"
@@ -202,7 +202,7 @@ public:
         simulator.AddCellPopulationBoundaryCondition(p_bc);
         
         // Construct a cell killer object and pass the cell killer into the cell-based simulation
-        MAKE_PTR_ARGS(MyCellKiller, p_killer, (&cell_population));
+        MAKE_PTR_ARGS(CellCoverslipBasedCellKiller, p_killer, (&cell_population));
         simulator.AddCellKiller(p_killer);
        
         // Run the simulation
