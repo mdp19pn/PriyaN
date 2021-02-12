@@ -10,7 +10,6 @@
 /**
  * A cell killer that kills cells if they are outside the domain.
  * defined by a point, mPointOnPlane, and an outward pointing normal, mNormalToPlane.
- * Works for all CellPopulations.
  */
 template<unsigned DIM>
 class PlaneBasedCellKiller : public AbstractCellKiller<DIM>
