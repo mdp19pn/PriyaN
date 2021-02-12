@@ -11,6 +11,7 @@
 #include "PetscSetupAndFinalize.hpp"
 #include "CellsGenerator.hpp"
 #include "MammaryCellCycleModel.hpp"
+#include "PlaneBasedCellKiller.hpp"
 #include "GeneralisedLinearSpringForce.hpp"
 #include "OffLatticeSimulation.hpp"
 #include "SmartPointers.hpp"
