@@ -199,6 +199,10 @@ public:
         // Make a pointer to a PlaneBoundaryCondition (passing the point and normal to the plane) and pass it to the OffLatticeSimulation.
         MAKE_PTR_ARGS(PlaneBoundaryCondition<3>, p_bc, (&cell_population, point, normal));
         simulator.AddCellPopulationBoundaryCondition(p_bc);
+        
+        // Construct a cell killer object and pass the cell killer into the cell-based simulation
+        MAKE_PTR_ARGS(MyCellKiller, p_killer, (&cell_population));
+        simulator.AddCellKiller(p_killer);
        
         // Run the simulation
         simulator.Solve();
