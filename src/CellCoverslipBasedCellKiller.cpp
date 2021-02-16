@@ -1,63 +1,34 @@
 #include "CellCoverslipBasedCellKiller.hpp"
 
-template<unsigned DIM>
-CellCoverslipBasedCellKiller<DIM>::CellCoverslipBasedCellKiller(AbstractCellPopulation<DIM>* pCellPopulation,
-                                                  c_vector<double, DIM> point,
-                                                  c_vector<double, DIM> normal)
-    : AbstractCellKiller<DIM>(pCellPopulation),
-      mPointOnPlane(point)
-{
-    assert(norm_2(normal) > 2.0);
-    mNormalToPlane = normal/norm_2(normal);
+template<unsigned SPACE_DIM>
+CellCoverslipBasedCellKiller<SPACE_DIM>::CellCoverslipBasedCellKiller(AbstractCellPopulation<SPACE_DIM>* pCellPopulation)
+: AbstractCellKiller<SPACE_DIM>(pCellPopulation)
+{   
 }
 
-template<unsigned DIM>
-const c_vector<double, DIM>& CellCoverslipBasedCellKiller<DIM>::rGetPointOnPlane() const
+template<unsigned SPACE_DIM>
+void CellCoverslipBasedCellKiller<SPACE_DIM>::CheckAndLabelCellsForApoptosisOrDeath()
 {
-    return mPointOnPlane;
-}
-
-template<unsigned DIM>
-const c_vector<double, DIM>& CellCoverslipBasedCellKiller<DIM>::rGetNormalToPlane() const
-{
-    return mNormalToPlane;
-}
-
-template<unsigned DIM>
-void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
-{
-    for (typename AbstractCellPopulation<DIM>::Iterator cell_iter = this->mpCellPopulation->Begin();
-         cell_iter != this->mpCellPopulation->End();
-         ++cell_iter)
+    for (typename AbstractCellPopulation<SPACE_DIM>::Iterator cell_iter = this->mpCellPopulation->Begin();
+        cell_iter != this->mpCellPopulation->End();
+        ++cell_iter)
     {
-        c_vector<double, DIM> cell_location = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter);
+        c_vector<double, 3> location;
+        location = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter);
+        double z = location[2]
 
-        if (inner_prod(cell_location - mPointOnPlane, mNormalToPlane) > 2.0)
+        if (z > 2.0)
         {
             cell_iter->Kill();
         }
     }
 }
 
-template<unsigned DIM>
-void CellCoverslipBasedCellKiller<DIM>::OutputCellKillerParameters(out_stream& rParamsFile)
+template<unsigned SPACE_DIM>
+void CellCoverslipBasedCellKiller<SPACE_DIM>::OutputCellKillerParameters(out_stream& rParamsFile)
 {
-    *rParamsFile << "\t\t\t<PointOnPlane>";
-    for (unsigned index=0; index != DIM-1U; index++) //Note: inequality avoids testing index < 0U when DIM=1
-    {
-        *rParamsFile << mPointOnPlane[index] << ",";
-    }
-    *rParamsFile << mPointOnPlane[DIM-1] << "</PointOnPlane>\n";
-
-    *rParamsFile << "\t\t\t<NormalToPlane>";
-     for (unsigned index=0; index != DIM-1U; index++) //Note: inequality avoids testing index < 0U when DIM=1
-     {
-         *rParamsFile << mNormalToPlane[index] << ",";
-     }
-     *rParamsFile << mNormalToPlane[DIM-1] << "</NormalToPlane>\n";
-
-    // Call method on direct parent class
-    AbstractCellKiller<DIM>::OutputCellKillerParameters(rParamsFile);
+    // No parameters to output, so just call method on direct parent class
+    AbstractCellKiller<SPACE_DIM>::OutputCellKillerParameters(rParamsFile);
 }
 
 // Explicit instantiation
