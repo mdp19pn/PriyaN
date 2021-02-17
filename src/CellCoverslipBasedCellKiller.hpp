@@ -10,8 +10,8 @@
 /**
  * A cell killer that kills cells if they are outside the domain.
  */
-template<unsigned SPACE_DIM>
-class CellCoverslipBasedCellKiller : public AbstractCellKiller<SPACE_DIM>
+template<unsigned DIM>
+class CellCoverslipBasedCellKiller : public AbstractCellKiller<DIM>
 {
 private:
 
@@ -26,12 +26,17 @@ private:
     template<class Archive>
     void serialize(Archive & archive, const unsigned int version)
     {
-        archive & boost::serialization::base_object<AbstractCellKiller<SPACE_DIM> >(*this);
+        archive & boost::serialization::base_object<AbstractCellKiller<DIM> >(*this);
     }
 
 public:
 
-    CellCoverslipBasedCellKiller(AbstractCellPopulation<SPACE_DIM>* pCellPopulation);
+    CellCoverslipBasedCellKiller(AbstractCellPopulation<DIM>* pCellPopulation);
+
+    /**
+     * Destructor
+     */
+    virtual ~CellCoverslipBasedCellKiller(){};
 
     /**
      * Loops over cells and kills cells outside boundary.
@@ -56,28 +61,28 @@ namespace boost
         /**
          * Serialize information required to construct a CellCoverslipBasedCellKiller.
          */
-        template<class Archive>
+        template<class Archive, unsigned DIM>
         inline void save_construct_data(
-            Archive & ar, const CellCoverslipBasedCellKiller<SPACE_DIM> * t, const unsigned int file_version)
+            Archive & ar, const CellCoverslipBasedCellKiller<DIM> * t, const unsigned int file_version)
             {
                 // Save data required to construct instance
-                const AbstractCellPopulation<3>* const p_cell_population = t->GetCellPopulation();
+                const AbstractCellPopulation<DIM>* const p_cell_population = t->GetCellPopulation();
                 ar << p_cell_population;
             }
 
         /**
          * De-serialize constructor parameters and initialise a CellCoverslipBasedCellKiller.
          */
-        template<class Archive>
+        template<class Archive, unsigned DIM>
         inline void load_construct_data(
-            Archive & ar, CellCoverslipBasedCellKiller<SPACE_DIM> * t, const unsigned int file_version)
+            Archive & ar, CellCoverslipBasedCellKiller<DIM> * t, const unsigned int file_version)
         {
             // Retrieve data from archive required to construct new instance
-            AbstractCellPopulation<3>* p_cell_population;
+            AbstractCellPopulation<DIM>* p_cell_population;
             ar >> p_cell_population;
 
             // Invoke inplace constructor to initialise instance
-            ::new(t)CellCoverslipBasedCellKille(p_cell_population);
+            ::new(t)CellCoverslipBasedCellKiller<DIM>(p_cell_population);
         }
     }
 } // namespace ...

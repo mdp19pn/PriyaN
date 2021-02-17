@@ -1,34 +1,45 @@
 #include "CellCoverslipBasedCellKiller.hpp"
+#include "NodeBasedCellPopulation.hpp"
+#include "Exception.hpp"
 
-template<unsigned SPACE_DIM>
-CellCoverslipBasedCellKiller<SPACE_DIM>::CellCoverslipBasedCellKiller(AbstractCellPopulation<SPACE_DIM>* pCellPopulation)
-: AbstractCellKiller<SPACE_DIM>(pCellPopulation)
+template<unsigned DIM>
+CellCoverslipBasedCellKiller<DIM>::CellCoverslipBasedCellKiller(AbstractCellPopulation<DIM>* pCellPopulation)
+: AbstractCellKiller<DIM>(pCellPopulation)
 {   
 }
 
-template<unsigned SPACE_DIM>
-void CellCoverslipBasedCellKiller<SPACE_DIM>::CheckAndLabelCellsForApoptosisOrDeath()
+template<unsigned DIM>
+void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
 {
-    for (typename AbstractCellPopulation<SPACE_DIM>::Iterator cell_iter = this->mpCellPopulation->Begin();
+    // Helper variable that is a static cast of the cell population
+    NodeBasedCellPopulation<DIM>* p_cell_population = static_cast<NodeBasedCellPopulation<DIM>*>(this->mpCellPopulation);
+    
+    switch (DIM)
+    {
+        // Iterate over cell population
+        for (typename AbstractCellPopulation<DIM>::Iterator cell_iter = this->mpCellPopulation->Begin();
         cell_iter != this->mpCellPopulation->End();
         ++cell_iter)
-    {
-        c_vector<double, 3> location;
-        location = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter);
-        double z = location[2]
-
-        if (z > 2.0)
         {
-            cell_iter->Kill();
+            //c_vector<double, 3> location;
+            //location = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter);
+            //double cell_height = location[2];
+
+            double cell_height = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter)[2];
+
+            if (cell_height>1.0)
+            {
+                cell_iter->Kill();
+            }
         }
     }
 }
 
-template<unsigned SPACE_DIM>
-void CellCoverslipBasedCellKiller<SPACE_DIM>::OutputCellKillerParameters(out_stream& rParamsFile)
+template<unsigned DIM>
+void CellCoverslipBasedCellKiller<DIM>::OutputCellKillerParameters(out_stream& rParamsFile)
 {
     // No parameters to output, so just call method on direct parent class
-    AbstractCellKiller<SPACE_DIM>::OutputCellKillerParameters(rParamsFile);
+    AbstractCellKiller<DIM>::OutputCellKillerParameters(rParamsFile);
 }
 
 // Explicit instantiation
