@@ -21,11 +21,7 @@ void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
         cell_iter != this->mpCellPopulation->End();
         ++cell_iter)
         {
-            //c_vector<double, 3> location;
-            //location = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter);
-            //double cell_height = location[2];
-
-            double cell_height = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter)[2];
+            double cell_height = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter)[DIM-1];
 
             if (cell_height>1.0)
             {

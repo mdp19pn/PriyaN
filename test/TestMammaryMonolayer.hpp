@@ -10,9 +10,6 @@
 #include "AbstractCellBasedTestSuite.hpp"
 #include "PetscSetupAndFinalize.hpp"
 #include "CellsGenerator.hpp"
-#include "MammaryCellCycleModel.hpp"
-#include "CellCoverslipBasedCellKiller.hpp"
-#include "GeneralisedLinearSpringForce.hpp"
 #include "OffLatticeSimulation.hpp"
 #include "SmartPointers.hpp"
 #include "NodesOnlyMesh.hpp"
@@ -23,6 +20,10 @@
 #include "CellLocationWriter.hpp"
 #include "HeterotypicBoundaryLengthWriter.hpp"
 #include "MammaryCellTypeWriter.hpp"
+#include "MammaryCellCycleModel.hpp"
+#include "OrientedDivisionRule.hpp"
+#include "CellCoverslipBasedCellKiller.hpp"
+#include "GeneralisedLinearSpringForce.hpp"
 #include "RepulsionForce.hpp"
 #include "CellCoverslipAdhesionForce.hpp"
 #include "PlaneBoundaryCondition.hpp"
@@ -149,6 +150,10 @@ public:
         cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(5)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(6)->AddCellProperty(p_luminal);
+
+        // Set the division rule for our population to be the random direction division rule
+        boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
+        cell_population.SetCentreBasedDivisionRule(p_division_rule_to_set);
         
         // Add a cell writer so that mammary cell types are written to file
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
