@@ -42,14 +42,10 @@ std::pair<c_vector<double, SPACE_DIM>, c_vector<double, SPACE_DIM> > OrientedDiv
              * [0, pi) respectively, since points picked in this way will be 'bunched' near
              * the poles. See #2230.
              */
-            double u = RandomNumberGenerator::Instance()->ranf();
-            double v = RandomNumberGenerator::Instance()->ranf();
+            double random_angle = 2.0*M_PI*RandomNumberGenerator::Instance()->ranf();
 
-            double random_azimuth_angle = 2*M_PI*u;
-            double random_zenith_angle = std::acos(2*v - 1);
-
-            random_vector(0) = 0.5*separation*cos(random_azimuth_angle)*sin(random_zenith_angle);
-            random_vector(1) = 0.5*separation*sin(random_azimuth_angle)*sin(random_zenith_angle);
+            random_vector(0) = 0.5*separation*cos(random_angle);
+            random_vector(1) = 0.5*separation*sin(random_angle);
             random_vector(2) = 0.0;
             break;
         }

@@ -21,6 +21,7 @@
 #include "HeterotypicBoundaryLengthWriter.hpp"
 #include "MammaryCellTypeWriter.hpp"
 #include "MammaryCellCycleModel.hpp"
+#include "SubstrateDependentCellCycleModel.hpp"
 #include "OrientedDivisionRule.hpp"
 #include "CellCoverslipBasedCellKiller.hpp"
 #include "GeneralisedLinearSpringForce.hpp"
@@ -129,7 +130,7 @@ public:
        
         // Create a vector of proliferative cells using the helper CellsGenerator
         std::vector<CellPtr> cells;
-        CellsGenerator<MammaryCellCycleModel, 3> cells_generator;
+        CellsGenerator<SubstrateDependentCellCycleModel, 3> cells_generator;
         cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
       
         // Use the mesh and cells to create a cell population
@@ -152,8 +153,8 @@ public:
         cell_population.GetCellUsingLocationIndex(6)->AddCellProperty(p_luminal);
 
         // Set the division rule for our population to be the random direction division rule
-        boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
-        cell_population.SetCentreBasedDivisionRule(p_division_rule_to_set);
+        //boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
+        //cell_population.SetCentreBasedDivisionRule(p_division_rule_to_set);
         
         // Add a cell writer so that mammary cell types are written to file
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
