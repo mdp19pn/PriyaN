@@ -40,6 +40,10 @@ private:
 
 protected:
 
+    /** The cell that this model is associated with. */
+    // CellPtr p_cell_A;
+    // CellPtr p_cell_B;
+
     /**
      * The fraction of the cells' equilibrium height in G1 phase below which these cells are quiescent.
      */
@@ -96,6 +100,17 @@ public:
      *
      */
     AbstractCellCycleModel* CreateCellCycleModel();
+
+    /**
+     * Gives the cell-cycle model a pointer to its host cell.
+     *
+     * Some cell-cycle models pass this pointer to other classes,
+     * which use this information to determine other information based upon the location
+     * of the cell (e.g. the Wnt concentration at this location).
+     *
+     * @param pCell pointer to the cell
+     */
+    //void SetCell(CellPtr pCell);
 
     /**
      * @param quiescentHeightFraction

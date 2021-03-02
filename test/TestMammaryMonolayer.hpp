@@ -129,10 +129,22 @@ public:
         mesh.ConstructNodesWithoutMesh(nodes, 1.5);
        
         // Create a vector of proliferative cells using the helper CellsGenerator
-        std::vector<CellPtr> cells;
-        CellsGenerator<SubstrateDependentCellCycleModel, 3> cells_generator;
-        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
+        // std::vector<CellPtr> cells;
+        // CellsGenerator<MammaryCellCycleModel, 3> cells_generator;
+        // cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
       
+        /* We now create a vector of cell pointers. */
+        std::vector<CellPtr> cells;
+
+        /* We now create a cell-cycle (only contact inhibited) model for these cells and loop over the
+        * nodes of the mesh to create as many elements in the vector of cell pointers as there are
+        * in the initial mesh. */
+        for (unsigned i=0; i<mesh.GetNumNodes(); i++)
+        {
+            SubstrateDependentCellCycleModel* p_cycle_model = new SubstrateDependentCellCycleModel();
+            p_cycle_model->SetDimension(3);
+        }
+
         // Use the mesh and cells to create a cell population
         NodeBasedCellPopulationWithVariableDamping<3> cell_population(mesh, cells);
 
