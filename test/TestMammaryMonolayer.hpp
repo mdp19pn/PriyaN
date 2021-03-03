@@ -144,6 +144,13 @@ public:
             SubstrateDependentCellCycleModel* p_cycle_model = new SubstrateDependentCellCycleModel();
             p_cycle_model->SetDimension(3);
             CellPtr p_cell(new Cell(p_cycle_model));
+            
+            p_cycle_model->SetQuiescentHeightFraction(0.5);
+            p_cycle_model->SetEquilibriumHeight(1.0);
+            
+            // we alter the defult cell-cyle duration
+            p_cycle_model->mCellCycleDuration(15.0);
+            
             cells.push_back(p_cell);
         }
 
