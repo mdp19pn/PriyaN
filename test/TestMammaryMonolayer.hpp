@@ -143,6 +143,8 @@ public:
         {
             SubstrateDependentCellCycleModel* p_cycle_model = new SubstrateDependentCellCycleModel();
             p_cycle_model->SetDimension(3);
+            CellPtr p_cell(new Cell(p_cycle_model));
+            cells.push_back(p_cell);
         }
 
         // Use the mesh and cells to create a cell population
