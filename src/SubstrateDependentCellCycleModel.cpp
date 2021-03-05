@@ -34,11 +34,6 @@ SubstrateDependentCellCycleModel::SubstrateDependentCellCycleModel(const Substra
      * is called on the new cell-cycle model.
      */
 }
-// void SubstrateDependentCellCycleModel::SetCell(CellPtr pCell)
-// {
-//     p_cell_A = pCell;
-//     p_cell_B = pCell;
-// }
 
 void SubstrateDependentCellCycleModel::UpdateCellCyclePhase()
 {
@@ -48,9 +43,6 @@ void SubstrateDependentCellCycleModel::UpdateCellCyclePhase()
     }
 
     // Get cell Height
-    // double cell_height_A = p_cell_A->GetCellData()->GetItem("height");
-    // double cell_height_B = p_cell_B->GetCellData()->GetItem("height");
-
     double cell_height = mpCell->GetCellData()->GetItem("height");
 
     // Removes the luminal cell property
@@ -80,32 +72,6 @@ void SubstrateDependentCellCycleModel::UpdateCellCyclePhase()
              */
             boost::shared_ptr<AbstractCellProperty> p_luminal = mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<LuminalCellProperty>();
             mpCell->AddCellProperty(p_luminal);
-
-            //boost::shared_ptr<AbstractCellProperty> p_myoepithelial = mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>();
-            //mpCell->AddCellProperty(p_myoepithelial);
-        }
-        else
-        {
-            // Reset the cell's quiescent duration and update the time at which the onset of quiescent occurs
-            mCurrentQuiescentDuration = 0.0;
-            mCurrentQuiescentOnsetTime = SimulationTime::Instance()->GetTime();
-        }
-
-        if (cell_height < quiescent_height)
-        {
-            // Update the duration of the current period of contact inhibition.
-            mCurrentQuiescentDuration = SimulationTime::Instance()->GetTime() - mCurrentQuiescentOnsetTime;
-            mG1Duration += dt;
-
-            /*
-             * This method is usually called within a CellBasedSimulation, after the CellPopulation
-             * has called CellPropertyRegistry::TakeOwnership(). This means that were we to call
-             * CellPropertyRegistry::Instance() here when adding the CellLabel, we would be creating
-             * a new CellPropertyRegistry. In this case the CellLabel's cell count would be incorrect.
-             * We must therefore access the CellLabel via the cell's CellPropertyCollection.
-             */
-            //boost::shared_ptr<AbstractCellProperty> p_luminal = mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<LuminalCellProperty>();
-            //mpCell->AddCellProperty(p_luminal);
 
             boost::shared_ptr<AbstractCellProperty> p_myoepithelial = mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>();
             mpCell->AddCellProperty(p_myoepithelial);

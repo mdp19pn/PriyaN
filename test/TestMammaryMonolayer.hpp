@@ -8,10 +8,10 @@
 
 #include "CheckpointArchiveTypes.hpp"
 #include "AbstractCellBasedTestSuite.hpp"
+#include "SmartPointers.hpp"
 #include "PetscSetupAndFinalize.hpp"
 #include "CellsGenerator.hpp"
 #include "OffLatticeSimulation.hpp"
-#include "SmartPointers.hpp"
 #include "NodesOnlyMesh.hpp"
 #include "NodeBasedCellPopulationWithVariableDamping.hpp"
 #include "LuminalCellProperty.hpp"
@@ -22,6 +22,7 @@
 #include "MammaryCellTypeWriter.hpp"
 #include "MammaryCellCycleModel.hpp"
 #include "SubstrateDependentCellCycleModel.hpp"
+#include "WildTypeCellMutationState.hpp"
 #include "OrientedDivisionRule.hpp"
 #include "CellCoverslipBasedCellKiller.hpp"
 #include "GeneralisedLinearSpringForce.hpp"
@@ -133,23 +134,29 @@ public:
         // CellsGenerator<MammaryCellCycleModel, 3> cells_generator;
         // cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
       
-        /* We now create a vector of cell pointers. */
+        /* Create a vector of cell pointers. */
         std::vector<CellPtr> cells;
 
-        /* We now create a cell-cycle (only contact inhibited) model for these cells and loop over the
+        /*
+         * This line defines a mutation state to be used for all cells, of type
+         * `WildTypeCellMutationState` (i.e. 'healthy'):
+         */
+        MAKE_PTR(WildTypeCellMutationState, p_state);
+
+        /* Create a cell-cycle (only contact inhibited) model for these cells and loop over the
         * nodes of the mesh to create as many elements in the vector of cell pointers as there are
         * in the initial mesh. */
         for (unsigned i=0; i<mesh.GetNumNodes(); i++)
         {
             SubstrateDependentCellCycleModel* p_cycle_model = new SubstrateDependentCellCycleModel();
             p_cycle_model->SetDimension(3);
-            CellPtr p_cell(new Cell(p_cycle_model));
+            CellPtr p_cell(new Cell(p_state,p_cycle_model));
             
-            p_cycle_model->SetQuiescentHeightFraction(0.5);
+            p_cycle_model->SetQuiescentHeightFraction(2.0);
             p_cycle_model->SetEquilibriumHeight(1.0);
             
-            // we alter the defult cell-cyle duration
-            p_cycle_model->mCellCycleDuration(15.0);
+            //Alter the defult cell-cyle duration
+            //p_cycle_model->SetG1Duration(8.0);
             
             cells.push_back(p_cell);
         }

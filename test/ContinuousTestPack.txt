@@ -2,4 +2,3 @@ TestHello.hpp
 TestPriya.hpp
 TestMammaryOrganoid.hpp
 TestMammaryMonolayer.hpp
-TestMammaryMonolayerDifferentialAdhesion.hpp
