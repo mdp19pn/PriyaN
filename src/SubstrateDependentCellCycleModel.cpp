@@ -48,10 +48,10 @@ void SubstrateDependentCellCycleModel::UpdateCellCyclePhase()
     PRINT_VARIABLE("cycle");
 
     // Removes the luminal cell property
-    //mpCell->RemoveCellProperty<LuminalCellProperty>();
+    mpCell->RemoveCellProperty<LuminalCellProperty>();
 
     // Removes the myoepithelial cell property
-    //mpCell->RemoveCellProperty<MyoepithelialCellProperty>();    
+    mpCell->RemoveCellProperty<MyoepithelialCellProperty>();    
 
     if (mCurrentCellCyclePhase == G_ONE_PHASE)
     {
@@ -72,11 +72,11 @@ void SubstrateDependentCellCycleModel::UpdateCellCyclePhase()
              * a new CellPropertyRegistry. In this case the CellLabel's cell count would be incorrect.
              * We must therefore access the CellLabel via the cell's CellPropertyCollection.
              */
-            //boost::shared_ptr<AbstractCellProperty> p_luminal = mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<LuminalCellProperty>();
-            //mpCell->AddCellProperty(p_luminal);
+            boost::shared_ptr<AbstractCellProperty> p_luminal = mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<LuminalCellProperty>();
+            mpCell->AddCellProperty(p_luminal);
 
-            // boost::shared_ptr<AbstractCellProperty> p_myoepithelial = mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>();
-            // mpCell->AddCellProperty(p_myoepithelial);
+            boost::shared_ptr<AbstractCellProperty> p_myoepithelial = mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>();
+            mpCell->AddCellProperty(p_myoepithelial);
         }
         else
         {
