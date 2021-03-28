@@ -2,6 +2,7 @@
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
 #include "DifferentiatedCellProliferativeType.hpp"
+#include "Debug.hpp"
 
 SubstrateDependentCellCycleModel::SubstrateDependentCellCycleModel()
     : AbstractSimplePhaseBasedCellCycleModel(),
@@ -44,19 +45,20 @@ void SubstrateDependentCellCycleModel::UpdateCellCyclePhase()
 
     // Get cell Height
     double cell_height = mpCell->GetCellData()->GetItem("height");
+    PRINT_VARIABLE("cycle");
 
     // Removes the luminal cell property
-    mpCell->RemoveCellProperty<LuminalCellProperty>();
+    //mpCell->RemoveCellProperty<LuminalCellProperty>();
 
     // Removes the myoepithelial cell property
-    mpCell->RemoveCellProperty<MyoepithelialCellProperty>();    
+    //mpCell->RemoveCellProperty<MyoepithelialCellProperty>();    
 
     if (mCurrentCellCyclePhase == G_ONE_PHASE)
     {
         // Update G1 duration based on cell height
         double dt = SimulationTime::Instance()->GetTimeStep();
         double quiescent_height = mEquilibriumHeight * mQuiescentHeightFraction;
-
+        
         if (cell_height < quiescent_height)
         {
             // Update the duration of the current period of contact inhibition.
@@ -70,11 +72,11 @@ void SubstrateDependentCellCycleModel::UpdateCellCyclePhase()
              * a new CellPropertyRegistry. In this case the CellLabel's cell count would be incorrect.
              * We must therefore access the CellLabel via the cell's CellPropertyCollection.
              */
-            boost::shared_ptr<AbstractCellProperty> p_luminal = mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<LuminalCellProperty>();
-            mpCell->AddCellProperty(p_luminal);
+            //boost::shared_ptr<AbstractCellProperty> p_luminal = mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<LuminalCellProperty>();
+            //mpCell->AddCellProperty(p_luminal);
 
-            boost::shared_ptr<AbstractCellProperty> p_myoepithelial = mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>();
-            mpCell->AddCellProperty(p_myoepithelial);
+            // boost::shared_ptr<AbstractCellProperty> p_myoepithelial = mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>();
+            // mpCell->AddCellProperty(p_myoepithelial);
         }
         else
         {

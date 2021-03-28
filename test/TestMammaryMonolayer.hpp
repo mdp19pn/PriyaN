@@ -23,6 +23,7 @@
 #include "MammaryCellCycleModel.hpp"
 #include "SubstrateDependentCellCycleModel.hpp"
 #include "WildTypeCellMutationState.hpp"
+#include "StemCellProliferativeType.hpp"
 #include "OrientedDivisionRule.hpp"
 #include "CellCoverslipBasedCellKiller.hpp"
 #include "GeneralisedLinearSpringForce.hpp"
@@ -129,7 +130,7 @@ public:
         NodesOnlyMesh<3> mesh;
         mesh.ConstructNodesWithoutMesh(nodes, 1.5);
        
-        // Create a vector of proliferative cells using the helper CellsGenerator
+        // // Create a vector of proliferative cells using the helper CellsGenerator
         // std::vector<CellPtr> cells;
         // CellsGenerator<MammaryCellCycleModel, 3> cells_generator;
         // cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
@@ -142,6 +143,7 @@ public:
          * `WildTypeCellMutationState` (i.e. 'healthy'):
          */
         MAKE_PTR(WildTypeCellMutationState, p_state);
+        MAKE_PTR(StemCellProliferativeType, p_stem_type);
 
         /* Create a cell-cycle (only contact inhibited) model for these cells and loop over the
         * nodes of the mesh to create as many elements in the vector of cell pointers as there are
@@ -150,13 +152,26 @@ public:
         {
             SubstrateDependentCellCycleModel* p_cycle_model = new SubstrateDependentCellCycleModel();
             p_cycle_model->SetDimension(3);
-            CellPtr p_cell(new Cell(p_state,p_cycle_model));
-            
-            p_cycle_model->SetQuiescentHeightFraction(2.0);
+            p_cycle_model->SetQuiescentHeightFraction(0.5);
             p_cycle_model->SetEquilibriumHeight(1.0);
             
+            CellPtr p_cell(new Cell(p_state,p_cycle_model));
+            p_cell->SetCellProliferativeType(p_stem_type);
+
+            /*
+            * We now define a random birth time, chosen from [-T,0], where T = t1 + t2, 
+            * where t1 is a parameter representing the G1 duration of a stem cell, 
+            * and t2 is the basic S+G2+M phases duration....
+            */
+            double birth_time = -RandomNumberGenerator::Instance()->ranf() * (p_cycle_model->GetStemCellG1Duration() + p_cycle_model->GetSG2MDuration());
+            /*
+            * ...then we set the birth time and push the cell back into the vector
+            * of cells.
+            */
+            p_cell->SetBirthTime(birth_time);
+            
             //Alter the defult cell-cyle duration
-            //p_cycle_model->SetG1Duration(8.0);
+            //p_cycle_model->SetStemG1Duration(8.0);
             
             cells.push_back(p_cell);
         }
@@ -195,6 +210,9 @@ public:
 
         // Add a population writer so that cell sorting (bilayer formation) is written to file
         cell_population.AddPopulationWriter<HeterotypicBoundaryLengthWriter>();
+
+        // Construct a cell killer object
+        MAKE_PTR_ARGS(CellCoverslipBasedCellKiller<3>, p_killer, (&cell_population));
       
         // Add a vertex mesh writer so that a rectangular coverslip  is written to file
         std::vector<Node<3>*> coverslip;
@@ -229,14 +247,13 @@ public:
         // Define a point on the plane boundary and a normal to the plane.
         c_vector<double,3> point = zero_vector<double>(3);
         c_vector<double,3> normal = zero_vector<double>(3);
-        normal(2) = -0.5;
+        normal(2) = -1.0;
         
         // Make a pointer to a PlaneBoundaryCondition (passing the point and normal to the plane) and pass it to the OffLatticeSimulation.
         MAKE_PTR_ARGS(PlaneBoundaryCondition<3>, p_bc, (&cell_population, point, normal));
         simulator.AddCellPopulationBoundaryCondition(p_bc);
         
-        // Construct a cell killer object and pass the cell killer into the cell-based simulation
-        MAKE_PTR_ARGS(CellCoverslipBasedCellKiller<3>, p_killer, (&cell_population));
+        // Pass the cell killer into the cell-based simulation
         simulator.AddCellKiller(p_killer);
        
         // Run the simulation

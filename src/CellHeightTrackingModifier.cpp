@@ -1,5 +1,6 @@
 #include "CellHeightTrackingModifier.hpp"
 #include "NodeBasedCellPopulation.hpp"
+#include "Debug.hpp"
 
 template<unsigned DIM>
 CellHeightTrackingModifier<DIM>::CellHeightTrackingModifier()
@@ -34,17 +35,15 @@ void CellHeightTrackingModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
     // Make sure the cell population is updated
     rCellPopulation.Update();
 
-    NodeBasedCellPopulation<DIM>* p_cell_population = static_cast<NodeBasedCellPopulation<DIM>*>(&rCellPopulation);
-
     // Iterate over cell population
-    for (typename AbstractCellPopulation<DIM>::Iterator cell_iter = p_cell_population->Begin();
-         cell_iter != p_cell_population->End();
-         ++cell_iter)
+    for (typename AbstractCellPopulation<DIM>::Iterator cell_iter = rCellPopulation.Begin();
+        cell_iter != rCellPopulation.End();
+        ++cell_iter)
     {
         // Get the height of this cell
-        double cell_height = p_cell_population->GetLocationOfCellCentre(*cell_iter)[2];
+        double cell_height = rCellPopulation.GetLocationOfCellCentre(*cell_iter)[2];
 
-        // Store the cell's volume in CellData
+        // Store the cell's height in CellData
         cell_iter->GetCellData()->SetItem("height", cell_height);
     }
 }

@@ -1,6 +1,7 @@
 #include "CellCoverslipBasedCellKiller.hpp"
 #include "NodeBasedCellPopulation.hpp"
 #include "Exception.hpp"
+#include "Debug.hpp"
 
 template<unsigned DIM>
 CellCoverslipBasedCellKiller<DIM>::CellCoverslipBasedCellKiller(AbstractCellPopulation<DIM>* pCellPopulation)
@@ -26,6 +27,7 @@ void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
             if (cell_height>1.0)
             {
                 cell_iter->Kill();
+                PRINT_VARIABLE("kill");
             }
         }
     }
