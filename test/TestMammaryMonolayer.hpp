@@ -16,9 +16,10 @@
 #include "NodeBasedCellPopulationWithVariableDamping.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
+#include "CellHeightTrackingModifier.hpp"
 #include "CellVelocityWriter.hpp"
 #include "CellLocationWriter.hpp"
-#include "HeterotypicBoundaryLengthWriter.hpp"
+#include "BoundaryLengthWriter.hpp"
 #include "MammaryCellTypeWriter.hpp"
 #include "MammaryCellCycleModel.hpp"
 #include "SubstrateDependentCellCycleModel.hpp"
@@ -84,7 +85,7 @@ public:
     //     cell_population.AddCellWriter<MammaryCellTypeWriter>();
 
     //     // Add a population writer so that cell sorting (bilayer formation) is written to file
-    //     cell_population.AddPopulationWriter<HeterotypicBoundaryLengthWriter>();
+    //     cell_population.AddPopulationWriter<BoundaryLengthWriter>();
 
     //     // Add a vertex mesh writer so that a rectangular coverslip  is written to file
     //     std::vector<Node<2>*> coverslip;
@@ -209,7 +210,7 @@ public:
         cell_population.AddCellWriter<CellVelocityWriter>();
 
         // Add a population writer so that cell sorting (bilayer formation) is written to file
-        cell_population.AddPopulationWriter<HeterotypicBoundaryLengthWriter>();
+        cell_population.AddPopulationWriter<BoundaryLengthWriter>();
 
         // Construct a cell killer object
         MAKE_PTR_ARGS(CellCoverslipBasedCellKiller<3>, p_killer, (&cell_population));
@@ -232,9 +233,9 @@ public:
         
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryMonolayer3DWT");
+        simulator.SetOutputDirectory("TestMammaryMonolayerMEKO");
         simulator.SetSamplingTimestepMultiple(12);
-        simulator.SetEndTime(96.0); // Hours
+        simulator.SetEndTime(20.0); // Hours
        
         // Create a cell-cell repulsion force law and pass it to the simulation
         MAKE_PTR(RepulsionForce<3>, p_force); 
@@ -256,6 +257,10 @@ public:
         // Pass the cell killer into the cell-based simulation
         simulator.AddCellKiller(p_killer);
        
+        // Add and pass the modifier to the simulation
+        MAKE_PTR(CellHeightTrackingModifier, p_modifier);
+        simulator.AddSimulationModifier(p_modifier);
+
         // Run the simulation
         simulator.Solve();
       

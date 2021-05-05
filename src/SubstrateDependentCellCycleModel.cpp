@@ -1,6 +1,4 @@
 #include "SubstrateDependentCellCycleModel.hpp"
-#include "LuminalCellProperty.hpp"
-#include "MyoepithelialCellProperty.hpp"
 #include "DifferentiatedCellProliferativeType.hpp"
 #include "Debug.hpp"
 
@@ -45,13 +43,6 @@ void SubstrateDependentCellCycleModel::UpdateCellCyclePhase()
 
     // Get cell Height
     double cell_height = mpCell->GetCellData()->GetItem("height");
-    PRINT_VARIABLE("cycle");
-
-    // Removes the luminal cell property
-    mpCell->RemoveCellProperty<LuminalCellProperty>();
-
-    // Removes the myoepithelial cell property
-    mpCell->RemoveCellProperty<MyoepithelialCellProperty>();    
 
     if (mCurrentCellCyclePhase == G_ONE_PHASE)
     {
@@ -64,19 +55,6 @@ void SubstrateDependentCellCycleModel::UpdateCellCyclePhase()
             // Update the duration of the current period of contact inhibition.
             mCurrentQuiescentDuration = SimulationTime::Instance()->GetTime() - mCurrentQuiescentOnsetTime;
             mG1Duration += dt;
-
-            /*
-             * This method is usually called within a CellBasedSimulation, after the CellPopulation
-             * has called CellPropertyRegistry::TakeOwnership(). This means that were we to call
-             * CellPropertyRegistry::Instance() here when adding the CellLabel, we would be creating
-             * a new CellPropertyRegistry. In this case the CellLabel's cell count would be incorrect.
-             * We must therefore access the CellLabel via the cell's CellPropertyCollection.
-             */
-            boost::shared_ptr<AbstractCellProperty> p_luminal = mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<LuminalCellProperty>();
-            mpCell->AddCellProperty(p_luminal);
-
-            boost::shared_ptr<AbstractCellProperty> p_myoepithelial = mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>();
-            mpCell->AddCellProperty(p_myoepithelial);
         }
         else
         {

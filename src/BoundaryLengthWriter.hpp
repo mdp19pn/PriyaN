@@ -1,5 +1,5 @@
-#ifndef HETEROTYPICBOUNDARYLENGTHWRITER_HPP_
-#define HETEROTYPICBOUNDARYLENGTHWRITER_HPP_
+#ifndef BOUNDARYLENGTHWRITER_HPP_
+#define BOUNDARYLENGTHWRITER_HPP_
 
 #include "AbstractCellPopulationWriter.hpp"
 #include "ChasteSerialization.hpp"
@@ -19,7 +19,7 @@
  * 6(10):e24999. doi:10.1371/journal.pone.0024999
  */
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-class HeterotypicBoundaryLengthWriter : public AbstractCellPopulationWriter<ELEMENT_DIM, SPACE_DIM>
+class BoundaryLengthWriter : public AbstractCellPopulationWriter<ELEMENT_DIM, SPACE_DIM>
 {
 private:
     /** Needed for serialization. */
@@ -41,7 +41,7 @@ public:
     /**
      * Default constructor.
      */
-    HeterotypicBoundaryLengthWriter();
+    BoundaryLengthWriter();
 
     /**
      * Visit the population and write the labelled boundary length data.
@@ -115,6 +115,6 @@ public:
 
 #include "SerializationExportWrapper.hpp"
 // Declare identifier for the serializer
-EXPORT_TEMPLATE_CLASS_ALL_DIMS(HeterotypicBoundaryLengthWriter)
+EXPORT_TEMPLATE_CLASS_ALL_DIMS(BoundaryLengthWriter)
 
-#endif /* HETEROTYPICBOUNDARYLENGTHWRITER_HPP_ */
+#endif /* BOUNDARYLENGTHWRITER_HPP_ */

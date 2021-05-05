@@ -11,12 +11,10 @@ CellCoverslipBasedCellKiller<DIM>::CellCoverslipBasedCellKiller(AbstractCellPopu
 
 template<unsigned DIM>
 void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
-{
-    // Helper variable that is a static cast of the cell population
-    NodeBasedCellPopulation<DIM>* p_cell_population = static_cast<NodeBasedCellPopulation<DIM>*>(this->mpCellPopulation);
-    
+{   
     switch (DIM)
     {
+        default:
         // Iterate over cell population
         for (typename AbstractCellPopulation<DIM>::Iterator cell_iter = this->mpCellPopulation->Begin();
         cell_iter != this->mpCellPopulation->End();

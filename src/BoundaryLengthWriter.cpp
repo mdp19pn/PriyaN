@@ -1,4 +1,4 @@
-#include "HeterotypicBoundaryLengthWriter.hpp"
+#include "BoundaryLengthWriter.hpp"
 
 #include "AbstractCellPopulation.hpp"
 #include "MeshBasedCellPopulation.hpp"
@@ -11,13 +11,13 @@
 #include "MyoepithelialCellProperty.hpp"
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-HeterotypicBoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::HeterotypicBoundaryLengthWriter()
+BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::BoundaryLengthWriter()
     : AbstractCellPopulationWriter<ELEMENT_DIM, SPACE_DIM>("heterotypicboundary.dat")
 {
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-void HeterotypicBoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(MeshBasedCellPopulation<ELEMENT_DIM, SPACE_DIM>* pCellPopulation)
+void BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(MeshBasedCellPopulation<ELEMENT_DIM, SPACE_DIM>* pCellPopulation)
 {
     // Initialise helper variables
     double heterotypic_boundary_length = 0.0;
@@ -114,7 +114,7 @@ void HeterotypicBoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(MeshBasedCel
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-void HeterotypicBoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(CaBasedCellPopulation<SPACE_DIM>* pCellPopulation)
+void BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(CaBasedCellPopulation<SPACE_DIM>* pCellPopulation)
 {
     // Initialise helper variables
     double heterotypic_boundary_length = 0.0;
@@ -206,7 +206,7 @@ void HeterotypicBoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(CaBasedCellP
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-void HeterotypicBoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(NodeBasedCellPopulation<SPACE_DIM>* pCellPopulation)
+void BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(NodeBasedCellPopulation<SPACE_DIM>* pCellPopulation)
 {
     // Make sure the cell population is updated so that mNodeNeighbours is set up
     ///\todo #2273 - check if this call to Update() is needed
@@ -317,7 +317,7 @@ void HeterotypicBoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(NodeBasedCel
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-void HeterotypicBoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(PottsBasedCellPopulation<SPACE_DIM>* pCellPopulation)
+void BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(PottsBasedCellPopulation<SPACE_DIM>* pCellPopulation)
 {
     ///\todo #2273 - investigate whether there is a hard-coded assumption that neighbouring nodes in Potts simulations are unit distance apart
 
@@ -464,7 +464,7 @@ void HeterotypicBoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(PottsBasedCe
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-void HeterotypicBoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(VertexBasedCellPopulation<SPACE_DIM>* pCellPopulation)
+void BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(VertexBasedCellPopulation<SPACE_DIM>* pCellPopulation)
 {
     // Make sure the cell population is updated
     ///\todo #2273 - check if this call to Update() is needed
@@ -554,13 +554,13 @@ void HeterotypicBoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(VertexBasedC
 }
 
 // Explicit instantiation
-template class HeterotypicBoundaryLengthWriter<1,1>;
-template class HeterotypicBoundaryLengthWriter<1,2>;
-template class HeterotypicBoundaryLengthWriter<2,2>;
-template class HeterotypicBoundaryLengthWriter<1,3>;
-template class HeterotypicBoundaryLengthWriter<2,3>;
-template class HeterotypicBoundaryLengthWriter<3,3>;
+template class BoundaryLengthWriter<1,1>;
+template class BoundaryLengthWriter<1,2>;
+template class BoundaryLengthWriter<2,2>;
+template class BoundaryLengthWriter<1,3>;
+template class BoundaryLengthWriter<2,3>;
+template class BoundaryLengthWriter<3,3>;
 
 #include "SerializationExportWrapperForCpp.hpp"
 // Declare identifier for the serializer
-EXPORT_TEMPLATE_CLASS_ALL_DIMS(HeterotypicBoundaryLengthWriter)
+EXPORT_TEMPLATE_CLASS_ALL_DIMS(BoundaryLengthWriter)
