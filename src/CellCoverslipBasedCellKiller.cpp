@@ -1,6 +1,5 @@
 #include "CellCoverslipBasedCellKiller.hpp"
 #include "NodeBasedCellPopulation.hpp"
-#include "Exception.hpp"
 #include "Debug.hpp"
 
 template<unsigned DIM>
@@ -25,7 +24,6 @@ void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
             if (cell_height>1.0)
             {
                 cell_iter->Kill();
-                PRINT_VARIABLE("kill");
             }
         }
     }
@@ -36,6 +34,7 @@ void CellCoverslipBasedCellKiller<DIM>::OutputCellKillerParameters(out_stream& r
 {
     // No parameters to output, so just call method on direct parent class
     AbstractCellKiller<DIM>::OutputCellKillerParameters(rParamsFile);
+    PRINT_VARIABLE("kill");
 }
 
 // Explicit instantiation

@@ -3,11 +3,11 @@
 
 // Include necessary header files
 #include <cxxtest/TestSuite.h>
+#include "CheckpointArchiveTypes.hpp"
+#include "AbstractCellBasedTestSuite.hpp"
 
 #include "CellBasedSimulationArchiver.hpp"
 
-#include "CheckpointArchiveTypes.hpp"
-#include "AbstractCellBasedTestSuite.hpp"
 #include "SmartPointers.hpp"
 #include "PetscSetupAndFinalize.hpp"
 #include "CellsGenerator.hpp"
@@ -158,6 +158,10 @@ public:
             
             CellPtr p_cell(new Cell(p_state,p_cycle_model));
             p_cell->SetCellProliferativeType(p_stem_type);
+            
+            //Alter the defult cell-cyle duration
+            p_cycle_model->SetStemCellG1Duration(8.0);
+            p_cycle_model->SetTransitCellG1Duration(8.0);
 
             /*
             * We now define a random birth time, chosen from [-T,0], where T = t1 + t2, 
@@ -165,15 +169,12 @@ public:
             * and t2 is the basic S+G2+M phases duration....
             */
             double birth_time = -RandomNumberGenerator::Instance()->ranf() * (p_cycle_model->GetStemCellG1Duration() + p_cycle_model->GetSG2MDuration());
+            
             /*
             * ...then we set the birth time and push the cell back into the vector
             * of cells.
             */
             p_cell->SetBirthTime(birth_time);
-            
-            //Alter the defult cell-cyle duration
-            //p_cycle_model->SetStemG1Duration(8.0);
-            
             cells.push_back(p_cell);
         }
 
@@ -212,8 +213,8 @@ public:
         // Add a population writer so that cell sorting (bilayer formation) is written to file
         cell_population.AddPopulationWriter<BoundaryLengthWriter>();
 
-        // Construct a cell killer object
-        MAKE_PTR_ARGS(CellCoverslipBasedCellKiller<3>, p_killer, (&cell_population));
+        // // Construct a cell killer object
+        // MAKE_PTR_ARGS(CellCoverslipBasedCellKiller<3>, p_killer, (&cell_population));
       
         // Add a vertex mesh writer so that a rectangular coverslip  is written to file
         std::vector<Node<3>*> coverslip;
@@ -233,9 +234,9 @@ public:
         
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryMonolayerMEKO");
+        simulator.SetOutputDirectory("TestMammaryMonolayerWT");
         simulator.SetSamplingTimestepMultiple(12);
-        simulator.SetEndTime(20.0); // Hours
+        simulator.SetEndTime(96.0); // Hours
        
         // Create a cell-cell repulsion force law and pass it to the simulation
         MAKE_PTR(RepulsionForce<3>, p_force); 
@@ -254,11 +255,11 @@ public:
         MAKE_PTR_ARGS(PlaneBoundaryCondition<3>, p_bc, (&cell_population, point, normal));
         simulator.AddCellPopulationBoundaryCondition(p_bc);
         
-        // Pass the cell killer into the cell-based simulation
-        simulator.AddCellKiller(p_killer);
+        // // Pass the cell killer into the cell-based simulation
+        // simulator.AddCellKiller(p_killer);
        
         // Add and pass the modifier to the simulation
-        MAKE_PTR(CellHeightTrackingModifier, p_modifier);
+        MAKE_PTR(CellHeightTrackingModifier<3>, p_modifier);
         simulator.AddSimulationModifier(p_modifier);
 
         // Run the simulation
