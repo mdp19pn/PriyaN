@@ -131,52 +131,52 @@ public:
         NodesOnlyMesh<3> mesh;
         mesh.ConstructNodesWithoutMesh(nodes, 1.5);
        
-        // // Create a vector of proliferative cells using the helper CellsGenerator
-        // std::vector<CellPtr> cells;
-        // CellsGenerator<MammaryCellCycleModel, 3> cells_generator;
-        // cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
-      
-        /* Create a vector of cell pointers. */
+        // Create a vector of proliferative cells using the helper CellsGenerator
         std::vector<CellPtr> cells;
+        CellsGenerator<MammaryCellCycleModel, 3> cells_generator;
+        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
+      
+        // /* Create a vector of cell pointers. */
+        // std::vector<CellPtr> cells;
 
-        /*
-         * This line defines a mutation state to be used for all cells, of type
-         * `WildTypeCellMutationState` (i.e. 'healthy'):
-         */
-        MAKE_PTR(WildTypeCellMutationState, p_state);
-        MAKE_PTR(StemCellProliferativeType, p_stem_type);
+        // /*
+        //  * This line defines a mutation state to be used for all cells, of type
+        //  * `WildTypeCellMutationState` (i.e. 'healthy'):
+        //  */
+        // MAKE_PTR(WildTypeCellMutationState, p_state);
+        // MAKE_PTR(StemCellProliferativeType, p_stem_type);
 
-        /* Create a cell-cycle (only contact inhibited) model for these cells and loop over the
-        * nodes of the mesh to create as many elements in the vector of cell pointers as there are
-        * in the initial mesh. */
-        for (unsigned i=0; i<mesh.GetNumNodes(); i++)
-        {
-            SubstrateDependentCellCycleModel* p_cycle_model = new SubstrateDependentCellCycleModel();
-            p_cycle_model->SetDimension(3);
-            p_cycle_model->SetQuiescentHeightFraction(0.5);
-            p_cycle_model->SetEquilibriumHeight(1.0);
+        // /* Create a cell-cycle (only contact inhibited) model for these cells and loop over the
+        // * nodes of the mesh to create as many elements in the vector of cell pointers as there are
+        // * in the initial mesh. */
+        // for (unsigned i=0; i<mesh.GetNumNodes(); i++)
+        // {
+        //     SubstrateDependentCellCycleModel* p_cycle_model = new SubstrateDependentCellCycleModel();
+        //     p_cycle_model->SetDimension(3);
+        //     p_cycle_model->SetQuiescentHeightFraction(0.5);
+        //     p_cycle_model->SetEquilibriumHeight(1.0);
             
-            CellPtr p_cell(new Cell(p_state,p_cycle_model));
-            p_cell->SetCellProliferativeType(p_stem_type);
+        //     CellPtr p_cell(new Cell(p_state,p_cycle_model));
+        //     p_cell->SetCellProliferativeType(p_stem_type);
             
-            //Alter the defult cell-cyle duration
-            p_cycle_model->SetStemCellG1Duration(8.0);
-            p_cycle_model->SetTransitCellG1Duration(8.0);
+        //     //Alter the defult cell-cyle duration
+        //     p_cycle_model->SetStemCellG1Duration(8.0);
+        //     p_cycle_model->SetTransitCellG1Duration(8.0);
 
-            /*
-            * We now define a random birth time, chosen from [-T,0], where T = t1 + t2, 
-            * where t1 is a parameter representing the G1 duration of a stem cell, 
-            * and t2 is the basic S+G2+M phases duration....
-            */
-            double birth_time = -RandomNumberGenerator::Instance()->ranf() * (p_cycle_model->GetStemCellG1Duration() + p_cycle_model->GetSG2MDuration());
+        //     /*
+        //     * We now define a random birth time, chosen from [-T,0], where T = t1 + t2, 
+        //     * where t1 is a parameter representing the G1 duration of a stem cell, 
+        //     * and t2 is the basic S+G2+M phases duration....
+        //     */
+        //     double birth_time = -RandomNumberGenerator::Instance()->ranf() * (p_cycle_model->GetStemCellG1Duration() + p_cycle_model->GetSG2MDuration());
             
-            /*
-            * ...then we set the birth time and push the cell back into the vector
-            * of cells.
-            */
-            p_cell->SetBirthTime(birth_time);
-            cells.push_back(p_cell);
-        }
+        //     /*
+        //     * ...then we set the birth time and push the cell back into the vector
+        //     * of cells.
+        //     */
+        //     p_cell->SetBirthTime(birth_time);
+        //     cells.push_back(p_cell);
+        // }
 
         // Use the mesh and cells to create a cell population
         NodeBasedCellPopulationWithVariableDamping<3> cell_population(mesh, cells);
@@ -213,8 +213,8 @@ public:
         // Add a population writer so that cell sorting (bilayer formation) is written to file
         cell_population.AddPopulationWriter<BoundaryLengthWriter>();
 
-        // // Construct a cell killer object
-        // MAKE_PTR_ARGS(CellCoverslipBasedCellKiller<3>, p_killer, (&cell_population));
+        // Construct a cell killer object
+        MAKE_PTR_ARGS(CellCoverslipBasedCellKiller<3>, p_killer, (&cell_population));
       
         // Add a vertex mesh writer so that a rectangular coverslip  is written to file
         std::vector<Node<3>*> coverslip;
@@ -255,8 +255,8 @@ public:
         MAKE_PTR_ARGS(PlaneBoundaryCondition<3>, p_bc, (&cell_population, point, normal));
         simulator.AddCellPopulationBoundaryCondition(p_bc);
         
-        // // Pass the cell killer into the cell-based simulation
-        // simulator.AddCellKiller(p_killer);
+        // Pass the cell killer into the cell-based simulation
+        simulator.AddCellKiller(p_killer);
        
         // Add and pass the modifier to the simulation
         MAKE_PTR(CellHeightTrackingModifier<3>, p_modifier);
