@@ -12,25 +12,26 @@ template<unsigned DIM>
 void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
 {   
     PRINT_VARIABLE(SimulationTime::Instance()->GetTime())
+    
+    // Iterate over cell population
+    for (typename AbstractCellPopulation<DIM>::Iterator cell_iter = this->mpCellPopulation->Begin();
+    cell_iter != this->mpCellPopulation->End();
+    ++cell_iter)
     {
-        // Iterate over cell population
-        for (typename AbstractCellPopulation<DIM>::Iterator cell_iter = this->mpCellPopulation->Begin();
-        cell_iter != this->mpCellPopulation->End();
-        ++cell_iter)
-        {
-            double cell_height = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter)[DIM-1];
-            double cell_y = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter)[DIM-2];
-            double cell_x = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter)[DIM-3];
+        c_vector<double, DIM> location;
+        location = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter);
+        // double cell_height = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter)[DIM-1];
+        // double cell_y = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter)[DIM-2];
+        // double cell_x = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter)[DIM-3];
 
-            if (cell_height > 1.5)
-            {
-                cell_iter->Kill();
-                PRINT_VARIABLE("kill");
-                PRINT_VARIABLE(cell_height);
-                PRINT_VARIABLE(cell_y);
-                PRINT_VARIABLE(cell_x);
-                PRINT_VARIABLE(cell_iter->GetAge());
-            }
+        if (location[2] > 1.5)
+        {
+            cell_iter->Kill();
+            PRINT_VARIABLE("kill");
+            PRINT_VARIABLE(location[0]);
+            PRINT_VARIABLE(location[1]);
+            PRINT_VARIABLE(location[2]);
+            // PRINT_VARIABLE(cell_iter->GetAge());
         }
     }
 }

@@ -31,17 +31,16 @@ private:
 
 public:
 
-    CellCoverslipBasedCellKiller(AbstractCellPopulation<DIM>* pCellPopulation);
-
     /**
-     * Destructor
+     * Default constructor
+     * @param pCellPopulation pointer to the cell population
      */
-    virtual ~CellCoverslipBasedCellKiller(){};
+    CellCoverslipBasedCellKiller(AbstractCellPopulation<DIM>* pCellPopulation);
 
     /**
      * Loops over cells and kills cells outside boundary.
      */
-    virtual void CheckAndLabelCellsForApoptosisOrDeath();
+    void CheckAndLabelCellsForApoptosisOrDeath();
 
     /**
      * Overridden OutputCellKillerParameters() method.

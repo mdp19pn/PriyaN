@@ -50,12 +50,11 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
     // Iterate over nodes in the cell population
     for (unsigned node_index=0; node_index<p_cell_population->GetNumNodes(); node_index++)
     {
+        double cell_height = p_cell_population->GetNode(node_index)->rGetLocation()[2];
+
         c_vector<double, DIM> force_contribution;
         for (unsigned i=0; i<DIM; i++)
-        {
-            //
-            double cell_height = p_cell_population->GetNode(node_index)->rGetLocation()[2];
-            
+        {           
             // Determine if cell is luminal (if not, assume it is myoepithelial)
             CellPtr p_cell = p_cell_population->GetCellUsingLocationIndex(node_index);
             bool cell_is_luminal = p_cell->template HasCellProperty<LuminalCellProperty>();
@@ -83,44 +82,36 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
             {
                 if (cell_b1_expn && cell_b4_expn)
                 {
-                    mStiffness = 1.0;
-                    mGravity = 9.81;
+                    mEquilibriumLength = 2.0;
                 }
                 else if (cell_b1_expn != cell_b4_expn)
                 {
-                    mStiffness = 0.5;
-                    mGravity = 9.81;
+                    mEquilibriumLength = 1.0;
                 }
                 else
                 {
-                    mStiffness = 0.0;
-                    mGravity = 9.81;
+                    mEquilibriumLength = 0.5;
                 }
             }
             else // if cell is myoepithelial
             {
                 if (cell_b1_expn && cell_b4_expn)
                 {
-                    mStiffness = 2.0;
-                    mGravity = 9.81;
+                    mEquilibriumLength = 4.0;
                 }
                 else if (cell_b1_expn != cell_b4_expn)
                 {
-                    mStiffness = 1.0;
-                    mGravity = 9.81;
+                    mEquilibriumLength = 2.0;
                 }
                 else
                 {
-                    mStiffness = 0.5;
-                    mGravity = 9.81;
+                    mEquilibriumLength = 1.0;
                 }
             }
         
-        c_vector<double, DIM> force_contribution;
-        force_contribution[0] = 0.0;
-        force_contribution[1] = 0.0;
-        force_contribution[2] = mStiffness*cell_height;
-        force_contribution[2] = mGravity;
+            force_contribution[0] = 0.0;
+            force_contribution[1] = 0.0;
+            force_contribution[2] = -mEquilibriumLength*cell_height;
         }
         rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force_contribution);
     }

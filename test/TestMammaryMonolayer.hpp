@@ -213,19 +213,19 @@ public:
         // Add a population writer so that cell sorting (bilayer formation) is written to file
         cell_population.AddPopulationWriter<BoundaryLengthWriter>();
 
-        // Construct a cell killer object
-        MAKE_PTR_ARGS(CellCoverslipBasedCellKiller<3>, p_killer, (&cell_population));
+        // // Construct a cell killer object
+        // MAKE_PTR_ARGS(CellCoverslipBasedCellKiller<3>, p_killer, (&cell_population));
       
         // Add a vertex mesh writer so that a rectangular coverslip  is written to file
         std::vector<Node<3>*> coverslip;
-        coverslip.push_back(new Node<3>(0, true, -25.0, 25.0, -0.5));
-        coverslip.push_back(new Node<3>(1, true, 25.0, 25.0, -0.5));
-        coverslip.push_back(new Node<3>(2, true, 25.0, -25.0, -0.5));
-        coverslip.push_back(new Node<3>(3, true, -25.0, -25.0, -0.5));
-        coverslip.push_back(new Node<3>(4, true, -25.0, 25.0, -1.0));
-        coverslip.push_back(new Node<3>(5, true, 25.0, 25.0, -1.0));
-        coverslip.push_back(new Node<3>(6, true, 25.0, -25.0, -1.0));
-        coverslip.push_back(new Node<3>(7, true, -25.0, -25.0, -1.0));
+        coverslip.push_back(new Node<3>(0, true, -25.0, 25.0, -0.4));
+        coverslip.push_back(new Node<3>(1, true, 25.0, 25.0, -0.4));
+        coverslip.push_back(new Node<3>(2, true, 25.0, -25.0, -0.4));
+        coverslip.push_back(new Node<3>(3, true, -25.0, -25.0, -0.4));
+        coverslip.push_back(new Node<3>(4, true, -25.0, 25.0, -0.5));
+        coverslip.push_back(new Node<3>(5, true, 25.0, 25.0, -0.5));
+        coverslip.push_back(new Node<3>(6, true, 25.0, -25.0, -0.5));
+        coverslip.push_back(new Node<3>(7, true, -25.0, -25.0, -0.5));
         std::vector<VertexElement<3,3>* > elements = {new VertexElement<3,3>(0, coverslip)};
         MutableVertexMesh<3,3>* p_mesh = new MutableVertexMesh<3,3>(coverslip, elements);
         
@@ -255,8 +255,8 @@ public:
         MAKE_PTR_ARGS(PlaneBoundaryCondition<3>, p_bc, (&cell_population, point, normal));
         simulator.AddCellPopulationBoundaryCondition(p_bc);
         
-        // Pass the cell killer into the cell-based simulation
-        simulator.AddCellKiller(p_killer);
+        // // Pass the cell killer into the cell-based simulation
+        // simulator.AddCellKiller(p_killer);
        
         // Add and pass the modifier to the simulation
         MAKE_PTR(CellHeightTrackingModifier<3>, p_modifier);
