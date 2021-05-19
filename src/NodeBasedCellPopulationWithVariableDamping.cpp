@@ -92,7 +92,6 @@ void NodeBasedCellPopulationWithVariableDamping<DIM>::AddForceContribution(Abstr
         c_vector<double, DIM> force_contribution;
         for (unsigned i=0; i<DIM; i++)
         {
-        c_vector<double, DIM> force_contribution;
         force_contribution[0] = 0.0;
         force_contribution[1] = 0.0;
         force_contribution[2] = (mLuminalCellDampingConstant*cell_height) && (mMyoepithelialCellDampingConstant*cell_height);

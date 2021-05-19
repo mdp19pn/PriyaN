@@ -120,63 +120,59 @@ public:
         
         // Create a 3D 'nodes only' mesh, specifying nodes manually
         std::vector<Node<3>*> nodes;
-        nodes.push_back(new Node<3>(0,  false,  0.5, 0.0, 0.0));
-        nodes.push_back(new Node<3>(1,  false,  0.0, 0.5, 0.0));
-        nodes.push_back(new Node<3>(2,  false,  1.0, 0.0, 0.0));
-        nodes.push_back(new Node<3>(3,  false,  1.0, 0.0, 1.0));
-        nodes.push_back(new Node<3>(4,  false,  0.5, 1.0, 0.0));
-        nodes.push_back(new Node<3>(5,  false,  1.0, 0.5, 0.0));
-        nodes.push_back(new Node<3>(6,  false,  1.0, 0.5, 1.0));
+        nodes.push_back(new Node<3>(0,  false,  0.0, 0.0, 0.0));
+        nodes.push_back(new Node<3>(1,  false,  0.75, 0.0, 0.0));
+        nodes.push_back(new Node<3>(2,  false,  -0.5, -0.5, 0.0));
+        nodes.push_back(new Node<3>(3,  false,  1.25, -0.5, 0.0));
+        nodes.push_back(new Node<3>(4,  false,  0.0, 0.75, 0.0));
+        nodes.push_back(new Node<3>(5,  false,  0.75, 0.75, 0.0));
+        nodes.push_back(new Node<3>(6,  false,  0.0, 0.0, 1.0));
+        nodes.push_back(new Node<3>(7,  false,  -0.5, -0.5, 1.0));
+        nodes.push_back(new Node<3>(8,  false,  -0.5, 0.5, 1.0));
+        nodes.push_back(new Node<3>(9,  false,  0.75, 0.5, 1.0));
 
         NodesOnlyMesh<3> mesh;
         mesh.ConstructNodesWithoutMesh(nodes, 1.5);
        
-        // Create a vector of proliferative cells using the helper CellsGenerator
-        std::vector<CellPtr> cells;
-        CellsGenerator<MammaryCellCycleModel, 3> cells_generator;
-        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
-      
-        // /* Create a vector of cell pointers. */
+        // // Create a vector of proliferative cells using the helper CellsGenerator
         // std::vector<CellPtr> cells;
+        // CellsGenerator<MammaryCellCycleModel, 3> cells_generator;
+        // cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
+      
+        /* Create a vector of cell pointers. */
+        std::vector<CellPtr> cells;
 
-        // /*
-        //  * This line defines a mutation state to be used for all cells, of type
-        //  * `WildTypeCellMutationState` (i.e. 'healthy'):
-        //  */
-        // MAKE_PTR(WildTypeCellMutationState, p_state);
-        // MAKE_PTR(StemCellProliferativeType, p_stem_type);
+        /*
+         * This line defines a mutation state to be used for all cells, of type
+         * `WildTypeCellMutationState` (i.e. 'healthy'):
+         */
+        MAKE_PTR(WildTypeCellMutationState, p_state);
+        MAKE_PTR(StemCellProliferativeType, p_stem_type);
 
-        // /* Create a cell-cycle (only contact inhibited) model for these cells and loop over the
-        // * nodes of the mesh to create as many elements in the vector of cell pointers as there are
-        // * in the initial mesh. */
-        // for (unsigned i=0; i<mesh.GetNumNodes(); i++)
-        // {
-        //     SubstrateDependentCellCycleModel* p_cycle_model = new SubstrateDependentCellCycleModel();
-        //     p_cycle_model->SetDimension(3);
-        //     p_cycle_model->SetQuiescentHeightFraction(0.5);
-        //     p_cycle_model->SetEquilibriumHeight(1.0);
+        /* Create a cell-cycle (only contact inhibited) model for these cells and loop over the
+        * nodes of the mesh to create as many elements in the vector of cell pointers as there are
+        * in the initial mesh. */
+        for (unsigned i=0; i<mesh.GetNumNodes(); i++)
+        {
+            SubstrateDependentCellCycleModel* p_cycle_model = new SubstrateDependentCellCycleModel();
+            p_cycle_model->SetDimension(3);
+            p_cycle_model->SetBirthTime(-2.0*(double)i);
+            p_cycle_model->SetQuiescentHeightFraction(0.2);
+            p_cycle_model->SetEquilibriumHeight(1.0);
             
-        //     CellPtr p_cell(new Cell(p_state,p_cycle_model));
-        //     p_cell->SetCellProliferativeType(p_stem_type);
+            CellPtr p_cell(new Cell(p_state,p_cycle_model));
+            p_cell->SetCellProliferativeType(p_stem_type);
             
-        //     //Alter the defult cell-cyle duration
-        //     p_cycle_model->SetStemCellG1Duration(8.0);
-        //     p_cycle_model->SetTransitCellG1Duration(8.0);
+            //Alter the defult cell-cyle duration
+            p_cycle_model->SetStemCellG1Duration(8.0);
+            p_cycle_model->SetTransitCellG1Duration(8.0);
 
-        //     /*
-        //     * We now define a random birth time, chosen from [-T,0], where T = t1 + t2, 
-        //     * where t1 is a parameter representing the G1 duration of a stem cell, 
-        //     * and t2 is the basic S+G2+M phases duration....
-        //     */
-        //     double birth_time = -RandomNumberGenerator::Instance()->ranf() * (p_cycle_model->GetStemCellG1Duration() + p_cycle_model->GetSG2MDuration());
-            
-        //     /*
-        //     * ...then we set the birth time and push the cell back into the vector
-        //     * of cells.
-        //     */
-        //     p_cell->SetBirthTime(birth_time);
-        //     cells.push_back(p_cell);
-        // }
+            /*
+            * push the cell back into the vector of cells.
+            */
+            p_cell->InitialiseCellCycleModel();
+            cells.push_back(p_cell);
+        }
 
         // Use the mesh and cells to create a cell population
         NodeBasedCellPopulationWithVariableDamping<3> cell_population(mesh, cells);
@@ -190,12 +186,15 @@ public:
         
         // Assign these properties to cells (change these lines if you want e.g. only luminal cells)
         cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(5)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(6)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(7)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(8)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(9)->AddCellProperty(p_myo);
 
         // Set the division rule for our population to be the random direction division rule
         //boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
@@ -246,7 +245,7 @@ public:
         MAKE_PTR(CellCoverslipAdhesionForce<3>, p_cell_coverslip_force);
         simulator.AddForce(p_cell_coverslip_force);
 
-        // Define a point on the plane boundary and a normal to the plane.
+        // Define a point on the plane boundary and a normal to the plane z=0.
         c_vector<double,3> point = zero_vector<double>(3);
         c_vector<double,3> normal = zero_vector<double>(3);
         normal(2) = -1.0;
