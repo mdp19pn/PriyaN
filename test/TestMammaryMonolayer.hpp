@@ -157,7 +157,7 @@ public:
             SubstrateDependentCellCycleModel* p_cycle_model = new SubstrateDependentCellCycleModel();
             p_cycle_model->SetDimension(3);
             p_cycle_model->SetBirthTime(-2.0*(double)i);
-            p_cycle_model->SetQuiescentHeightFraction(0.2);
+            p_cycle_model->SetQuiescentHeightFraction(0.5);
             p_cycle_model->SetEquilibriumHeight(1.0);
             
             CellPtr p_cell(new Cell(p_state,p_cycle_model));

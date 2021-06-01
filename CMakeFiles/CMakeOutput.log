@@ -780,3 +780,7 @@ Determing location of ParMETIS succeded:
 Include directory: /usr/include
 Library directory: /usr/lib/libparmetis.so;/usr/lib/x86_64-linux-gnu/libmetis.so
 
+Determing location of ParMETIS succeded:
+Include directory: /usr/include
+Library directory: /usr/lib/libparmetis.so;/usr/lib/x86_64-linux-gnu/libmetis.so
+

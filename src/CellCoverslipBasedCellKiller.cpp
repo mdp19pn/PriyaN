@@ -11,7 +11,7 @@ CellCoverslipBasedCellKiller<DIM>::CellCoverslipBasedCellKiller(AbstractCellPopu
 template<unsigned DIM>
 void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
 {   
-    PRINT_VARIABLE(SimulationTime::Instance()->GetTime())
+    //PRINT_VARIABLE(SimulationTime::Instance()->GetTime())
     
     // Iterate over cell population
     for (typename AbstractCellPopulation<DIM>::Iterator cell_iter = this->mpCellPopulation->Begin();
@@ -24,7 +24,7 @@ void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
         // double cell_y = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter)[DIM-2];
         // double cell_x = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter)[DIM-3];
 
-        if (location[2] > 1.5)
+        if (location[2] > 1.0)
         {
             cell_iter->Kill();
             PRINT_VARIABLE("kill");

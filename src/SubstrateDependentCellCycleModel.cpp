@@ -49,8 +49,9 @@ void SubstrateDependentCellCycleModel::UpdateCellCyclePhase()
         // Update G1 duration based on cell height
         double dt = SimulationTime::Instance()->GetTimeStep();
         double quiescent_height = mEquilibriumHeight * mQuiescentHeightFraction;
+        //PRINT_VARIABLE(cell_height);
         
-        if (cell_height < quiescent_height)
+        if (cell_height > 0.5)
         {
             // Update the duration of the current period of contact inhibition.
             mCurrentQuiescentDuration = SimulationTime::Instance()->GetTime() - mCurrentQuiescentOnsetTime;

@@ -6,16 +6,11 @@
 /**
  * A simple anchorage-dependent cell-cycle model that inherits from
  * AbstractSimplePhaseBasedCellCycleModel. The duration of G1 phase depends
- * on the area of contact, interpreted here as deviation from target
- * cell height.
- *
- * This model allows for quiescence imposed by transient periods
- * of high stress, followed by relaxation.
+ * on the cell height.
  *
  * Note that in this cell cycle model, quiescence is implemented
- * by extending the G1 phase. If a cell is compressed during G2
- * or S phases then it will still divide, and thus cells whose
- * cell height are smaller than the given threshold may still divide.
+ * by extending the G1 phase. Cells whose cell height are smaller than the given 
+ * threshold will divide.
  */
 class SubstrateDependentCellCycleModel : public AbstractSimplePhaseBasedCellCycleModel
 {
