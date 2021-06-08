@@ -2,6 +2,7 @@
 #define CELLCOVERLSIPBASEDCELLKILLER_HPP_
 
 #include "AbstractCellKiller.hpp"
+#include "RandomNumberGenerator.hpp"
 
 #include "ChasteSerialization.hpp"
 #include <boost/serialization/base_object.hpp>
@@ -15,6 +16,12 @@ class CellCoverslipBasedCellKiller : public AbstractCellKiller<DIM>
 {
 private:
 
+    /**
+     * Probability that in an hour's worth of trying, the cell killer
+     * will have successfully killed a given cell.
+      */
+     double mProbabilityOfDeathInAnHour;
+
     /** Needed for serialization. */
     friend class boost::serialization::access;
     /**
@@ -27,6 +34,10 @@ private:
     void serialize(Archive & archive, const unsigned int version)
     {
         archive & boost::serialization::base_object<AbstractCellKiller<DIM> >(*this);
+
+        // Make sure the random number generator is also archived
+        SerializableSingleton<RandomNumberGenerator>* p_rng_wrapper = RandomNumberGenerator::Instance()->GetSerializationWrapper();
+        archive & p_rng_wrapper;
     }
 
 public:
@@ -35,7 +46,19 @@ public:
      * Default constructor
      * @param pCellPopulation pointer to the cell population
      */
-    CellCoverslipBasedCellKiller(AbstractCellPopulation<DIM>* pCellPopulation);
+    CellCoverslipBasedCellKiller(AbstractCellPopulation<DIM>* pCellPopulation,  double probabilityOfDeathInAnHour);
+
+    /**
+     * @return mProbabilityOfDeathInAnHour.
+     */
+    double GetDeathProbabilityInAnHour() const;
+
+    /**
+     * Overridden method to test a given cell for apoptosis.
+     *
+     * @param pCell the cell to test for apoptosis
+     */
+    void CheckAndLabelSingleCellForApoptosis(CellPtr pCell);
 
     /**
      * Loops over cells and kills cells outside boundary.
@@ -67,6 +90,8 @@ namespace boost
                 // Save data required to construct instance
                 const AbstractCellPopulation<DIM>* const p_cell_population = t->GetCellPopulation();
                 ar << p_cell_population;
+                double prob = t->GetDeathProbabilityInAnHour();
+                ar << prob;
             }
 
         /**
@@ -79,9 +104,11 @@ namespace boost
             // Retrieve data from archive required to construct new instance
             AbstractCellPopulation<DIM>* p_cell_population;
             ar >> p_cell_population;
+            double prob;
+            ar >> prob;
 
             // Invoke inplace constructor to initialise instance
-            ::new(t)CellCoverslipBasedCellKiller<DIM>(p_cell_population);
+            ::new(t)CellCoverslipBasedCellKiller<DIM>(p_cell_population, prob);
         }
     }
 } // namespace ...

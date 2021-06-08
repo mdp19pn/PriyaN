@@ -2,13 +2,13 @@
 #include "NodeBasedCellPopulation.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
+#include "Debug.hpp"
 
 template<unsigned DIM>
 CellCoverslipAdhesionForce<DIM>::CellCoverslipAdhesionForce()
     : AbstractForce<DIM>(),
       mStiffness(1.0),
-      mEquilibriumLength(1.0),
-      mGravity(9.81)
+      mEquilibriumLength(1.0)
 {
 }
 
@@ -30,26 +30,20 @@ void CellCoverslipAdhesionForce<DIM>::SetEquilibriumLength(double equilibriumLen
 }
 
 template<unsigned DIM>
-void CellCoverslipAdhesionForce<DIM>::SetGravity(double gravity)
-{
-    mGravity = gravity;
-}
-
-template<unsigned DIM>
 void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulation<DIM>& rCellPopulation)
 {
-    // Throw an exception message if not using a NodeBasedCellPopulation
-    if (dynamic_cast<NodeBasedCellPopulation<DIM>*>(&rCellPopulation) == nullptr)
-    {
-        EXCEPTION("CellCoverslipAdhesionForce is to be used with a NodeBasedCellPopulation only");
-    }
+    // This force class is defined for NodeBasedCellPopulations only
+    assert(dynamic_cast<NodeBasedCellPopulation<DIM>*>(&rCellPopulation) != nullptr);
 
     // Helper variable that is a static cast of the cell population
     NodeBasedCellPopulation<DIM>* p_cell_population = static_cast<NodeBasedCellPopulation<DIM>*>(&rCellPopulation);
 
-    // Iterate over nodes in the cell population
-    for (unsigned node_index=0; node_index<p_cell_population->GetNumNodes(); node_index++)
+    // loop over nodes in the cell population
+    for (typename AbstractMesh<DIM, DIM>::NodeIterator node_iter = rCellPopulation.rGetMesh().GetNodeIteratorBegin(); 
+    node_iter != rCellPopulation.rGetMesh().GetNodeIteratorEnd();++node_iter)
     {
+        // Get the index, height of this node
+        unsigned node_index = node_iter->GetIndex();
         double cell_height = p_cell_population->GetNode(node_index)->rGetLocation()[2];
 
         c_vector<double, DIM> force_contribution;
@@ -113,7 +107,7 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
             force_contribution[1] = 0.0;
             force_contribution[2] = -mEquilibriumLength*cell_height;
         }
-        rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force_contribution);
+        node_iter->AddAppliedForceContribution(force_contribution);
     }
 }
 

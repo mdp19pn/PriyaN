@@ -54,6 +54,15 @@ public:
      * This line is appended to the output written by AbstractCellBasedWriter, which is a single
      * value [present simulation time], followed by a tab.
      *
+     * @param pCellPopulation a pointer to the NodeBasedCellPopulation to visit.
+     */
+    virtual void Visit(NodeBasedCellPopulation<SPACE_DIM>* pCellPopulation);
+
+    /**
+     * Visit the population and write the data.
+     *
+     * This is an empty dummy function, since this class is not defined for use with a CaBasedCellPopulation.
+     *
      * @param pCellPopulation a pointer to the MeshBasedCellPopulation to visit.
      */
     virtual void Visit(MeshBasedCellPopulation<ELEMENT_DIM, SPACE_DIM>* pCellPopulation);
@@ -68,45 +77,18 @@ public:
     virtual void Visit(CaBasedCellPopulation<SPACE_DIM>* pCellPopulation);
 
     /**
-     * Visit the population and write the labelled boundary length data.
+     * Visit the population and write the data.
      *
-     * Outputs a line of tab-separated values of the form:
-     * [fractional_length] [total_length] [fractional_neighbours] [total_neighbours]
-     *
-     * Here the indexing of nodes is as given by the NodeIterator.
-     *
-     * This line is appended to the output written by AbstractCellBasedWriter, which is a single
-     * value [present simulation time], followed by a tab.
-     *
-     * @param pCellPopulation a pointer to the NodeBasedCellPopulation to visit.
-     */
-    virtual void Visit(NodeBasedCellPopulation<SPACE_DIM>* pCellPopulation);
-
-    /**
-     * Visit the population and write the labelled boundary length data.
-     *
-     * Outputs a line of tab-separated values of the form:
-     * [fractional_length] [total_length] [fractional_neighbours] [total_neighbours]
-     *
-     * Here the indexing of nodes is as given by the NodeIterator.
-     *
-     * This line is appended to the output written by AbstractCellBasedWriter, which is a single
-     * value [present simulation time], followed by a tab.
+     * This is an empty dummy function, since this class is not defined for use with a CaBasedCellPopulation.
      *
      * @param pCellPopulation a pointer to the PottsBasedCellPopulation to visit.
      */
     virtual void Visit(PottsBasedCellPopulation<SPACE_DIM>* pCellPopulation);
 
     /**
-     * Visit the population and write the labelled boundary length data.
+     * Visit the population and write the data.
      *
-     * Outputs a line of tab-separated values of the form:
-     * [fractional_length] [total_length] [fractional_neighbours] [total_neighbours]
-     *
-     * Here the indexing of nodes is as given by the NodeIterator.
-     *
-     * This line is appended to the output written by AbstractCellBasedWriter, which is a single
-     * value [present simulation time], followed by a tab.
+     * This is an empty dummy function, since this class is not defined for use with a CaBasedCellPopulation.
      *
      * @param pCellPopulation a pointer to the VertexBasedCellPopulation to visit.
      */

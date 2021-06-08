@@ -18,9 +18,6 @@ private:
     /** Spring equilibrium length. */
     double mEquilibriumLength;
 
-    /** Gravity. */
-    double mGravity;
-
     friend class boost::serialization::access;
     template<class Archive>
     void serialize(Archive & archive, const unsigned int version)
@@ -28,7 +25,6 @@ private:
         archive & boost::serialization::base_object<AbstractForce<DIM> >(*this);
         archive & mStiffness;
         archive & mEquilibriumLength;
-        archive & mGravity;
     }
 
 public:
@@ -56,13 +52,6 @@ public:
      * @params equilibriumLength the value to assign to the spring equilibrium length.
      */
     void SetEquilibriumLength(double equilibriumLength);
-
-    /*
-     * Set the gravity.
-     *
-     * @params equilibriumLength the value to assign to the gravity.
-     */
-    void SetGravity(double gravity);
 
     /**
      * Overridden AddForceContribution() method.
