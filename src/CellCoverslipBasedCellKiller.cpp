@@ -62,6 +62,7 @@ void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
         {
             CheckAndLabelSingleCellForApoptosis(*cell_iter);
             // PRINT_VARIABLE("kill");
+            // PRINT_VARIABLE(cell_iter->GetCellId());
             // PRINT_VARIABLE(location[0]);
             // PRINT_VARIABLE(location[1]);
             // PRINT_VARIABLE(location[2]);

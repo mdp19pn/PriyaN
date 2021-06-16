@@ -32,7 +32,7 @@ double CellCellAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMult
         bool cell_B_is_luminal = p_cell_B->template HasCellProperty<LuminalCellProperty>();
 
         // For heterotypic interactions, scale the spring constant by mHeterotypicSpringConstantMultiplier
-        f (cell_A_is_luminal != cell_B_is_luminal)
+        if (cell_A_is_luminal != cell_B_is_luminal)
         {
             return mHeterotypicSpringConstantMultiplier;
         }

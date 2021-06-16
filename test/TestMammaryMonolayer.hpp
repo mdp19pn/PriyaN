@@ -31,6 +31,7 @@
 #include "CellCoverslipBasedCellKiller.hpp"
 #include "GeneralisedLinearSpringForce.hpp"
 #include "RepulsionForce.hpp"
+#include "CellCellAdhesionForce.hpp"
 #include "CellCoverslipAdhesionForce.hpp"
 #include "PlaneBoundaryCondition.hpp"
 #include "VertexMeshWriter.hpp"
@@ -131,7 +132,6 @@ public:
         nodes.push_back(new Node<3>(6,  false,  0.0, 0.0, 1.0));
         nodes.push_back(new Node<3>(7,  false,  -0.5, -0.5, 1.0));
         nodes.push_back(new Node<3>(8,  false,  -0.5, 0.5, 1.0));
-        nodes.push_back(new Node<3>(9,  false,  0.75, 0.5, 1.0));
 
         NodesOnlyMesh<3> mesh;
         mesh.ConstructNodesWithoutMesh(nodes, 1.5);
@@ -191,7 +191,7 @@ public:
         cell_population.GetCellUsingLocationIndex(6)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(7)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(8)->AddCellProperty(p_myo);
-        cell_population.GetCellUsingLocationIndex(9)->AddCellProperty(p_myo);
+
 
         // Set the division rule for our population to be the oriented division rule
         boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
@@ -315,9 +315,9 @@ public:
         cell_population.GetCellUsingLocationIndex(8)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(9)->AddCellProperty(p_myo);
 
-        // // Set the division rule for our population to be the oriented division rule
-        // boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
-        // cell_population.SetCentreBasedDivisionRule(p_division_rule_to_set);
+        // Set the division rule for our population to be the oriented division rule
+        boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
+        cell_population.SetCentreBasedDivisionRule(p_division_rule_to_set);
         
         // Add a cell writer so that mammary cell types are written to file
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
@@ -332,7 +332,7 @@ public:
         cell_population.AddPopulationWriter<BoundaryLengthWriter>();
 
         // // Construct a cell killer object
-        // MAKE_PTR_ARGS(CellCoverslipBasedCellKiller<3>, p_killer, (&cell_population));
+        // MAKE_PTR_ARGS(CellCoverslipBasedCellKiller<3>, p_killer, (&cell_population, 0.5));
       
         // Add a vertex mesh writer so that a rectangular coverslip  is written to file
         std::vector<Node<3>*> coverslip;
