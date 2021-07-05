@@ -1,5 +1,5 @@
-#ifndef MYOEPITHELIALCELLPROPERTY_HPP_
-#define MYOEPITHELIALCELLPROPERTY_HPP_
+#ifndef MAMMARYSTEMCELLPROPERTY_HPP_
+#define MAMMARYSTEMCELLPROPERTY_HPP_
 
 #include <boost/shared_ptr.hpp>
 #include "AbstractMammaryCellProperty.hpp"
@@ -9,7 +9,7 @@
 /**
  * Subclass of AbstractMammaryCellProperty defining a myoepithelial cell.
  */
-class MyoepithelialCellProperty : public AbstractMammaryCellProperty
+class MammaryStemCellProperty : public AbstractMammaryCellProperty
 {
 private:
 
@@ -35,16 +35,16 @@ public:
      * @param b1IntegrinExpression  whether B1 integrin by this myoepithelial cell
      * @param b4IntegrinExpression  whether B4 integrin by this myoepithelial cell
      */
-    MyoepithelialCellProperty(bool b1IntegrinExpression=true, bool b4IntegrinExpression=true);
+    MammaryStemCellProperty(bool b1IntegrinExpression=true, bool b4IntegrinExpression=true);
 
     /**
      * Virtual destructor, to make this class polymorphic.
      */
-    virtual ~MyoepithelialCellProperty();
+    virtual ~MammaryStemCellProperty();
 };
 
 #include "SerializationExportWrapper.hpp"
 // Declare identifier for the serializer
-CHASTE_CLASS_EXPORT(MyoepithelialCellProperty)
+CHASTE_CLASS_EXPORT(MammaryStemCellProperty)
 
-#endif /*MYOEPITHELIALCELLPROPERTY_HPP_*/
+#endif /*MAMMARYSTEMCELLPROPERTY_HPP_*/

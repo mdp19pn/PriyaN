@@ -2,6 +2,7 @@
 #include "NodeBasedCellPopulation.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
+#include "MammaryStemCellProperty.hpp"
 #include "Debug.hpp"
 
 template<unsigned DIM>
@@ -52,6 +53,7 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
             // Determine if cell is luminal (if not, assume it is myoepithelial)
             CellPtr p_cell = p_cell_population->GetCellUsingLocationIndex(node_index);
             bool cell_is_luminal = p_cell->template HasCellProperty<LuminalCellProperty>();
+            bool cell_is_myoepithelial = p_cell->template HasCellProperty<MyoepithelialCellProperty>();
 
             // Determine if cell expresses b1 and/or b4 integrin
             bool cell_b1_expn = true;
@@ -64,10 +66,17 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
                 cell_b1_expn = p_prop->GetB1IntegrinExpression();
                 cell_b4_expn = p_prop->GetB4IntegrinExpression();
             }
-            else
+            else if (cell_is_myoepithelial)
             {
                 CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<MyoepithelialCellProperty>();
                 boost::shared_ptr<MyoepithelialCellProperty> p_prop = boost::static_pointer_cast<MyoepithelialCellProperty>(collection.GetProperty());
+                cell_b1_expn = p_prop->GetB1IntegrinExpression();
+                cell_b4_expn = p_prop->GetB4IntegrinExpression();
+            }
+            else // if cell is mammary stem cell
+            {
+                CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<MammaryStemCellProperty>();
+                boost::shared_ptr<MammaryStemCellProperty> p_prop = boost::static_pointer_cast<MammaryStemCellProperty>(collection.GetProperty());
                 cell_b1_expn = p_prop->GetB1IntegrinExpression();
                 cell_b4_expn = p_prop->GetB4IntegrinExpression();
             }
@@ -78,7 +87,7 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
                 {
                     mEquilibriumLength = 2.0;
                 }
-                else if (cell_b1_expn != cell_b4_expn)
+                else if (cell_b1_expn || cell_b4_expn)
                 {
                     mEquilibriumLength = 1.0;
                 }
@@ -87,13 +96,28 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
                     mEquilibriumLength = 0.5;
                 }
             }
-            else // if cell is myoepithelial
+            else if (cell_is_myoepithelial) // if cell is myoepithelial
             {
                 if (cell_b1_expn && cell_b4_expn)
                 {
                     mEquilibriumLength = 4.0;
                 }
-                else if (cell_b1_expn != cell_b4_expn)
+                else if (cell_b1_expn || cell_b4_expn)
+                {
+                    mEquilibriumLength = 2.0;
+                }
+                else
+                {
+                    mEquilibriumLength = 1.0;
+                }
+            }
+            else // if cell is mammary stem cell
+            {
+                if (cell_b1_expn && cell_b4_expn)
+                {
+                    mEquilibriumLength = 4.0;
+                }
+                else if (cell_b1_expn || cell_b4_expn)
                 {
                     mEquilibriumLength = 2.0;
                 }

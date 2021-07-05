@@ -30,10 +30,12 @@ private:
         archive & boost::serialization::base_object<NodeBasedCellPopulation<DIM> >(*this);
         archive & mLuminalCellDampingConstant;
         archive & mMyoepithelialCellDampingConstant;
+        archive & mMammaryStemCellDampingConstant;
     }
 
     double mLuminalCellDampingConstant;
     double mMyoepithelialCellDampingConstant;
+    double mMammaryStemCellDampingConstant;
 
 public:
 
@@ -82,9 +84,16 @@ public:
     /**
      * Set mMyoepithelialCellDampingConstant.
      * 
-     * @param myoepithelialCellDampingConstant  the new value ofmMyoepithelialCellDampingConstant
+     * @param myoepithelialCellDampingConstant  the new value of mMyoepithelialCellDampingConstant
      */
     void SetMyoepithelialCellDampingConstant(double myoepithelialCellDampingConstant);
+
+    /**
+     * Set mMammaryStemCellDampingConstant.
+     * 
+     * @param MammaryStemCellDampingConstant  the new value of mMyoepithelialCellDampingConstant
+     */
+    void SetMammaryStemCellDampingConstant(double MammaryStemCellDampingConstant);
 
     /**
      * @return mLuminalCellDampingConstant
@@ -95,6 +104,11 @@ public:
      * @return mMyoepithelialCellDampingConstant
      */
     double GetMyoepithelialCellDampingConstant();
+
+    /**
+     * @return mMammaryStemCellDampingConstant
+     */
+    double GetMammaryStemCellDampingConstant();
 
     /**
      * Overridden AddForceContribution() method.

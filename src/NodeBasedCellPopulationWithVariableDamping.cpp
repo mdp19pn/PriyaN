@@ -1,6 +1,7 @@
 #include "NodeBasedCellPopulationWithVariableDamping.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
+#include "MammaryStemCellProperty.hpp"
 
 template<unsigned DIM>
 NodeBasedCellPopulationWithVariableDamping<DIM>::NodeBasedCellPopulationWithVariableDamping(NodesOnlyMesh<DIM>& rMesh,
@@ -9,7 +10,8 @@ NodeBasedCellPopulationWithVariableDamping<DIM>::NodeBasedCellPopulationWithVari
                                       bool deleteMesh)
     : NodeBasedCellPopulation<DIM>(rMesh, rCells, locationIndices, deleteMesh),
       mLuminalCellDampingConstant(1.0),
-      mMyoepithelialCellDampingConstant(1.0)
+      mMyoepithelialCellDampingConstant(1.0),
+      mMammaryStemCellDampingConstant(1.0)
 {
 }
 
@@ -23,9 +25,10 @@ NodeBasedCellPopulationWithVariableDamping<DIM>::NodeBasedCellPopulationWithVari
 template<unsigned DIM>
 double NodeBasedCellPopulationWithVariableDamping<DIM>::GetDampingConstant(unsigned nodeIndex)
 {
-    // Determine if cell is luminal (if not, assume it is myoepithelial)
+    // Determine if cell is luminal, myoepithelial (if not, assume it is stem cell)
     CellPtr p_cell = this->GetCellUsingLocationIndex(nodeIndex);
     bool cell_is_luminal = p_cell->template HasCellProperty<LuminalCellProperty>();
+    bool cell_is_myoepithelial = p_cell->template HasCellProperty<MyoepithelialCellProperty>();
 
     // Determine if cell expresses b1 and/or b4 integrin
     bool cell_b1_expn = true;
@@ -38,10 +41,17 @@ double NodeBasedCellPopulationWithVariableDamping<DIM>::GetDampingConstant(unsig
         cell_b1_expn = p_prop->GetB1IntegrinExpression();
         cell_b4_expn = p_prop->GetB4IntegrinExpression();
     }
-    else
+    else if (cell_is_myoepithelial)
     {
         CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<MyoepithelialCellProperty>();
         boost::shared_ptr<MyoepithelialCellProperty> p_prop = boost::static_pointer_cast<MyoepithelialCellProperty>(collection.GetProperty());
+        cell_b1_expn = p_prop->GetB1IntegrinExpression();
+        cell_b4_expn = p_prop->GetB4IntegrinExpression();
+    }
+    else // if cell is mammary stem cell
+    {
+        CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<MammaryStemCellProperty>();
+        boost::shared_ptr<MammaryStemCellProperty> p_prop = boost::static_pointer_cast<MammaryStemCellProperty>(collection.GetProperty());
         cell_b1_expn = p_prop->GetB1IntegrinExpression();
         cell_b4_expn = p_prop->GetB4IntegrinExpression();
     }
@@ -52,7 +62,7 @@ double NodeBasedCellPopulationWithVariableDamping<DIM>::GetDampingConstant(unsig
         {
             return 1.0*mLuminalCellDampingConstant;
         }
-        else if (cell_b1_expn != cell_b4_expn)
+        else if (cell_b1_expn || cell_b4_expn)
         {
             return 0.5*mLuminalCellDampingConstant;
         }
@@ -61,15 +71,30 @@ double NodeBasedCellPopulationWithVariableDamping<DIM>::GetDampingConstant(unsig
             return 1.0;
         }
     }
-    else // if cell is myoepithelial
+    else if (cell_is_myoepithelial) // if cell is myoepithelial
     {
         if (cell_b1_expn && cell_b4_expn)
         {
             return 1.0*mMyoepithelialCellDampingConstant;
         }
-        else if (cell_b1_expn != cell_b4_expn)
+        else if (cell_b1_expn || cell_b4_expn)
         {
             return 0.5*mMyoepithelialCellDampingConstant;
+        }
+        else
+        {
+            return 1.0;
+        }
+    }
+    else // if cell is mammary stem cell
+    {
+        if (cell_b1_expn && cell_b4_expn)
+        {
+            return 1.0*mMammaryStemCellDampingConstant;
+        }
+        else if (cell_b1_expn || cell_b4_expn)
+        {
+            return 0.5*mMammaryStemCellDampingConstant;
         }
         else
         {

@@ -87,6 +87,11 @@ public:
     AbstractCellCycleModel* CreateCellCycleModel();
 
     /**
+     * Set the new cell's type after division.
+     */
+    void InitialiseDaughterCell();
+
+    /**
      * @return mMinCellCycleDuration
      */
     double GetMinCellCycleDuration();

@@ -53,6 +53,7 @@ public:
      * 5.0 : Myoepithelial cell, B1 expression, no B4 expression
      * 6.0 : Myoepithelial cell, no B1 expression, B4 expression
      * 7.0 : Myoepithelial cell, B1 expression, B4 expression
+     * 8.0 : Mammary Stem Cell
      *
      * @param pCell a cell
      * @param pCellPopulation a pointer to the cell population owning the cell

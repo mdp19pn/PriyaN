@@ -1,5 +1,8 @@
 #include "SubstrateDependentCellCycleModel.hpp"
 #include "DifferentiatedCellProliferativeType.hpp"
+#include "LuminalCellProperty.hpp"
+#include "MyoepithelialCellProperty.hpp"
+#include "MammaryStemCellProperty.hpp"
 #include "Debug.hpp"
 
 SubstrateDependentCellCycleModel::SubstrateDependentCellCycleModel()
@@ -68,7 +71,7 @@ void SubstrateDependentCellCycleModel::UpdateCellCyclePhase()
     double time_since_birth = GetAge();
     assert(time_since_birth >= 0);
 
-    if (mpCell->GetCellProliferativeType()->IsType<DifferentiatedCellProliferativeType>())
+    if (mpCell->HasCellProperty<MyoepithelialCellProperty>()) // myoepithelial cell is DifferentiatedCellProliferativeType
     {
         mCurrentCellCyclePhase = G_ZERO_PHASE;
     }
@@ -87,6 +90,22 @@ void SubstrateDependentCellCycleModel::UpdateCellCyclePhase()
     else if (time_since_birth < GetMDuration() + mG1Duration + GetSDuration() + GetG2Duration())
     {
         mCurrentCellCyclePhase = G_TWO_PHASE;
+    }
+}
+
+void SubstrateDependentCellCycleModel::InitialiseDaughterCell()
+{
+    if (mpCell->HasCellProperty<LuminalCellProperty>())
+    {
+        boost::shared_ptr<AbstractCellProperty> p_luminal =
+        mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<LuminalCellProperty>();
+        mpCell->AddCellProperty(p_luminal);
+    }
+    else if (mpCell->HasCellProperty<MammaryStemCellProperty>())
+    {
+        boost::shared_ptr<AbstractCellProperty> p_myo =
+        mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>();
+        mpCell->AddCellProperty(p_myo);
     }
 }
 
