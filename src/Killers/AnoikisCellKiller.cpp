@@ -1,9 +1,9 @@
-#include "CellCoverslipBasedCellKiller.hpp"
+#include "AnoikisCellKiller.hpp"
 #include "NodeBasedCellPopulation.hpp"
 #include "Debug.hpp"
 
 template<unsigned DIM>
-CellCoverslipBasedCellKiller<DIM>::CellCoverslipBasedCellKiller(AbstractCellPopulation<DIM>* pCellPopulation, double probabilityOfDeathInAnHour)
+AnoikisCellKiller<DIM>::AnoikisCellKiller(AbstractCellPopulation<DIM>* pCellPopulation, double probabilityOfDeathInAnHour)
 : AbstractCellKiller<DIM>(pCellPopulation),
 mProbabilityOfDeathInAnHour(probabilityOfDeathInAnHour)
 {   
@@ -14,13 +14,13 @@ mProbabilityOfDeathInAnHour(probabilityOfDeathInAnHour)
 }
 
 template<unsigned DIM>
-double CellCoverslipBasedCellKiller<DIM>::GetDeathProbabilityInAnHour() const
+double AnoikisCellKiller<DIM>::GetDeathProbabilityInAnHour() const
 {
     return mProbabilityOfDeathInAnHour;
 }
 
 template<unsigned DIM>
-void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelSingleCellForApoptosis(CellPtr pCell)
+void AnoikisCellKiller<DIM>::CheckAndLabelSingleCellForApoptosis(CellPtr pCell)
 {
     /*
      * We assume a constant time step and that there are an integer number (n = 1/dt)
@@ -46,10 +46,8 @@ void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelSingleCellForApoptosis(Cell
 
 
 template<unsigned DIM>
-void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
+void AnoikisCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
 {   
-    //PRINT_VARIABLE(SimulationTime::Instance()->GetTime())
-    
     // Iterate over cell population
     for (typename AbstractCellPopulation<DIM>::Iterator cell_iter = this->mpCellPopulation->Begin();
     cell_iter != this->mpCellPopulation->End();
@@ -61,17 +59,12 @@ void CellCoverslipBasedCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
         if (location[DIM-1] > 0.75)
         {
             CheckAndLabelSingleCellForApoptosis(*cell_iter);
-            // PRINT_VARIABLE("kill");
-            // PRINT_VARIABLE(cell_iter->GetCellId());
-            // PRINT_VARIABLE(location[0]);
-            // PRINT_VARIABLE(location[1]);
-            // PRINT_VARIABLE(location[2]);
         }
     }
 }
 
 template<unsigned DIM>
-void CellCoverslipBasedCellKiller<DIM>::OutputCellKillerParameters(out_stream& rParamsFile)
+void AnoikisCellKiller<DIM>::OutputCellKillerParameters(out_stream& rParamsFile)
 {
     *rParamsFile << "\t\t\t<ProbabilityOfDeathInAnHour>" << mProbabilityOfDeathInAnHour << "</ProbabilityOfDeathInAnHour>\n";
     // No parameters to output, so just call method on direct parent class
@@ -79,10 +72,10 @@ void CellCoverslipBasedCellKiller<DIM>::OutputCellKillerParameters(out_stream& r
 }
 
 // Explicit instantiation
-template class CellCoverslipBasedCellKiller<1>;
-template class CellCoverslipBasedCellKiller<2>;
-template class CellCoverslipBasedCellKiller<3>;
+template class AnoikisCellKiller<1>;
+template class AnoikisCellKiller<2>;
+template class AnoikisCellKiller<3>;
 
 // Serialization for Boost >= 1.36
 #include "SerializationExportWrapperForCpp.hpp"
-EXPORT_TEMPLATE_CLASS_SAME_DIMS(CellCoverslipBasedCellKiller)
+EXPORT_TEMPLATE_CLASS_SAME_DIMS(AnoikisCellKiller)

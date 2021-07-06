@@ -1,5 +1,5 @@
-#ifndef CELLCOVERSLIPBASEDCELLKILLER_HPP_
-#define CELLCOVERLSIPBASEDCELLKILLER_HPP_
+#ifndef ANOIKISCELLKILLER_HPP_
+#define ANOIKISCELLKILLER_HPP_
 
 #include "AbstractCellKiller.hpp"
 #include "RandomNumberGenerator.hpp"
@@ -12,7 +12,7 @@
  * A cell killer that kills cells if they are outside the domain.
  */
 template<unsigned DIM>
-class CellCoverslipBasedCellKiller : public AbstractCellKiller<DIM>
+class AnoikisCellKiller : public AbstractCellKiller<DIM>
 {
 private:
 
@@ -46,7 +46,7 @@ public:
      * Default constructor
      * @param pCellPopulation pointer to the cell population
      */
-    CellCoverslipBasedCellKiller(AbstractCellPopulation<DIM>* pCellPopulation,  double probabilityOfDeathInAnHour);
+    AnoikisCellKiller(AbstractCellPopulation<DIM>* pCellPopulation,  double probabilityOfDeathInAnHour);
 
     /**
      * @return mProbabilityOfDeathInAnHour.
@@ -74,18 +74,18 @@ public:
 };
 
 #include "SerializationExportWrapper.hpp"
-EXPORT_TEMPLATE_CLASS_SAME_DIMS(CellCoverslipBasedCellKiller)
+EXPORT_TEMPLATE_CLASS_SAME_DIMS(AnoikisCellKiller)
 
 namespace boost
 {
     namespace serialization
     {
         /**
-         * Serialize information required to construct a CellCoverslipBasedCellKiller.
+         * Serialize information required to construct a AnoikisCellKiller.
          */
         template<class Archive, unsigned DIM>
         inline void save_construct_data(
-            Archive & ar, const CellCoverslipBasedCellKiller<DIM> * t, const unsigned int file_version)
+            Archive & ar, const AnoikisCellKiller<DIM> * t, const unsigned int file_version)
             {
                 // Save data required to construct instance
                 const AbstractCellPopulation<DIM>* const p_cell_population = t->GetCellPopulation();
@@ -95,11 +95,11 @@ namespace boost
             }
 
         /**
-         * De-serialize constructor parameters and initialise a CellCoverslipBasedCellKiller.
+         * De-serialize constructor parameters and initialise a AnoikisCellKiller.
          */
         template<class Archive, unsigned DIM>
         inline void load_construct_data(
-            Archive & ar, CellCoverslipBasedCellKiller<DIM> * t, const unsigned int file_version)
+            Archive & ar, AnoikisCellKiller<DIM> * t, const unsigned int file_version)
         {
             // Retrieve data from archive required to construct new instance
             AbstractCellPopulation<DIM>* p_cell_population;
@@ -108,9 +108,9 @@ namespace boost
             ar >> prob;
 
             // Invoke inplace constructor to initialise instance
-            ::new(t)CellCoverslipBasedCellKiller<DIM>(p_cell_population, prob);
+            ::new(t)AnoikisCellKiller<DIM>(p_cell_population, prob);
         }
     }
 } // namespace ...
 
-#endif /*CELLCOVERSLIPEBASEDCELLKILLER_HPP_*/
+#endif /*ANOIKISCELLKILLER_HPP_*/

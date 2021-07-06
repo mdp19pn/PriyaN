@@ -29,7 +29,7 @@
 #include "WildTypeCellMutationState.hpp"
 #include "StemCellProliferativeType.hpp"
 #include "OrientedDivisionRule.hpp"
-#include "CellCoverslipBasedCellKiller.hpp"
+#include "AnoikisCellKiller.hpp"
 #include "GeneralisedLinearSpringForce.hpp"
 #include "RepulsionForce.hpp"
 #include "CellCellAdhesionForce.hpp"
@@ -212,7 +212,7 @@ public:
         // cell_population.AddPopulationWriter<BoundaryLengthWriter>();
 
         // Construct a cell killer object
-        MAKE_PTR_ARGS(CellCoverslipBasedCellKiller<3>, p_killer, (&cell_population, 0.5));
+        MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
 
         // Add a vertex mesh writer so that a rectangular coverslip is written to file
         std::vector<Node<3>*> coverslip;
@@ -335,7 +335,7 @@ public:
         cell_population.AddPopulationWriter<BoundaryLengthWriter>();
 
         // // Construct a cell killer object
-        // MAKE_PTR_ARGS(CellCoverslipBasedCellKiller<3>, p_killer, (&cell_population, 0.5));
+        // MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
       
         // Add a vertex mesh writer so that a rectangular coverslip  is written to file
         std::vector<Node<3>*> coverslip;
