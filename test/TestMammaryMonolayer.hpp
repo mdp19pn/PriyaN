@@ -120,7 +120,7 @@ public:
 
     void TestMammaryMonolayerSubstrateDependentCellCycleModel()
     {
-        // EXIT_IF_PARALLEL;
+        EXIT_IF_PARALLEL;
         
         // Create a 3D 'nodes only' mesh, specifying nodes manually
         std::vector<Node<3>*> nodes;
