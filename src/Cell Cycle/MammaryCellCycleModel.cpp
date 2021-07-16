@@ -2,11 +2,12 @@
 #include "DifferentiatedCellProliferativeType.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
-#include "MammaryStemCellProperty.hpp"
+#include "LuminalStemCellProperty.hpp"
+#include "MyoepithelialStemCellProperty.hpp"
 
 MammaryCellCycleModel::MammaryCellCycleModel()
     : AbstractSimpleCellCycleModel(),
-      mMinCellCycleDuration(14.0), // Hours
+      mMinCellCycleDuration(12.0), // Hours
       mMaxCellCycleDuration(16.0)  // Hours
 {
 }
@@ -32,13 +33,13 @@ MammaryCellCycleModel::MammaryCellCycleModel(const MammaryCellCycleModel& rModel
 
 void MammaryCellCycleModel::InitialiseDaughterCell()
 {
-    if (mpCell->HasCellProperty<LuminalCellProperty>())
+    if (mpCell->HasCellProperty<LuminalStemCellProperty>())
     {
         boost::shared_ptr<AbstractCellProperty> p_luminal =
         mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<LuminalCellProperty>();
         mpCell->AddCellProperty(p_luminal);
     }
-    else if (mpCell->HasCellProperty<MammaryStemCellProperty>())
+    else if (mpCell->HasCellProperty<MyoepithelialStemCellProperty>())
     {
         boost::shared_ptr<AbstractCellProperty> p_myo =
         mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>();
@@ -55,7 +56,11 @@ void MammaryCellCycleModel::SetCellCycleDuration()
 {
     RandomNumberGenerator* p_gen = RandomNumberGenerator::Instance();
 
-    if (mpCell->HasCellProperty<MyoepithelialCellProperty>()) // myoepithelial cell is DifferentiatedCellProliferativeType
+    if (mpCell->HasCellProperty<LuminalCellProperty>()) // luminal cell is DifferentiatedCellProliferativeType
+    {
+        mCellCycleDuration = DBL_MAX;
+    }
+    else if (mpCell->HasCellProperty<MyoepithelialCellProperty>()) // myoepithelial cell is DifferentiatedCellProliferativeType
     {
         mCellCycleDuration = DBL_MAX;
     }

@@ -2,7 +2,8 @@
 #include "NodeBasedCellPopulation.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
-#include "MammaryStemCellProperty.hpp"
+#include "LuminalStemCellProperty.hpp"
+#include "MyoepithelialStemCellProperty.hpp"
 #include "Debug.hpp"
 
 template<unsigned DIM>
@@ -54,6 +55,7 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
             CellPtr p_cell = p_cell_population->GetCellUsingLocationIndex(node_index);
             bool cell_is_luminal = p_cell->template HasCellProperty<LuminalCellProperty>();
             bool cell_is_myoepithelial = p_cell->template HasCellProperty<MyoepithelialCellProperty>();
+            bool cell_is_luminal_stem = p_cell->template HasCellProperty<LuminalStemCellProperty>();
 
             // Determine if cell expresses b1 and/or b4 integrin
             bool cell_b1_expn = true;
@@ -73,10 +75,17 @@ void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulatio
                 cell_b1_expn = p_prop->GetB1IntegrinExpression();
                 cell_b4_expn = p_prop->GetB4IntegrinExpression();
             }
-            else // if cell is mammary stem cell
+            else if (cell_is_luminal_stem) 
             {
-                CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<MammaryStemCellProperty>();
-                boost::shared_ptr<MammaryStemCellProperty> p_prop = boost::static_pointer_cast<MammaryStemCellProperty>(collection.GetProperty());
+                CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<LuminalStemCellProperty>();
+                boost::shared_ptr<LuminalStemCellProperty> p_prop = boost::static_pointer_cast<LuminalStemCellProperty>(collection.GetProperty());
+                cell_b1_expn = p_prop->GetB1IntegrinExpression();
+                cell_b4_expn = p_prop->GetB4IntegrinExpression();
+            }
+            else
+            {
+                CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<MyoepithelialStemCellProperty>();
+                boost::shared_ptr<MyoepithelialStemCellProperty> p_prop = boost::static_pointer_cast<MyoepithelialStemCellProperty>(collection.GetProperty());
                 cell_b1_expn = p_prop->GetB1IntegrinExpression();
                 cell_b4_expn = p_prop->GetB4IntegrinExpression();
             }

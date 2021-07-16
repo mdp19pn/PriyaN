@@ -17,7 +17,8 @@
 #include "NodeBasedCellPopulation.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
-#include "MammaryStemCellProperty.hpp"
+#include "LuminalStemCellProperty.hpp"
+#include "MyoepithelialStemCellProperty.hpp"
 #include "CellHeightTrackingModifier.hpp"
 #include "CellVelocityWriter.hpp"
 #include "CellLocationWriter.hpp"
@@ -133,6 +134,9 @@ public:
         nodes.push_back(new Node<3>(6,  false,  0.0, 0.0, 1.0));
         nodes.push_back(new Node<3>(7,  false,  -0.5, -0.5, 1.0));
         nodes.push_back(new Node<3>(8,  false,  -0.5, 0.5, 1.0));
+        nodes.push_back(new Node<3>(9,  false,  1.25, 0.0, 0.0));
+        nodes.push_back(new Node<3>(10,  false,  0.0, 1.0, 0.0));
+        nodes.push_back(new Node<3>(11,  false,  0.0, 0.75, 1.0));
 
         NodesOnlyMesh<3> mesh;
         mesh.ConstructNodesWithoutMesh(nodes, 1.5);
@@ -178,21 +182,25 @@ public:
         cell_population.SetLuminalCellDampingConstant(3.0); 
         cell_population.SetMyoepithelialCellDampingConstant(5.0);
 
-        // Create the different cell types: mammary stem cells, luminal cells and differentiated myoepithelial cell, (we do it this way to make sure they're tracked correctly in the simulation)
+        // Create the different cell types: luminal stem cells, myoepithelial stem differentiated luminal cells and differentiated myoepithelial cell, (we do it this way to make sure they're tracked correctly in the simulation)
         boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
         boost::shared_ptr<AbstractCellProperty> p_myo(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>());
-        boost::shared_ptr<AbstractCellProperty> p_stem(cell_population.GetCellPropertyRegistry()->Get<MammaryStemCellProperty>());
+        boost::shared_ptr<AbstractCellProperty> p_luminal_stem(cell_population.GetCellPropertyRegistry()->Get<LuminalStemCellProperty>());
+        boost::shared_ptr<AbstractCellProperty> p_myo_stem(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialStemCellProperty>());
         
         // Assign these properties to cells
         cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_stem);
-        cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_stem);
+        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_luminal_stem);
         cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(5)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(6)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(7)->AddCellProperty(p_stem);
+        cell_population.GetCellUsingLocationIndex(7)->AddCellProperty(p_luminal_stem);
         cell_population.GetCellUsingLocationIndex(8)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(9)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(10)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(11)->AddCellProperty(p_luminal);
 
 
         // Set the division rule for our population to be the oriented division rule
@@ -285,7 +293,9 @@ public:
         nodes.push_back(new Node<3>(6,  false,  0.0, 0.0, 1.0));
         nodes.push_back(new Node<3>(7,  false,  -0.5, -0.5, 1.0));
         nodes.push_back(new Node<3>(8,  false,  -0.5, 0.5, 1.0));
-        nodes.push_back(new Node<3>(9,  false,  0.75, 0.5, 1.0));
+        nodes.push_back(new Node<3>(9,  false,  1.25, 0.0, 0.0));
+        nodes.push_back(new Node<3>(10,  false,  0.0, 1.0, 0.0));
+        nodes.push_back(new Node<3>(11,  false,  0.0, 0.75, 1.0));
 
         NodesOnlyMesh<3> mesh;
         mesh.ConstructNodesWithoutMesh(nodes, 1.5);
@@ -301,22 +311,25 @@ public:
         cell_population.SetLuminalCellDampingConstant(3.0); 
         cell_population.SetMyoepithelialCellDampingConstant(5.0);
         
-        // Create the luminal/myoepithelial cell properties (we do it this way to make sure they're tracked correctly in the simulation)
+        // Create the different cell types: luminal stem cells, myoepithelial stem differentiated luminal cells and differentiated myoepithelial cell, (we do it this way to make sure they're tracked correctly in the simulation)
         boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
         boost::shared_ptr<AbstractCellProperty> p_myo(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>());
-        boost::shared_ptr<AbstractCellProperty> p_stem(cell_population.GetCellPropertyRegistry()->Get<MammaryStemCellProperty>());
+        boost::shared_ptr<AbstractCellProperty> p_luminal_stem(cell_population.GetCellPropertyRegistry()->Get<LuminalStemCellProperty>());
+        boost::shared_ptr<AbstractCellProperty> p_myo_stem(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialStemCellProperty>());
         
-        // Assign these properties to cells (change these lines if you want e.g. only luminal cells)
+        // Assign these properties to cells
         cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_luminal_stem);
         cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(5)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(6)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(7)->AddCellProperty(p_stem);
+        cell_population.GetCellUsingLocationIndex(7)->AddCellProperty(p_luminal_stem);
         cell_population.GetCellUsingLocationIndex(8)->AddCellProperty(p_myo);
-        cell_population.GetCellUsingLocationIndex(9)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(9)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(10)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(11)->AddCellProperty(p_myo_stem);
 
         // Set the division rule for our population to be the oriented division rule
         boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());

@@ -2,7 +2,8 @@
 #include "AbstractCellPopulation.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
-#include "MammaryStemCellProperty.hpp"
+#include "LuminalStemCellProperty.hpp"
+#include "MyoepithelialStemCellProperty.hpp"
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 MammaryCellTypeWriter<ELEMENT_DIM, SPACE_DIM>::MammaryCellTypeWriter()
@@ -27,9 +28,15 @@ double MammaryCellTypeWriter<ELEMENT_DIM, SPACE_DIM>::GetCellDataForVtkOutput(Ce
         boost::shared_ptr<MyoepithelialCellProperty> p_prop = boost::static_pointer_cast<MyoepithelialCellProperty>(collection.GetProperty());
         colour = 4.0 + double(p_prop->GetColour());
     }
+    else if (pCell->HasCellProperty<LuminalStemCellProperty>())
+    {
+        CellPropertyCollection collection = pCell->rGetCellPropertyCollection().GetProperties<LuminalStemCellProperty>();
+        boost::shared_ptr<LuminalStemCellProperty> p_prop = boost::static_pointer_cast<LuminalStemCellProperty>(collection.GetProperty());
+        colour = 8.0;
+    }
     else 
     {
-        colour = 8.0;
+        colour = 9.0;
     }
     return colour;
 }

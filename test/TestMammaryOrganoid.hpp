@@ -49,7 +49,7 @@ public:
     void TestMammaryOrganoidMammaryCellCycleModel()
     {
         EXIT_IF_PARALLEL;
-
+        
         // Create a 3D 'nodes only' mesh, specifying nodes manually
         std::vector<Node<3>*> nodes;
         nodes.push_back(new Node<3>(0,  false,  0.0, 0.0, 0.0));
@@ -73,8 +73,7 @@ public:
         // Use the mesh and cells to create a cell population
         NodeBasedCellPopulation<3> cell_population(mesh, cells);
         
-        // Create the luminal/myoepithelial cell properties (we do it this way
-        // to make sure they're tracked correctly in the simulation)
+        // Create the luminal/myoepithelial cell properties (we do it this way to make sure they're tracked correctly in the simulation)
         boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
         boost::shared_ptr<AbstractCellProperty> p_myo(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>());
         boost::shared_ptr<AbstractCellProperty> p_stem(cell_population.GetCellPropertyRegistry()->Get<MammaryStemCellProperty>());

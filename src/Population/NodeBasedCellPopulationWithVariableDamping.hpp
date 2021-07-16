@@ -30,12 +30,14 @@ private:
         archive & boost::serialization::base_object<NodeBasedCellPopulation<DIM> >(*this);
         archive & mLuminalCellDampingConstant;
         archive & mMyoepithelialCellDampingConstant;
-        archive & mMammaryStemCellDampingConstant;
+        archive & mLuminalStemCellDampingConstant;
+        archive & mMyoepithelialStemCellDampingConstant;
     }
 
     double mLuminalCellDampingConstant;
     double mMyoepithelialCellDampingConstant;
-    double mMammaryStemCellDampingConstant;
+    double mLuminalStemCellDampingConstant;
+    double mMyoepithelialStemCellDampingConstant;
 
 public:
 
@@ -89,11 +91,18 @@ public:
     void SetMyoepithelialCellDampingConstant(double myoepithelialCellDampingConstant);
 
     /**
-     * Set mMammaryStemCellDampingConstant.
+     * Set mLuminalStemCellDampingConstant.
      * 
-     * @param MammaryStemCellDampingConstant  the new value of mMyoepithelialCellDampingConstant
+     * @param LuminalStemCellDampingConstant  the new value of mMyoepithelialCellDampingConstant
      */
-    void SetMammaryStemCellDampingConstant(double MammaryStemCellDampingConstant);
+    void SetLuminalStemCellDampingConstant(double LuminalStemCellDampingConstant);
+
+    /**
+     * Set mMyoepithelialStemCellDampingConstant.
+     * 
+     * @param MyoepithelialStemCellDampingConstant  the new value of mMyoepithelialCellDampingConstant
+     */
+    void SetMyoepithelialStemCellDampingConstant(double MyoepithelialStemCellDampingConstant);
 
     /**
      * @return mLuminalCellDampingConstant
@@ -106,9 +115,14 @@ public:
     double GetMyoepithelialCellDampingConstant();
 
     /**
-     * @return mMammaryStemCellDampingConstant
+     * @return mLuminalStemCellDampingConstant
      */
-    double GetMammaryStemCellDampingConstant();
+    double GetLuminalStemCellDampingConstant();
+
+    /**
+     * @return mMyoepithelialStemCellDampingConstant
+     */
+    double GetMyoepithelialStemCellDampingConstant();
 
     /**
      * Overridden AddForceContribution() method.
