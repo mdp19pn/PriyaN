@@ -119,7 +119,7 @@ public:
         simulator.Solve();
     }
 
-    void TestMammaryMonolayerSubstrateDependentCellCycleModel()
+    void xTestMammaryMonolayerSubstrateDependentCellCycleModel()
     {
         EXIT_IF_PARALLEL;
         
@@ -193,7 +193,7 @@ public:
         cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_myo_stem);
         cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_luminal_stem);
-        cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_luminal_stem);
         cell_population.GetCellUsingLocationIndex(5)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(6)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(7)->AddCellProperty(p_luminal_stem);
@@ -278,7 +278,7 @@ public:
         }
     }
 
-    void xTestMammaryMonolayerMammaryCellCycleModel()
+    void TestMammaryMonolayerMammaryCellCycleModel()
     {
         // EXIT_IF_PARALLEL;
         
@@ -320,16 +320,16 @@ public:
         // Assign these properties to cells
         cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_myo_stem);
         cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_luminal_stem);
-        cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_luminal_stem);
         cell_population.GetCellUsingLocationIndex(5)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(6)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(7)->AddCellProperty(p_luminal_stem);
         cell_population.GetCellUsingLocationIndex(8)->AddCellProperty(p_myo);
-        cell_population.GetCellUsingLocationIndex(9)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(9)->AddCellProperty(p_luminal_stem);
         cell_population.GetCellUsingLocationIndex(10)->AddCellProperty(p_myo_stem);
-        cell_population.GetCellUsingLocationIndex(11)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(11)->AddCellProperty(p_luminal);
 
         // Set the division rule for our population to be the oriented division rule
         boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
@@ -344,11 +344,11 @@ public:
         // Add a cell writer so that cell velocities are written to file
         cell_population.AddCellWriter<CellVelocityWriter>();
 
-        // Add a population writer so that cell sorting (bilayer formation) is written to file
-        cell_population.AddPopulationWriter<BoundaryLengthWriter>();
+        // // Add a population writer so that cell sorting (bilayer formation) is written to file
+        // cell_population.AddPopulationWriter<BoundaryLengthWriter>();
 
-        // // Construct a cell killer object
-        // MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
+        // Construct a cell killer object
+        MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
       
         // Add a vertex mesh writer so that a rectangular coverslip  is written to file
         std::vector<Node<3>*> coverslip;
@@ -389,8 +389,8 @@ public:
         MAKE_PTR_ARGS(PlaneBoundaryCondition<3>, p_bc, (&cell_population, point, normal));
         simulator.AddCellPopulationBoundaryCondition(p_bc);
         
-        // // Pass the cell killer into the cell-based simulation
-        // simulator.AddCellKiller(p_killer);
+        // Pass the cell killer into the cell-based simulation
+        simulator.AddCellKiller(p_killer);
        
         // Add and pass the modifier to the simulation
         MAKE_PTR(CellHeightTrackingModifier<3>, p_modifier);

@@ -4,6 +4,8 @@
 #include "NodeBasedCellPopulation.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
+#include "LuminalStemCellProperty.hpp"
+#include "MyoepithelialStemCellProperty.hpp"
 #include "Exception.hpp"
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
@@ -37,9 +39,17 @@ void CellLocationWriter<ELEMENT_DIM, SPACE_DIM>::VisitCell(CellPtr pCell, Abstra
             {
                 *this->mpOutStream << "Luminal"<< " ";
             }
-            else 
+            else if (pCell->HasCellProperty<MyoepithelialCellProperty>())
             {
                 *this->mpOutStream << "Myoepithelial"<< " ";
+            }
+            else if (pCell->HasCellProperty<LuminalStemCellProperty>())
+            {
+                *this->mpOutStream << "LSC"<< " ";
+            }
+            else
+            {
+                *this->mpOutStream << "MSC"<< " ";
             }
         
             // Write the cell's ID to file

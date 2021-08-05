@@ -62,6 +62,18 @@ void MammaryCellTypeWriter<ELEMENT_DIM, SPACE_DIM>::VisitCell(CellPtr pCell, Abs
         b1_expn = double(p_prop->GetB1IntegrinExpression());
         b4_expn = double(p_prop->GetB4IntegrinExpression());
     }
+    else if (pCell->HasCellProperty<LuminalStemCellProperty>())
+    {
+        cell_type = 2.0;
+        CellPropertyCollection collection = pCell->rGetCellPropertyCollection().GetProperties<LuminalStemCellProperty>();
+        boost::shared_ptr<LuminalStemCellProperty> p_prop = boost::static_pointer_cast<LuminalStemCellProperty>(collection.GetProperty());
+    }
+    else if (pCell->HasCellProperty<MyoepithelialStemCellProperty>())
+    {
+        cell_type = 3.0;
+        CellPropertyCollection collection = pCell->rGetCellPropertyCollection().GetProperties<MyoepithelialStemCellProperty>();
+        boost::shared_ptr<MyoepithelialStemCellProperty> p_prop = boost::static_pointer_cast<MyoepithelialStemCellProperty>(collection.GetProperty());
+    }
 
     *this->mpOutStream << " " << cell_type << " " << b1_expn << " " << b4_expn;
 

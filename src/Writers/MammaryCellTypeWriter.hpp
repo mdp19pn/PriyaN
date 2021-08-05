@@ -54,7 +54,7 @@ public:
      * 6.0 : Myoepithelial cell, no B1 expression, B4 expression
      * 7.0 : Myoepithelial cell, B1 expression, B4 expression
      * 8.0 : Luminal Stem Cell
-     * 9.0 : Luminal Stem Cell
+     * 9.0 : Myoepithelial Stem Cell
      *
      * @param pCell a cell
      * @param pCellPopulation a pointer to the cell population owning the cell
