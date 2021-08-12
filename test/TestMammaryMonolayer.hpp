@@ -119,7 +119,7 @@ public:
         simulator.Solve();
     }
 
-    void xTestMammaryMonolayerSubstrateDependentCellCycleModel()
+    void TestMammaryMonolayerSubstrateDependentCellCycleModel()
     {
         EXIT_IF_PARALLEL;
         
@@ -278,7 +278,7 @@ public:
         }
     }
 
-    void TestMammaryMonolayerMammaryCellCycleModel()
+    void xTestMammaryMonolayerMammaryCellCycleModel()
     {
         // EXIT_IF_PARALLEL;
         

@@ -35,7 +35,7 @@
 #include "RepulsionForce.hpp"
 #include "CellCellAdhesionForce.hpp"
 #include "CellCoverslipAdhesionForce.hpp"
-#include "PlaneBoundaryCondition.hpp"
+#include "LumenBoundaryCondition.hpp"
 #include "VertexMeshWriter.hpp"
 #include "MutableVertexMesh.hpp"
 #include "Debug.hpp"
@@ -120,6 +120,16 @@ public:
         p_linear_force->SetCutOffLength(3);
         simulator.AddForce(p_linear_force);
        
+        // Here we use a LumenBoundaryCondition which restricts cells to lie on a sphere. 
+        // Define the initially circular lumen by centre (0,0,1) and radius of the sphere (1).
+        c_vector<double,3> centre = zero_vector<double>(3);
+        centre(2) = 1.0;
+        double radius = 2.0;
+
+        // We then make a pointer to the LumenBoundaryCondition, and pass it to the simulation.
+        MAKE_PTR_ARGS(LumenBoundaryCondition<3>, p_boundary_condition, (&cell_population, centre, radius));
+        simulator.AddCellPopulationBoundaryCondition(p_boundary_condition);
+
         // Run the simulation
         simulator.Solve();
       
