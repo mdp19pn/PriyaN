@@ -216,8 +216,8 @@ public:
         // Add a cell writer so that cell velocities are written to file
         cell_population.AddCellWriter<CellVelocityWriter>();
 
-        // // Add a population writer so that cell sorting (bilayer formation) is written to file
-        // cell_population.AddPopulationWriter<BoundaryLengthWriter>();
+        // Add a population writer so that cell sorting (bilayer formation) is written to file
+        cell_population.AddPopulationWriter<BoundaryLengthWriter>();
 
         // Construct a cell killer object
         MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));

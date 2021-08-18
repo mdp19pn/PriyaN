@@ -9,6 +9,7 @@
 
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
+#include "Debug.hpp"
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::BoundaryLengthWriter()
@@ -20,7 +21,7 @@ template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 void BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(NodeBasedCellPopulation<SPACE_DIM>* pCellPopulation)
 {
     // Make sure the cell population is updated so that mNodeNeighbours is set up
-    //pCellPopulation->Update();
+    pCellPopulation->Update();
 
     // Initialise helper variables
     double heterotypic_boundary_length = 0.0;
@@ -33,6 +34,8 @@ void BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(NodeBasedCellPopulation
          cell_iter != pCellPopulation->End();
          ++cell_iter)
     {
+        assert(cell_iter->HasApoptosisBegun() == false);
+
         // Store whether this cell is luminal or myoepithelial
         bool cell_is_luminal = cell_iter->template HasCellProperty<LuminalCellProperty>();
         bool cell_is_myoepithelial = cell_iter->template HasCellProperty<MyoepithelialCellProperty>();
@@ -46,6 +49,7 @@ void BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(NodeBasedCellPopulation
 
         if (!neighbour_indices.empty())
         {
+            PRINT_VARIABLE(SimulationTime::Instance()->GetTime());
             // Iterate over these neighbours
             for (std::set<unsigned>::iterator neighbour_iter = neighbour_indices.begin();
                  neighbour_iter != neighbour_indices.end();

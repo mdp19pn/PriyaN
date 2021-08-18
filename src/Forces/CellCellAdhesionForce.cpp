@@ -46,6 +46,7 @@ double CellCellAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMult
             
             else
             {
+                // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
                 return 1.0; 
             }
         }

@@ -13,8 +13,8 @@
 #include "CellsGenerator.hpp"
 #include "OffLatticeSimulation.hpp"
 #include "NodesOnlyMesh.hpp"
-#include "NodeBasedCellPopulationWithVariableDamping.hpp"
 #include "NodeBasedCellPopulation.hpp"
+#include "NodeBasedCellPopulationWithParticles.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
 #include "LuminalStemCellProperty.hpp"
@@ -32,10 +32,8 @@
 #include "OrientedDivisionRule.hpp"
 #include "AnoikisCellKiller.hpp"
 #include "GeneralisedLinearSpringForce.hpp"
+#include "EpithelialLayerLinearSpringForce.hpp"
 #include "RepulsionForce.hpp"
-#include "CellCellAdhesionForce.hpp"
-#include "CellCoverslipAdhesionForce.hpp"
-#include "LumenBoundaryCondition.hpp"
 #include "VertexMeshWriter.hpp"
 #include "MutableVertexMesh.hpp"
 #include "Debug.hpp"
@@ -47,7 +45,7 @@ class TestMammaryOrganoid : public AbstractCellBasedTestSuite
 {
 public:
 
-    void TestMammaryOrganoidMammaryCellCycleModel()
+    void xTestMammaryOrganoidMammaryCellCycleModel()
     {
         EXIT_IF_PARALLEL;
         
@@ -119,16 +117,94 @@ public:
         MAKE_PTR(GeneralisedLinearSpringForce<3>, p_linear_force);
         p_linear_force->SetCutOffLength(3);
         simulator.AddForce(p_linear_force);
-       
-        // Here we use a LumenBoundaryCondition which restricts cells to lie on a sphere. 
-        // Define the initially circular lumen by centre (0,0,1) and radius of the sphere (1).
-        c_vector<double,3> centre = zero_vector<double>(3);
-        centre(2) = 1.0;
-        double radius = 2.0;
 
-        // We then make a pointer to the LumenBoundaryCondition, and pass it to the simulation.
-        MAKE_PTR_ARGS(LumenBoundaryCondition<3>, p_boundary_condition, (&cell_population, centre, radius));
-        simulator.AddCellPopulationBoundaryCondition(p_boundary_condition);
+        // Run the simulation
+        simulator.Solve();
+      
+        // Since we created pointers to nodes, we delete them here to avoid memory leaks
+        for (unsigned i=0; i<nodes.size(); i++)
+        {
+            delete nodes[i];
+        }
+    }
+
+    void TestMammaryOrganoidWithParticles()
+    {
+        EXIT_IF_PARALLEL;
+        
+        // Create a simple 3D mesh with some particles
+        std::vector<Node<3>*> nodes;
+        nodes.push_back(new Node<3>(0,  true,  0.0, 0.0, 0.0));
+        nodes.push_back(new Node<3>(1,  true,  1.0, 1.0, 0.0));
+        nodes.push_back(new Node<3>(2,  true,  1.0, 0.0, 1.0));
+        nodes.push_back(new Node<3>(3,  true,  0.0, 1.0, 1.0));
+        nodes.push_back(new Node<3>(4,  false, 0.5, 0.5, 0.5));
+        nodes.push_back(new Node<3>(5,  false, -1.0, -1.0, -1.0));
+        nodes.push_back(new Node<3>(6,  false,  2.0, -1.0, -1.0));
+        nodes.push_back(new Node<3>(7,  false,  2.0,  2.0, -1.0));
+        nodes.push_back(new Node<3>(8,  false, -1.0,  2.0, -1.0));
+        nodes.push_back(new Node<3>(9,  false, -1.0, -1.0,  2.0));
+        nodes.push_back(new Node<3>(10, false,  2.0, -1.0,  2.0));
+        nodes.push_back(new Node<3>(11, false,  2.0,  2.0,  2.0));
+        nodes.push_back(new Node<3>(12, false, -1.0,  2.0,  2.0));
+
+        // Convert this to a NodesOnlyMesh
+        MAKE_PTR(NodesOnlyMesh<3>, p_mesh);
+        p_mesh->ConstructNodesWithoutMesh(nodes, 1.5);
+
+        // Specify the node indices corresponding to cells (the others correspond to particles)
+        std::vector<unsigned> location_indices;
+        for (unsigned index=0; index<5; index++)
+        {
+            location_indices.push_back(index);
+        }
+
+        // Set up cells
+        std::vector<CellPtr> cells;
+        CellsGenerator<MammaryCellCycleModel, 3> cells_generator;
+        cells_generator.GenerateGivenLocationIndices(cells, location_indices);
+
+        // Create cell population
+        NodeBasedCellPopulationWithParticles<3> cell_population(*p_mesh, cells, location_indices);
+
+        // Create the different cell types: luminal stem cells, myoepithelial stem differentiated luminal cells and differentiated myoepithelial cell, (we do it this way to make sure they're tracked correctly in the simulation)
+        boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
+        boost::shared_ptr<AbstractCellProperty> p_myo(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>());
+        boost::shared_ptr<AbstractCellProperty> p_luminal_stem(cell_population.GetCellPropertyRegistry()->Get<LuminalStemCellProperty>());
+        boost::shared_ptr<AbstractCellProperty> p_myo_stem(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialStemCellProperty>());
+        
+        // Assign these properties to cells
+        cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
+
+        // Set the division rule for our population to be the oriented division rule
+        boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
+        cell_population.SetCentreBasedDivisionRule(p_division_rule_to_set);
+
+        // Add a cell writer so that mammary cell types are written to file
+        cell_population.AddCellWriter<MammaryCellTypeWriter>();
+
+        // Add a cell writer so that the cell location is written to file
+        cell_population.AddCellWriter<CellLocationWriter>();
+
+        // Add a cell writer so that cell velocities are written to file
+        cell_population.AddCellWriter<CellVelocityWriter>();
+
+        // Pass the cell population to the simulation and specify duration and output parameters
+        OffLatticeSimulation<3> simulator(cell_population);
+        simulator.SetOutputDirectory("TestMammaryOrganoidWithParticles");
+        simulator.SetSamplingTimestepMultiple(12);
+        simulator.SetEndTime(96.0); // Hours
+
+        MAKE_PTR(EpithelialLayerLinearSpringForce<3>, p_linear_force);
+        p_linear_force->SetCutOffLength(3);
+        // p_linear_force->SetCellCellSpringStiffness(cell_cell_spring_stiffness);
+        // p_linear_force->SetCellECMSpringStiffness(cell_ecm_spring_stiffness);
+        // p_linear_force->SetECMECMSpringStiffness(ecm_ecm_spring_stiffness);
+        simulator.AddForce(p_linear_force);
 
         // Run the simulation
         simulator.Solve();
