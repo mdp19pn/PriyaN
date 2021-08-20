@@ -31,11 +31,8 @@
 #include "StemCellProliferativeType.hpp"
 #include "OrientedDivisionRule.hpp"
 #include "AnoikisCellKiller.hpp"
-#include "GeneralisedLinearSpringForce.hpp"
-#include "EpithelialLayerLinearSpringForce.hpp"
+#include "LinearSpringForce.hpp"
 #include "RepulsionForce.hpp"
-#include "VertexMeshWriter.hpp"
-#include "MutableVertexMesh.hpp"
 #include "Debug.hpp"
 
 /*
@@ -199,12 +196,16 @@ public:
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(96.0); // Hours
 
-        MAKE_PTR(EpithelialLayerLinearSpringForce<3>, p_linear_force);
+        MAKE_PTR(LinearSpringForce<3>, p_linear_force);
         p_linear_force->SetCutOffLength(3);
+        simulator.AddForce(p_linear_force);
+
+        // MAKE_PTR(EpithelialLayerLinearSpringForce<3>, p_linear_force);
+        // p_linear_force->SetCutOffLength(3);
         // p_linear_force->SetCellCellSpringStiffness(cell_cell_spring_stiffness);
         // p_linear_force->SetCellECMSpringStiffness(cell_ecm_spring_stiffness);
         // p_linear_force->SetECMECMSpringStiffness(ecm_ecm_spring_stiffness);
-        simulator.AddForce(p_linear_force);
+        // simulator.AddForce(p_linear_force);
 
         // Run the simulation
         simulator.Solve();

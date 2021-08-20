@@ -1,5 +1,5 @@
-#ifndef EPITHELIALLAYERLINEARSPRINGFORCE_HPP_
-#define EPITHELIALLAYERLINEARSPRINGFORCE_HPP_
+#ifndef LINEARSPRINGFORCE_HPP_
+#define LINEARSPRINGFORCE_HPP_
 
 #include "AbstractTwoBodyInteractionForce.hpp"
 
@@ -7,7 +7,7 @@
 #include <boost/serialization/base_object.hpp>
 
 /**
- * A force law initially employed by Meineke et al (2001) in their off-lattice
+ * A force law employed by Meineke et al (2001) in their off-lattice
  * model of the intestinal crypt (doi:10.1046/j.0960-7722.2001.00216.x).
  *
  * Each pair of neighbouring nodes are assumed to be connected by a linear
@@ -27,7 +27,7 @@
  * Time is in hours.
  */
 template<unsigned  ELEMENT_DIM, unsigned SPACE_DIM=ELEMENT_DIM>
-class EpithelialLayerLinearSpringForce : public AbstractTwoBodyInteractionForce<ELEMENT_DIM, SPACE_DIM>
+class LinearSpringForce : public AbstractTwoBodyInteractionForce<ELEMENT_DIM, SPACE_DIM>
 {
     friend class TestForces;
 
@@ -45,9 +45,7 @@ private:
     void serialize(Archive & archive, const unsigned int version)
     {
         archive & boost::serialization::base_object<AbstractTwoBodyInteractionForce<ELEMENT_DIM, SPACE_DIM> >(*this);
-        archive & mCellCellSpringStiffness;
-        archive & mCellECMSpringStiffness;
-        archive & mECMECMSpringStiffness;
+        archive & mMeinekeSpringStiffness;
         archive & mMeinekeDivisionRestingSpringLength;
         archive & mMeinekeSpringGrowthDuration;
     }
@@ -55,19 +53,13 @@ private:
 protected:
 
     /**
-     * Cell to Cell spring stiffness.
+     * Spring stiffness.
+     *
+     * Represented by the parameter mu in the model by Meineke et al (2001) in
+     * their off-lattice model of the intestinal crypt
+     * (doi:10.1046/j.0960-7722.2001.00216.x).
      */
-    double mCellCellSpringStiffness;
-
-    /**
-     * Cell to ECM spring stiffness.
-     */
-    double mCellECMSpringStiffness;
-
-    /*
-     * ECM to ECM spring stiffness.
-     */
-    double mECMECMSpringStiffness;
+    double mMeinekeSpringStiffness;
 
     /**
      * Initial resting spring length after cell division.
@@ -91,18 +83,18 @@ public:
     /**
      * Constructor.
      */
-    EpithelialLayerLinearSpringForce();
+    LinearSpringForce();
 
     /**
      * Destructor.
      */
-    virtual ~EpithelialLayerLinearSpringForce();
+    virtual ~LinearSpringForce();
 
     /**
      * Return a multiplication factor for the spring constant, which
      * returns a default value of 1.
      *
-     * This method is overridden in a subclass.
+     * This method may be overridden in subclasses.
      *
      * @param nodeAGlobalIndex index of one neighbouring node
      * @param nodeBGlobalIndex index of the other neighbouring node
@@ -132,19 +124,9 @@ public:
                                                      unsigned nodeBGlobalIndex,
                                                      AbstractCellPopulation<ELEMENT_DIM,SPACE_DIM>& rCellPopulation);
     /**
-     * @return mCellCellSpringStiffness
+     * @return mMeinekeSpringStiffness
      */
-    double GetCellCellSpringStiffness();
-
-    /**
-     * @return mCellECMSpringStiffness
-     */
-    double GetCellECMSpringStiffness();
-
-    /**
-     * @return mECMECMSpringStiffness
-     */
-    double GetECMECMSpringStiffness();
+    double GetMeinekeSpringStiffness();
 
     /**
      * @return mMeinekeDivisionRestingSpringLength
@@ -157,20 +139,11 @@ public:
     double GetMeinekeSpringGrowthDuration();
 
     /**
-     * Set mCellCellSpringStiffness.
+     * Set mMeinekeSpringStiffness.
      *
+     * @param springStiffness the new value of mMeinekeSpringStiffness
      */
-    void SetCellCellSpringStiffness(double cellCellSpringStiffness);
-
-    /**
-     * Set mCellECMSpringStiffness.
-     */
-    void SetCellECMSpringStiffness(double cellECMSpringStiffness);
-
-    /**
-     * Set mECMECMSpringStiffness.
-     */
-    void SetECMECMSpringStiffness(double eCMECMSpringStiffness);
+    void SetMeinekeSpringStiffness(double springStiffness);
 
     /**
      * Set mMeinekeDivisionRestingSpringLength.
@@ -195,6 +168,6 @@ public:
 };
 
 #include "SerializationExportWrapper.hpp"
-EXPORT_TEMPLATE_CLASS_ALL_DIMS(EpithelialLayerLinearSpringForce)
+EXPORT_TEMPLATE_CLASS_ALL_DIMS(LinearSpringForce)
 
-#endif /*EPITHELIALLAYERLINEARSPRINGFORCE_HPP_*/
+#endif /*LINEARSPRINGFORCE_HPP_*/
