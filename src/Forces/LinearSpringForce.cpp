@@ -5,13 +5,17 @@
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::LinearSpringForce()
    : AbstractTwoBodyInteractionForce<ELEMENT_DIM,SPACE_DIM>(),
-     mMeinekeSpringStiffness(15.0),        // denoted by mu in Meineke et al, 2001 (doi:10.1046/j.0960-7722.2001.00216.x)
+     mCellCellSpringStiffness(15.0),
+     mCellECMSpringStiffness(15.0),
+     mECMECMSpringStiffness(15.0),          // denoted by mu in Meineke et al, 2001 (doi:10.1046/j.0960-7722.2001.00216.x)
      mMeinekeDivisionRestingSpringLength(0.5),
      mMeinekeSpringGrowthDuration(1.0)
 {
     if (SPACE_DIM == 1)
     {
-        mMeinekeSpringStiffness = 30.0;
+        mCellCellSpringStiffness = 30.0;
+        mCellECMSpringStiffness = 30.0;
+        mECMECMSpringStiffness = 30.0;
     }
 }
 
@@ -101,11 +105,10 @@ c_vector<double, SPACE_DIM> LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::CalculateF
 
     double rest_length = rest_length_final;
 
-    if (!p_node_a->IsParticle() && !p_node_b->IsParticle()) // If node A and node b is not a particle, do all of the cell-related things
+    if (!p_node_a->IsParticle() && !p_node_b->IsParticle()) // if we have a cell-cell pair
     {
-        CellPtr p_cell_B = rCellPopulation.GetCellUsingLocationIndex(nodeBGlobalIndex);
-
         CellPtr p_cell_A = rCellPopulation.GetCellUsingLocationIndex(nodeAGlobalIndex);
+        CellPtr p_cell_B = rCellPopulation.GetCellUsingLocationIndex(nodeBGlobalIndex);
 
         double ageA = p_cell_A->GetAge();
         double ageB = p_cell_B->GetAge();
@@ -172,11 +175,11 @@ c_vector<double, SPACE_DIM> LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::CalculateF
         double overlap = distance_between_nodes - rest_length;
         bool is_closer_than_rest_length = (overlap <= 0);
         double multiplication_factor = VariableSpringConstantMultiplicationFactor(nodeAGlobalIndex, nodeBGlobalIndex, rCellPopulation, is_closer_than_rest_length);
-        double spring_stiffness = mMeinekeSpringStiffness;
+        double spring_cell_cell_stiffness = mCellCellSpringStiffness;
 
         if (bool(dynamic_cast<MeshBasedCellPopulation<ELEMENT_DIM,SPACE_DIM>*>(&rCellPopulation)))
         {
-            return multiplication_factor * spring_stiffness * unit_difference * overlap;
+            return multiplication_factor * spring_cell_cell_stiffness * unit_difference * overlap;
         }
         else
         {
@@ -185,29 +188,29 @@ c_vector<double, SPACE_DIM> LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::CalculateF
             {
                 //log(x+1) is undefined for x<=-1
                 assert(overlap > -rest_length_final);
-                c_vector<double, SPACE_DIM> temp = multiplication_factor*spring_stiffness * unit_difference * rest_length_final* log(1.0 + overlap/rest_length_final);
+                c_vector<double, SPACE_DIM> temp = multiplication_factor*spring_cell_cell_stiffness * unit_difference * rest_length_final* log(1.0 + overlap/rest_length_final);
                 return temp;
             }
             else
             {
                 double alpha = 5.0;
-                c_vector<double, SPACE_DIM> temp = multiplication_factor*spring_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                c_vector<double, SPACE_DIM> temp = multiplication_factor*spring_cell_cell_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
                 return temp;
             }
         }
     }
-    else // p_node_a is a particle or p_node_b is a particle
+    else if (p_node_a->IsParticle() && p_node_b->IsParticle()) // if we have ECM-ECM pair
     {
-        rest_length = 1.0;
+        rest_length = 1;
 
         double overlap = distance_between_nodes - rest_length;
         bool is_closer_than_rest_length = (overlap <= 0);
         double multiplication_factor = VariableSpringConstantMultiplicationFactor(nodeAGlobalIndex, nodeBGlobalIndex, rCellPopulation, is_closer_than_rest_length);
-        double spring_stiffness = mMeinekeSpringStiffness;
+        double spring_ecm_ecm_stiffness = mECMECMSpringStiffness;
 
         if (bool(dynamic_cast<MeshBasedCellPopulation<ELEMENT_DIM,SPACE_DIM>*>(&rCellPopulation)))
         {
-            return multiplication_factor * spring_stiffness * unit_difference * overlap;
+            return multiplication_factor * spring_ecm_ecm_stiffness * unit_difference * overlap;
         }
         else
         {
@@ -216,13 +219,44 @@ c_vector<double, SPACE_DIM> LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::CalculateF
             {
                 //log(x+1) is undefined for x<=-1
                 assert(overlap > -rest_length_final);
-                c_vector<double, SPACE_DIM> temp = multiplication_factor*spring_stiffness * unit_difference * rest_length_final* log(1.0 + overlap/rest_length_final);
+                c_vector<double, SPACE_DIM> temp = multiplication_factor*spring_ecm_ecm_stiffness * unit_difference * rest_length_final* log(1.0 + overlap/rest_length_final);
                 return temp;
             }
             else
             {
                 double alpha = 5.0;
-                c_vector<double, SPACE_DIM> temp = multiplication_factor*spring_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                c_vector<double, SPACE_DIM> temp = multiplication_factor*spring_ecm_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                return temp;
+            }
+        }
+    }
+    else // if we have cell-ECM pair
+    {
+        rest_length = 1;
+
+        double overlap = distance_between_nodes - rest_length;
+        bool is_closer_than_rest_length = (overlap <= 0);
+        double multiplication_factor = VariableSpringConstantMultiplicationFactor(nodeAGlobalIndex, nodeBGlobalIndex, rCellPopulation, is_closer_than_rest_length);
+        double spring_cell_ecm_stiffness = mCellECMSpringStiffness;
+
+        if (bool(dynamic_cast<MeshBasedCellPopulation<ELEMENT_DIM,SPACE_DIM>*>(&rCellPopulation)))
+        {
+            return multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap;
+        }
+        else
+        {
+            // A reasonably stable simple force law
+            if (is_closer_than_rest_length) //overlap is negative
+            {
+                //log(x+1) is undefined for x<=-1
+                assert(overlap > -rest_length_final);
+                c_vector<double, SPACE_DIM> temp = multiplication_factor*spring_cell_ecm_stiffness * unit_difference * rest_length_final* log(1.0 + overlap/rest_length_final);
+                return temp;
+            }
+            else
+            {
+                double alpha = 5.0;
+                c_vector<double, SPACE_DIM> temp = multiplication_factor*spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
                 return temp;
             }
         }
@@ -230,9 +264,21 @@ c_vector<double, SPACE_DIM> LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::CalculateF
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::GetMeinekeSpringStiffness()
+double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::GetCellCellSpringStiffness()
 {
-    return mMeinekeSpringStiffness;
+    return mCellCellSpringStiffness;
+}
+
+template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
+double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::GetCellECMSpringStiffness()
+{
+    return mCellECMSpringStiffness;
+}
+
+template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
+double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::GetECMECMSpringStiffness()
+{
+    return mECMECMSpringStiffness;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
@@ -248,10 +294,24 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::GetMeinekeSpringGrowthDuration(
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::SetMeinekeSpringStiffness(double springStiffness)
+void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::SetCellCellSpringStiffness(double cellcellSpringStiffness)
 {
     assert(springStiffness > 0.0);
-    mMeinekeSpringStiffness = springStiffness;
+    mCellCellSpringStiffness = cellcellSpringStiffness;
+}
+
+template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
+void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::SetCellECMSpringStiffness(double cellECMSpringStiffness)
+{
+    assert(springStiffness > 0.0);
+    mCellECMSpringStiffness = cellECMSpringStiffness;
+}
+
+template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
+void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::SetECMECMSpringStiffness(double eCMECMSpringStiffness)
+{
+    assert(springStiffness > 0.0);
+    mECMECMSpringStiffness = eCMECMSpringStiffness;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
@@ -274,7 +334,9 @@ void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::SetMeinekeSpringGrowthDuration(do
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::OutputForceParameters(out_stream& rParamsFile)
 {
-    *rParamsFile << "\t\t\t<MeinekeSpringStiffness>" << mMeinekeSpringStiffness << "</MeinekeSpringStiffness>\n";
+    *rParamsFile << "\t\t\t<CellECMSpringStiffness>" << mCellCellSpringStiffness << "</CellCellSpringStiffness>\n";
+    *rParamsFile << "\t\t\t<ECMECMSpringStiffness>" << mCellECMSpringStiffness << "</CellECMSpringStiffness>\n";
+    *rParamsFile << "\t\t\t<ECMECMSpringStiffness>" << mECMECMSpringStiffness << "</ECMECMSpringStiffness>\n";
     *rParamsFile << "\t\t\t<MeinekeDivisionRestingSpringLength>" << mMeinekeDivisionRestingSpringLength << "</MeinekeDivisionRestingSpringLength>\n";
     *rParamsFile << "\t\t\t<MeinekeSpringGrowthDuration>" << mMeinekeSpringGrowthDuration << "</MeinekeSpringGrowthDuration>\n";
 

@@ -45,7 +45,9 @@ private:
     void serialize(Archive & archive, const unsigned int version)
     {
         archive & boost::serialization::base_object<AbstractTwoBodyInteractionForce<ELEMENT_DIM, SPACE_DIM> >(*this);
-        archive & mMeinekeSpringStiffness;
+        archive & mCellCellSpringStiffness;
+        archive & mCellECMSpringStiffness;
+        archive & mECMECMSpringStiffness;
         archive & mMeinekeDivisionRestingSpringLength;
         archive & mMeinekeSpringGrowthDuration;
     }
@@ -53,13 +55,19 @@ private:
 protected:
 
     /**
-     * Spring stiffness.
-     *
-     * Represented by the parameter mu in the model by Meineke et al (2001) in
-     * their off-lattice model of the intestinal crypt
-     * (doi:10.1046/j.0960-7722.2001.00216.x).
+     * Cell cell Spring stiffness.
      */
-    double mMeinekeSpringStiffness;
+    double mCellCellSpringStiffness;
+
+    /**
+     * Cell ECM Spring stiffness.
+     */
+    double mCellECMSpringStiffness;
+
+    /**
+     * ECM ECM Spring stiffness.
+     */
+    double mECMECMSpringStiffness;
 
     /**
      * Initial resting spring length after cell division.
@@ -124,9 +132,19 @@ public:
                                                      unsigned nodeBGlobalIndex,
                                                      AbstractCellPopulation<ELEMENT_DIM,SPACE_DIM>& rCellPopulation);
     /**
-     * @return mMeinekeSpringStiffness
+     * @return mCellCellSpringStiffness
      */
-    double GetMeinekeSpringStiffness();
+    double GetCellCellSpringStiffness();
+
+    /**
+     * @return mCellECMSpringStiffness
+     */
+    double GetCellECMSpringStiffness();
+
+    /**
+     * @return mCellCellSpringStiffness
+     */
+    double GetECMECMSpringStiffness();
 
     /**
      * @return mMeinekeDivisionRestingSpringLength
@@ -139,11 +157,25 @@ public:
     double GetMeinekeSpringGrowthDuration();
 
     /**
-     * Set mMeinekeSpringStiffness.
+     * Set mCellCellSpringStiffness
      *
-     * @param springStiffness the new value of mMeinekeSpringStiffness
+     * @param cellcellSpringStiffness the new value of mCellCellSpringStiffness
      */
-    void SetMeinekeSpringStiffness(double springStiffness);
+    void SetCellCellSpringStiffness(double cellcellSpringStiffness);
+
+    /**
+     * Set mCellECMSpringStiffness
+     *
+     * @param cellECMSpringStiffness the new value of mCellECMSpringStiffness
+     */
+    void SetCellECMSpringStiffness(double cellECMSpringStiffness);
+
+    /**
+     * Set mECMECMSpringStiffness
+     *
+     * @param eCMECMSpringStiffness the new value of mECMECMSpringStiffness
+     */
+    void SetECMECMSpringStiffness(double eCMECMSpringStiffness);
 
     /**
      * Set mMeinekeDivisionRestingSpringLength.

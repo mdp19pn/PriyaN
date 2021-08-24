@@ -26,13 +26,14 @@
 #include "MammaryCellTypeWriter.hpp"
 #include "MammaryCellCycleModel.hpp"
 #include "UniformCellCycleModel.hpp"
-#include "SubstrateDependentCellCycleModel.hpp"
 #include "WildTypeCellMutationState.hpp"
 #include "StemCellProliferativeType.hpp"
 #include "OrientedDivisionRule.hpp"
 #include "AnoikisCellKiller.hpp"
 #include "LinearSpringForce.hpp"
 #include "RepulsionForce.hpp"
+#include "CellECMAdhesionForce.hpp"
+#include "LumenExpansionForce.hpp"
 #include "Debug.hpp"
 
 /*
@@ -124,26 +125,46 @@ public:
             delete nodes[i];
         }
     }
-
     void TestMammaryOrganoidWithParticles()
     {
         EXIT_IF_PARALLEL;
         
         // Create a simple 3D mesh with some particles
         std::vector<Node<3>*> nodes;
-        nodes.push_back(new Node<3>(0,  true,  0.0, 0.0, 0.0));
-        nodes.push_back(new Node<3>(1,  true,  1.0, 1.0, 0.0));
-        nodes.push_back(new Node<3>(2,  true,  1.0, 0.0, 1.0));
-        nodes.push_back(new Node<3>(3,  true,  0.0, 1.0, 1.0));
-        nodes.push_back(new Node<3>(4,  false, 0.5, 0.5, 0.5));
-        nodes.push_back(new Node<3>(5,  false, -1.0, -1.0, -1.0));
-        nodes.push_back(new Node<3>(6,  false,  2.0, -1.0, -1.0));
-        nodes.push_back(new Node<3>(7,  false,  2.0,  2.0, -1.0));
-        nodes.push_back(new Node<3>(8,  false, -1.0,  2.0, -1.0));
-        nodes.push_back(new Node<3>(9,  false, -1.0, -1.0,  2.0));
-        nodes.push_back(new Node<3>(10, false,  2.0, -1.0,  2.0));
-        nodes.push_back(new Node<3>(11, false,  2.0,  2.0,  2.0));
-        nodes.push_back(new Node<3>(12, false, -1.0,  2.0,  2.0));
+        nodes.push_back(new Node<3>(0,  false,  -0.5, -0.5, 0.0));
+        nodes.push_back(new Node<3>(1,  false,  0.5, 0.5, 0.0));
+        nodes.push_back(new Node<3>(2,  false,  0.5, -0.5, -0.5));
+        nodes.push_back(new Node<3>(3,  false,  -0.5, 0.5, 0.5));
+        nodes.push_back(new Node<3>(4,  false, 0.0, 0.0, 0.0));
+        
+        nodes.push_back(new Node<3>(5,  false, -1.0, -1.0, -1.0)); //corner
+        nodes.push_back(new Node<3>(6,  false, 0.0, -1.0, -1.0));
+        nodes.push_back(new Node<3>(7,  false,  1.0, -1.0, -1.0)); //corner
+        nodes.push_back(new Node<3>(8,  false,  1.0, 0.0, -1.0));
+        nodes.push_back(new Node<3>(9,  false,  1.0,  1.0, -1.0)); //corner
+        nodes.push_back(new Node<3>(10,  false,  0.0,  1.0, -1.0));
+        nodes.push_back(new Node<3>(11,  false, -1.0,  1.0, -1.0)); //corner
+        nodes.push_back(new Node<3>(12,  false, -1.0,  0.0, -1.0));
+        nodes.push_back(new Node<3>(13,  false, 0.0,  0.0, -1.0));
+
+        nodes.push_back(new Node<3>(14,  false, -1.0, -1.0, 0.0)); //corner
+        nodes.push_back(new Node<3>(15,  false, 0.0, -1.0, 0.0));
+        nodes.push_back(new Node<3>(16,  false,  1.0, -1.0, 0.0)); //corner
+        nodes.push_back(new Node<3>(17,  false,  1.0, 0.0, 0.0));
+        nodes.push_back(new Node<3>(18,  false,  1.0,  1.0, 0.0)); //corner
+        nodes.push_back(new Node<3>(19,  false,  0.0,  1.0, 0.0));
+        nodes.push_back(new Node<3>(20,  false, -1.0,  1.0, 0.0)); //corner
+        nodes.push_back(new Node<3>(21,  false, -1.0,  0.0, 0.0));
+
+        nodes.push_back(new Node<3>(22,  false, -1.0, -1.0, 1.0)); //corner
+        nodes.push_back(new Node<3>(23,  false, 0.0, -1.0, 1.0));
+        nodes.push_back(new Node<3>(24,  false,  1.0, -1.0, 1.0)); //corner 
+        nodes.push_back(new Node<3>(25,  false,  1.0, 0.0, 1.0));
+        nodes.push_back(new Node<3>(26,  false,  1.0,  1.0, 1.0)); //corner
+        nodes.push_back(new Node<3>(27,  false,  0.0,  1.0, 1.0));
+        nodes.push_back(new Node<3>(28,  false, -1.0,  1.0, 1.0)); //corner
+        nodes.push_back(new Node<3>(29,  false, -1.0,  0.0, 1.0));
+        nodes.push_back(new Node<3>(30,  false, 0.0,  0.0, 1.0));
 
         // Convert this to a NodesOnlyMesh
         MAKE_PTR(NodesOnlyMesh<3>, p_mesh);
@@ -158,13 +179,16 @@ public:
 
         // Set up cells
         std::vector<CellPtr> cells;
-        CellsGenerator<MammaryCellCycleModel, 3> cells_generator;
+        CellsGenerator<UniformCellCycleModel, 3> cells_generator;
         cells_generator.GenerateGivenLocationIndices(cells, location_indices);
 
         // Create cell population
         NodeBasedCellPopulationWithParticles<3> cell_population(*p_mesh, cells, location_indices);
 
-        // Create the different cell types: luminal stem cells, myoepithelial stem differentiated luminal cells and differentiated myoepithelial cell, (we do it this way to make sure they're tracked correctly in the simulation)
+        /* 
+        * Create the different cell types: luminal stem cells, myoepithelial stem differentiated luminal cells and 
+        * differentiated myoepithelial cell, (we do it this way to make sure they're tracked correctly in the simulation)
+        */
         boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
         boost::shared_ptr<AbstractCellProperty> p_myo(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>());
         boost::shared_ptr<AbstractCellProperty> p_luminal_stem(cell_population.GetCellPropertyRegistry()->Get<LuminalStemCellProperty>());
@@ -172,8 +196,8 @@ public:
         
         // Assign these properties to cells
         cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_luminal_stem);
         cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
 
@@ -196,16 +220,16 @@ public:
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(96.0); // Hours
 
+        // Add linear spring force which has different spring stiffness constants, depending on the pair of nodes (cells, particles) it is connecting.
         MAKE_PTR(LinearSpringForce<3>, p_linear_force);
-        p_linear_force->SetCutOffLength(3);
+        p_linear_force->SetCutOffLength(1.5);
+        p_linear_force->SetCellCellSpringStiffness(15.0);
+        p_linear_force->SetCellECMSpringStiffness(15.0);
+        p_linear_force->SetECMECMSpringStiffness(15.0);
         simulator.AddForce(p_linear_force);
 
-        // MAKE_PTR(EpithelialLayerLinearSpringForce<3>, p_linear_force);
-        // p_linear_force->SetCutOffLength(3);
-        // p_linear_force->SetCellCellSpringStiffness(cell_cell_spring_stiffness);
-        // p_linear_force->SetCellECMSpringStiffness(cell_ecm_spring_stiffness);
-        // p_linear_force->SetECMECMSpringStiffness(ecm_ecm_spring_stiffness);
-        // simulator.AddForce(p_linear_force);
+        MAKE_PTR(LumenExpansionForce<3>, p_force);
+        simulator.AddForce(p_force);
 
         // Run the simulation
         simulator.Solve();
