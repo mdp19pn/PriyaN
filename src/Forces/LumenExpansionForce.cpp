@@ -29,7 +29,12 @@ void LumenExpansionForce<DIM>::AddForceContribution(AbstractCellPopulation<DIM>&
     organoid_centre(0) = 0;
     organoid_centre(1) = 0;
     organoid_centre(2) = 0;
-
+    
+    unsigned num_nodes = rCellPopulation.GetNumNodes();
+    double dist_to_nb = 0.75;
+    double cell_radius = 0.5;
+    double lumen_radius = pow(num_nodes / 0.64, 1. / 3) * dist_to_nb / 2;
+    
     // Iterate over cell population
     for (typename AbstractCellPopulation<DIM>::Iterator cell_iter = rCellPopulation.Begin();
         cell_iter != rCellPopulation.End();
