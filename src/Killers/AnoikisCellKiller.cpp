@@ -56,7 +56,7 @@ void AnoikisCellKiller<DIM>::CheckAndLabelCellsForApoptosisOrDeath()
         c_vector<double, DIM> location;
         location = this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter);
 
-        if (location[DIM-1] > 0.75)
+        if (location[DIM-1] > 1.0)
         {
             CheckAndLabelSingleCellForApoptosis(*cell_iter);
         }

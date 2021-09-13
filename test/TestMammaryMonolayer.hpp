@@ -137,6 +137,22 @@ public:
         nodes.push_back(new Node<3>(9,  false,  1.25, 0.0, 0.0));
         nodes.push_back(new Node<3>(10,  false,  0.0, 1.0, 0.0));
         nodes.push_back(new Node<3>(11,  false,  0.0, 0.75, 1.0));
+        nodes.push_back(new Node<3>(12,  false,  -1.5, -0.5, 0.0)); //
+        nodes.push_back(new Node<3>(13,  false,  1.0, 0.75, 0.0));
+        nodes.push_back(new Node<3>(14,  false,  1.75, 0.75, 0.0));
+        nodes.push_back(new Node<3>(15,  false,  1.0, 0.0, 1.0));
+        nodes.push_back(new Node<3>(16,  false,  -1.5, -0.5, 1.0));
+        nodes.push_back(new Node<3>(17,  false,  -1.5, 0.5, 1.0));
+        nodes.push_back(new Node<3>(18,  false,  2.25, 0.0, 0.0));
+        nodes.push_back(new Node<3>(19,  false,  1.0, 1.0, 0.0));
+        nodes.push_back(new Node<3>(20,  false,  1.0, 0.75, 1.0));
+        nodes.push_back(new Node<3>(21,  false,  0.0, 1.75, 1.0));
+        nodes.push_back(new Node<3>(22,  false,  -1.5, -1.5, 0.0)); //
+        nodes.push_back(new Node<3>(23,  false,  1.0, 1.75, 0.0));
+        nodes.push_back(new Node<3>(24,  false,  1.75, 1.75, 0.0));
+        nodes.push_back(new Node<3>(25,  false,  1.0, 1.0, 1.0));
+        nodes.push_back(new Node<3>(26,  false,  -1.5, -1.5, 1.0));
+        nodes.push_back(new Node<3>(27,  false,  -1.5, 1.5, 1.0));
 
         NodesOnlyMesh<3> mesh;
         mesh.ConstructNodesWithoutMesh(nodes, 1.5);
@@ -179,8 +195,8 @@ public:
         // Use the mesh and cells to create a cell population
         NodeBasedCellPopulationWithVariableDamping<3> cell_population(mesh, cells);
 
-        cell_population.SetLuminalCellDampingConstant(3.0); 
-        cell_population.SetMyoepithelialCellDampingConstant(5.0);
+        cell_population.SetLuminalCellDampingConstant(1.0); 
+        cell_population.SetMyoepithelialCellDampingConstant(1.0);
 
         // Create the different cell types: luminal stem cells, myoepithelial stem differentiated luminal cells and differentiated myoepithelial cell, (we do it this way to make sure they're tracked correctly in the simulation)
         boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
@@ -201,6 +217,22 @@ public:
         cell_population.GetCellUsingLocationIndex(9)->AddCellProperty(p_luminal_stem);
         cell_population.GetCellUsingLocationIndex(10)->AddCellProperty(p_myo_stem);
         cell_population.GetCellUsingLocationIndex(11)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(12)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(13)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(14)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(15)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(16)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(17)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(18)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(19)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(20)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(21)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(22)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(23)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(24)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(25)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(26)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(27)->AddCellProperty(p_myo);
 
 
         // Set the division rule for our population to be the oriented division rule
@@ -216,11 +248,11 @@ public:
         // Add a cell writer so that cell velocities are written to file
         cell_population.AddCellWriter<CellVelocityWriter>();
 
-        // Add a population writer so that cell sorting (bilayer formation) is written to file
-        cell_population.AddPopulationWriter<BoundaryLengthWriter>();
+        // // Add a population writer so that cell sorting (bilayer formation) is written to file
+        // cell_population.AddPopulationWriter<BoundaryLengthWriter>();
 
-        // Construct a cell killer object
-        MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
+        // // Construct a cell killer object
+        // MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
 
         // Add a vertex mesh writer so that a rectangular coverslip is written to file
         std::vector<Node<3>*> coverslip;
@@ -261,8 +293,8 @@ public:
         MAKE_PTR_ARGS(PlaneBoundaryCondition<3>, p_bc, (&cell_population, point, normal));
         simulator.AddCellPopulationBoundaryCondition(p_bc);
 
-        // Pass the cell killer into the cell-based simulation
-        simulator.AddCellKiller(p_killer);
+        // // Pass the cell killer into the cell-based simulation
+        // simulator.AddCellKiller(p_killer);
 
         // Add and pass the modifier to the simulation
         MAKE_PTR(CellHeightTrackingModifier<3>, p_modifier);
