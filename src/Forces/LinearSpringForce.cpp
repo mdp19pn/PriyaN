@@ -117,9 +117,9 @@ c_vector<double, SPACE_DIM> LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::CalculateF
         assert(!std::isnan(ageB));
 
         /*
-            * If the cells are both newly divided, then the rest length of the spring
-            * connecting them grows linearly with time, until 1 hour after division.
-            */
+        * If the cells are both newly divided, then the rest length of the spring
+        * connecting them grows linearly with time, until 1 hour after division.
+        */
         if (ageA < mMeinekeSpringGrowthDuration && ageB < mMeinekeSpringGrowthDuration)
         {
             AbstractCentreBasedCellPopulation<ELEMENT_DIM,SPACE_DIM>* p_static_cast_cell_population = static_cast<AbstractCentreBasedCellPopulation<ELEMENT_DIM,SPACE_DIM>*>(&rCellPopulation);
@@ -139,9 +139,7 @@ c_vector<double, SPACE_DIM> LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::CalculateF
             }
         }
 
-        /*
-            * For apoptosis, progressively reduce the radius of the cell
-            */
+        // For apoptosis, progressively reduce the radius of the cell
         double a_rest_length = rest_length*0.5;
         double b_rest_length = a_rest_length;
 
@@ -153,9 +151,9 @@ c_vector<double, SPACE_DIM> LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::CalculateF
         }
 
         /*
-            * If either of the cells has begun apoptosis, then the length of the spring
-            * connecting them decreases linearly with time.
-            */
+        * If either of the cells has begun apoptosis, then the length of the spring
+        * connecting them decreases linearly with time.
+        */
         if (p_cell_A->HasApoptosisBegun())
         {
             double time_until_death_a = p_cell_A->GetTimeUntilDeath();

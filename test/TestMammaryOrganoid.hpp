@@ -29,7 +29,7 @@
 #include "WildTypeCellMutationState.hpp"
 #include "StemCellProliferativeType.hpp"
 #include "OrientedDivisionRule.hpp"
-#include "AnoikisCellKiller.hpp"
+#include "AnoikisCellKiller3D.hpp"
 #include "LinearSpringForce.hpp"
 #include "RepulsionForce.hpp"
 #include "CellECMAdhesionForce.hpp"
@@ -43,7 +43,7 @@ class TestMammaryOrganoid : public AbstractCellBasedTestSuite
 {
 public:
 
-    void xTestMammaryOrganoidMammaryCellCycleModel()
+    void TestMammaryOrganoidMammaryCellCycleModel()
     {
         EXIT_IF_PARALLEL;
         
@@ -116,6 +116,10 @@ public:
         p_linear_force->SetCutOffLength(3);
         simulator.AddForce(p_linear_force);
 
+        // Add an anoikis-based cell killer and pass it to the simulation
+		MAKE_PTR_ARGS(AnoikisCellKiller3D<3>, p_anoikis_killer, (&cell_population));
+		simulator.AddCellKiller(p_anoikis_killer);
+
         // Run the simulation
         simulator.Solve();
       
@@ -125,7 +129,8 @@ public:
             delete nodes[i];
         }
     }
-    void TestMammaryOrganoidWithParticles()
+
+    void xTestMammaryOrganoidWithParticles()
     {
         EXIT_IF_PARALLEL;
         
@@ -228,8 +233,9 @@ public:
         p_linear_force->SetECMECMSpringStiffness(15.0);
         simulator.AddForce(p_linear_force);
 
-        MAKE_PTR(LumenExpansionForce<3>, p_force);
-        simulator.AddForce(p_force);
+        // Add an anoikis-based cell killer and pass it to the simulation
+		MAKE_PTR_ARGS(AnoikisCellKiller3D<3>, p_anoikis_killer, (&cell_population));
+		simulator.AddCellKiller(p_anoikis_killer);
 
         // Run the simulation
         simulator.Solve();

@@ -234,7 +234,6 @@ public:
         cell_population.GetCellUsingLocationIndex(26)->AddCellProperty(p_luminal_stem);
         cell_population.GetCellUsingLocationIndex(27)->AddCellProperty(p_myo);
 
-
         // Set the division rule for our population to be the oriented division rule
         boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
         cell_population.SetCentreBasedDivisionRule(p_division_rule_to_set);
@@ -328,6 +327,22 @@ public:
         nodes.push_back(new Node<3>(9,  false,  1.25, 0.0, 0.0));
         nodes.push_back(new Node<3>(10,  false,  0.0, 1.0, 0.0));
         nodes.push_back(new Node<3>(11,  false,  0.0, 0.75, 1.0));
+        nodes.push_back(new Node<3>(12,  false,  -1.5, -0.5, 0.0)); //
+        nodes.push_back(new Node<3>(13,  false,  1.0, 0.75, 0.0));
+        nodes.push_back(new Node<3>(14,  false,  1.75, 0.75, 0.0));
+        nodes.push_back(new Node<3>(15,  false,  1.0, 0.0, 1.0));
+        nodes.push_back(new Node<3>(16,  false,  -1.5, -0.5, 1.0));
+        nodes.push_back(new Node<3>(17,  false,  -1.5, 0.5, 1.0));
+        nodes.push_back(new Node<3>(18,  false,  2.25, 0.0, 0.0));
+        nodes.push_back(new Node<3>(19,  false,  1.0, 1.0, 0.0));
+        nodes.push_back(new Node<3>(20,  false,  1.0, 0.75, 1.0));
+        nodes.push_back(new Node<3>(21,  false,  0.0, 1.75, 1.0));
+        nodes.push_back(new Node<3>(22,  false,  -1.5, -1.5, 0.0)); //
+        nodes.push_back(new Node<3>(23,  false,  1.0, 1.75, 0.0));
+        nodes.push_back(new Node<3>(24,  false,  1.75, 1.75, 0.0));
+        nodes.push_back(new Node<3>(25,  false,  1.0, 1.0, 1.0));
+        nodes.push_back(new Node<3>(26,  false,  -1.5, -1.5, 1.0));
+        nodes.push_back(new Node<3>(27,  false,  -1.5, 1.5, 1.0));
 
         NodesOnlyMesh<3> mesh;
         mesh.ConstructNodesWithoutMesh(nodes, 1.5);
@@ -362,6 +377,22 @@ public:
         cell_population.GetCellUsingLocationIndex(9)->AddCellProperty(p_luminal_stem);
         cell_population.GetCellUsingLocationIndex(10)->AddCellProperty(p_myo_stem);
         cell_population.GetCellUsingLocationIndex(11)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(12)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(13)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(14)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(15)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(16)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(17)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(18)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(19)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(20)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(21)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(22)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(23)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(24)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(25)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(26)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(27)->AddCellProperty(p_myo);
 
         // Set the division rule for our population to be the oriented division rule
         boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());

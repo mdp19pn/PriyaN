@@ -33,7 +33,7 @@ class TestMammaryMonolayer : public AbstractCellBasedTestSuite
 {
 public:
 
-    void TestMammaryMonolayer2D()
+    void xTestMammaryMonolayer2D()
     {
         EXIT_IF_PARALLEL;
         
