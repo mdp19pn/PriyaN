@@ -43,7 +43,7 @@ class TestMammaryOrganoid : public AbstractCellBasedTestSuite
 {
 public:
 
-    void TestMammaryOrganoidMammaryCellCycleModel()
+    void xTestMammaryOrganoidMammaryCellCycleModel()
     {
         EXIT_IF_PARALLEL;
         
@@ -116,9 +116,9 @@ public:
         p_linear_force->SetCutOffLength(3);
         simulator.AddForce(p_linear_force);
 
-        // Add an anoikis-based cell killer and pass it to the simulation
-		MAKE_PTR_ARGS(AnoikisCellKiller3D<3>, p_anoikis_killer, (&cell_population));
-		simulator.AddCellKiller(p_anoikis_killer);
+        // // Add an anoikis-based cell killer and pass it to the simulation
+		// MAKE_PTR_ARGS(AnoikisCellKiller3D<3>, p_anoikis_killer, (&cell_population));
+		// simulator.AddCellKiller(p_anoikis_killer);
 
         // Run the simulation
         simulator.Solve();
@@ -130,7 +130,7 @@ public:
         }
     }
 
-    void xTestMammaryOrganoidWithParticles()
+    void TestMammaryOrganoidWithParticles()
     {
         EXIT_IF_PARALLEL;
         
@@ -233,9 +233,13 @@ public:
         p_linear_force->SetECMECMSpringStiffness(15.0);
         simulator.AddForce(p_linear_force);
 
+        // Create a cell-ECM adhesion force law and pass it to the simulation
+        MAKE_PTR(CellECMAdhesionForce<3>, p_cell_ECM_force);
+        simulator.AddForce(p_cell_ECM_force);
+
         // Add an anoikis-based cell killer and pass it to the simulation
-		MAKE_PTR_ARGS(AnoikisCellKiller3D<3>, p_anoikis_killer, (&cell_population));
-		simulator.AddCellKiller(p_anoikis_killer);
+		// MAKE_PTR_ARGS(AnoikisCellKiller3D<3>, p_anoikis_killer, (&cell_population));
+		// simulator.AddCellKiller(p_anoikis_killer);
 
         // Run the simulation
         simulator.Solve();

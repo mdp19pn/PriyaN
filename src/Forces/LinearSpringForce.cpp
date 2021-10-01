@@ -60,6 +60,7 @@ c_vector<double, SPACE_DIM> LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::CalculateF
 
     // Get the unit vector parallel to the line joining the two nodes
     c_vector<double, SPACE_DIM> unit_difference;
+    
     /*
      * We use the mesh method GetVectorFromAtoB() to compute the direction of the
      * unit vector along the line joining the two nodes, rather than simply subtract
