@@ -1,5 +1,6 @@
 #include "CellECMAdhesionForce.hpp"
 #include "NodeBasedCellPopulation.hpp"
+#include "NodeBasedCellPopulationWithParticles.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
 #include "LuminalStemCellProperty.hpp"
@@ -21,9 +22,12 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
     AbstractCellPopulation<ELEMENT_DIM, SPACE_DIM>& rCellPopulation,
     bool isCloserThanRestLength)
 {
+    PRINT_VARIABLE("a")
     if (isCloserThanRestLength)
     {
+    PRINT_VARIABLE("b")
         return 1.0;
+    PRINT_VARIABLE("c")
     }
     else 
     {
@@ -41,7 +45,6 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
             bool cell_A_is_luminal_stem = p_cell_A->template HasCellProperty<LuminalStemCellProperty>();
             bool cell_A_is_myo_stem = p_cell_A->template HasCellProperty<MyoepithelialStemCellProperty>();
 
-        
             // Determine if cell expresses b1 and/or b4 integrin
             bool cell_A_b1_expn = true;
             bool cell_A_b4_expn = true;
@@ -73,6 +76,100 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
                 boost::shared_ptr<MyoepithelialStemCellProperty> p_prop_A = boost::static_pointer_cast<MyoepithelialStemCellProperty>(collection.GetProperty());
                 cell_A_b1_expn = p_prop_A->GetB1IntegrinExpression();
                 cell_A_b4_expn = p_prop_A->GetB4IntegrinExpression();
+            }
+            
+            // For heterotypic interactions, scale the spring constant by mHeterotypicSpringConstantMultiplier
+            if (cell_A_is_luminal && p_node_b->IsParticle())
+            {
+                if (cell_A_b1_expn && cell_A_b4_expn)
+                {
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else if (cell_A_b1_expn != cell_A_b4_expn)
+                {
+                    return 1.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else
+                {
+                    return 0.5;
+                }
+            }
+            else if (cell_A_is_myoepithelial && p_node_b->IsParticle())
+            {
+                if (cell_A_b1_expn && cell_A_b4_expn)
+                {
+                    return 4.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else if (cell_A_b1_expn != cell_A_b4_expn)
+                {
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else
+                {
+                    return 1.0;
+                }
+            }
+            else if (cell_A_is_luminal_stem && p_node_b->IsParticle())
+            {
+                if (cell_A_b1_expn && cell_A_b4_expn)
+                {
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else if (cell_A_b1_expn != cell_A_b4_expn)
+                {
+                    return 1.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else
+                {
+                    return 0.5;
+                }
+            }
+            else if (cell_A_is_myo_stem && p_node_b->IsParticle())
+            {
+                if (cell_A_b1_expn && cell_A_b4_expn)
+                {
+                    return 4.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else if (cell_A_b1_expn != cell_A_b4_expn)
+                {
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else
+                {
+                    return 1.0;
+                }
+            }
+            else
+            {
+                // For homotypic interactions between cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
+                if (cell_A_is_luminal)
+                {
+                    return mHomotypicLabelledSpringConstantMultiplier;
+                }
+                else if (cell_A_is_myoepithelial)
+                {
+                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
+                    return mHomotypicLabelledSpringConstantMultiplier;
+                }
+                else if (cell_A_is_luminal_stem)
+                {
+                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
+                    return mHomotypicLabelledSpringConstantMultiplier;
+                }
+                else if (cell_A_is_myo_stem)
+                {
+                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
+                    return mHomotypicLabelledSpringConstantMultiplier;
+                }
+                else if (p_node_a->IsParticle())
+                {
+                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
+                    return mHomotypicLabelledSpringConstantMultiplier;
+                }
+                else
+                {
+                    return 1.0;
+                }
             }
         }
         else // node is particle
@@ -121,102 +218,101 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
                 cell_B_b1_expn = p_prop_B->GetB1IntegrinExpression();
                 cell_B_b4_expn = p_prop_B->GetB4IntegrinExpression();
             }
+
+            // For heterotypic interactions, scale the spring constant by mHeterotypicSpringConstantMultiplier
+            if (cell_B_is_luminal && p_node_a->IsParticle())
+            {
+                if (cell_B_b1_expn && cell_B_b4_expn)
+                {
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else if (cell_B_b1_expn != cell_B_b4_expn)
+                {
+                    return 1.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else
+                {
+                    return 0.5;
+                }
+            }
+            else if (cell_B_is_myoepithelial && p_node_a->IsParticle())
+            {
+                if (cell_B_b1_expn && cell_B_b4_expn)
+                {
+                    return 4.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else if (cell_B_b1_expn != cell_B_b4_expn)
+                {
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else
+                {
+                    return 1.0;
+                }
+            }
+            else if (cell_B_is_luminal_stem && p_node_a->IsParticle())
+            {
+                if (cell_B_b1_expn && cell_B_b4_expn)
+                {
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else if (cell_B_b1_expn != cell_B_b4_expn)
+                {
+                    return 1.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else
+                {
+                    return 0.5;
+                }
+            }
+            else if (cell_B_is_myo_stem && p_node_a->IsParticle())
+            {
+                if (cell_B_b1_expn && cell_B_b4_expn)
+                {
+                    return 4.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else if (cell_B_b1_expn != cell_B_b4_expn)
+                {
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                }
+                else
+                {
+                    return 1.0;
+                }
+            }
+            else
+            {
+                // For homotypic interactions between cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
+                if (cell_B_is_luminal)
+                {
+                    return mHomotypicLabelledSpringConstantMultiplier;
+                }
+                else if (cell_B_is_myoepithelial)
+                {
+                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
+                    return mHomotypicLabelledSpringConstantMultiplier;
+                }
+                else if (cell_B_is_luminal_stem)
+                {
+                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
+                    return mHomotypicLabelledSpringConstantMultiplier;
+                }
+                else if (cell_B_is_myo_stem)
+                {
+                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
+                    return mHomotypicLabelledSpringConstantMultiplier;
+                }
+                else if (p_node_b->IsParticle())
+                {
+                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
+                    return mHomotypicLabelledSpringConstantMultiplier;
+                }
+            }
         }
         else // node is particle
         {
             ECM_node.push_back(nodeBGlobalIndex);
         }
-
-        // For heterotypic interactions, scale the spring constant by mHeterotypicSpringConstantMultiplier
-        if (cell_A_is_luminal && p_node_b->IsParticle())
-        {
-            if (cell_A_b1_expn && cell_A_b4_expn)
-            {
-                return 2.0*mHeterotypicSpringConstantMultiplier;
-            }
-            else if (cell_A_b1_expn != cell_A_b4_expn)
-            {
-                return 1.0*mHeterotypicSpringConstantMultiplier;
-            }
-            else
-            {
-                return 0.5;
-            }
-        }
-        else if (cell_A_is_myoepithelial && p_node_b->IsParticle())
-        {
-            if (cell_A_b1_expn && cell_A_b4_expn)
-            {
-                return 4.0*mHeterotypicSpringConstantMultiplier;
-            }
-            else if (cell_A_b1_expn != cell_A_b4_expn)
-            {
-                return 2.0*mHeterotypicSpringConstantMultiplier;
-            }
-            else
-            {
-                return 1.0;
-            }
-        }
-        else if (cell_A_is_luminal_stem && p_node_b->IsParticle())
-        {
-            if (cell_A_b1_expn && cell_A_b4_expn)
-            {
-                return 2.0*mHeterotypicSpringConstantMultiplier;
-            }
-            else if (cell_A_b1_expn != cell_A_b4_expn)
-            {
-                return 1.0*mHeterotypicSpringConstantMultiplier;
-            }
-            else
-            {
-                return 0.5;
-            }
-        }
-        else if (cell_A_is_myo_stem && p_node_b->IsParticle())
-        {
-            if (cell_A_b1_expn && cell_A_b4_expn)
-            {
-                return 4.0*mHeterotypicSpringConstantMultiplier;
-            }
-            else if (cell_A_b1_expn != cell_A_b4_expn)
-            {
-                return 2.0*mHeterotypicSpringConstantMultiplier;
-            }
-            else
-            {
-                return 1.0;
-            }
-        }
-        else
-        {
-            // For homotypic interactions between cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
-            if (cell_A_is_luminal)
-            {
-                return mHomotypicLabelledSpringConstantMultiplier;
-            }
-            else if (cell_A_is_myoepithelial)
-            {
-                // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                return mHomotypicLabelledSpringConstantMultiplier;
-            }
-            else if (cell_A_is_luminal_stem)
-            {
-                // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                return mHomotypicLabelledSpringConstantMultiplier;
-            }
-            else if (cell_A_is_myo_stem)
-            {
-                // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                return mHomotypicLabelledSpringConstantMultiplier;
-            }
-            else if (p_node_a->IsParticle())
-            {
-                // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                return mHomotypicLabelledSpringConstantMultiplier;
-            }
-        }
-        return 1.0;
     }
 }
 

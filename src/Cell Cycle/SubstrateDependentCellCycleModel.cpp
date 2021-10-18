@@ -72,7 +72,7 @@ void SubstrateDependentCellCycleModel::UpdateCellCyclePhase()
     double time_since_birth = GetAge();
     assert(time_since_birth >= 0);
 
-    if (mpCell->HasCellProperty<LuminalCellProperty>()) // luminal cell is DifferentiatedCellProliferativeType
+    if (mpCell->HasCellProperty<LuminalCellProperty>()) // luminal cell is DifferentiatedCellProliferativeType (mpCell->GetCellProliferativeType()->IsType<DifferentiatedCellProliferativeType>())
     {
         mCurrentCellCyclePhase = G_ZERO_PHASE;
     }

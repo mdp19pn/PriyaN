@@ -206,10 +206,6 @@ public:
         cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_luminal_stem);
         cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
 
-        // Set the division rule for our population to be the oriented division rule
-        boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
-        cell_population.SetCentreBasedDivisionRule(p_division_rule_to_set);
-
         // Add a cell writer so that mammary cell types are written to file
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
 
@@ -236,10 +232,6 @@ public:
         // Create a cell-ECM adhesion force law and pass it to the simulation
         MAKE_PTR(CellECMAdhesionForce<3>, p_cell_ECM_force);
         simulator.AddForce(p_cell_ECM_force);
-
-        // Add an anoikis-based cell killer and pass it to the simulation
-		// MAKE_PTR_ARGS(AnoikisCellKiller3D<3>, p_anoikis_killer, (&cell_population));
-		// simulator.AddCellKiller(p_anoikis_killer);
 
         // Run the simulation
         simulator.Solve();
