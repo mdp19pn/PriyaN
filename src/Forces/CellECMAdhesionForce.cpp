@@ -22,12 +22,12 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
     AbstractCellPopulation<ELEMENT_DIM, SPACE_DIM>& rCellPopulation,
     bool isCloserThanRestLength)
 {
-    PRINT_VARIABLE("a")
+    TRACE("a")
     if (isCloserThanRestLength)
     {
-    PRINT_VARIABLE("b")
+    TRACE("b")
         return 1.0;
-    PRINT_VARIABLE("c")
+    TRACE("c")
     }
     else 
     {
