@@ -33,7 +33,8 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
     {
         Node<SPACE_DIM>* p_node_a = rCellPopulation.GetNode(nodeAGlobalIndex);
         Node<SPACE_DIM>* p_node_b = rCellPopulation.GetNode(nodeBGlobalIndex);
-
+       
+        // Create a vector to record the nodes corresponding only to particles (ECM Nodes)
         std::vector<unsigned> ECM_node;
 
         if (!p_node_a->IsParticle())
@@ -175,6 +176,7 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
         else // node is particle
         {
             ECM_node.push_back(nodeAGlobalIndex);
+            return 1.0;
         }
 
         if (!p_node_b->IsParticle())
@@ -312,7 +314,9 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
         else // node is particle
         {
             ECM_node.push_back(nodeBGlobalIndex);
+            return 1.0;
         }
+       return 1.0;
     }
 }
 
