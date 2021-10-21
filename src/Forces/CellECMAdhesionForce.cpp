@@ -22,21 +22,19 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
     AbstractCellPopulation<ELEMENT_DIM, SPACE_DIM>& rCellPopulation,
     bool isCloserThanRestLength)
 {
-    TRACE("a")
     if (isCloserThanRestLength)
     {
-    TRACE("b")
         return 1.0;
-    TRACE("c")
     }
+MARK;
     else 
     {
         Node<SPACE_DIM>* p_node_a = rCellPopulation.GetNode(nodeAGlobalIndex);
         Node<SPACE_DIM>* p_node_b = rCellPopulation.GetNode(nodeBGlobalIndex);
-       
+MARK;
         // Create a vector to record the nodes corresponding only to particles (ECM Nodes)
         std::vector<unsigned> ECM_node;
-
+MARK;
         if (!p_node_a->IsParticle())
         {
             // Determine if cell A is luminal (if not, assume it is myoepithelial)
@@ -49,7 +47,7 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
             // Determine if cell expresses b1 and/or b4 integrin
             bool cell_A_b1_expn = true;
             bool cell_A_b4_expn = true;
-
+MARK;
             if (cell_A_is_luminal)
             {
                 CellPropertyCollection collection = p_cell_A->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
@@ -140,6 +138,7 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
                     return 1.0;
                 }
             }
+MARK;
             else
             {
                 // For homotypic interactions between cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
@@ -171,14 +170,16 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
                 {
                     return 1.0;
                 }
+MARK;
             }
         }
         else // node is particle
         {
             ECM_node.push_back(nodeAGlobalIndex);
             return 1.0;
+MARK;
         }
-
+MARK;
         if (!p_node_b->IsParticle())
         {
             // Determine if cell B is luminal (if not, assume it is myoepithelial)
@@ -191,7 +192,7 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
             // Determine if cell expresses b1 and/or b4 integrin
             bool cell_B_b1_expn = true;
             bool cell_B_b4_expn = true;
-
+MARK;
             if (cell_B_is_luminal)
             {
                 CellPropertyCollection collection = p_cell_B->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
@@ -220,7 +221,7 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
                 cell_B_b1_expn = p_prop_B->GetB1IntegrinExpression();
                 cell_B_b4_expn = p_prop_B->GetB4IntegrinExpression();
             }
-
+MARK;
             // For heterotypic interactions, scale the spring constant by mHeterotypicSpringConstantMultiplier
             if (cell_B_is_luminal && p_node_a->IsParticle())
             {
@@ -282,6 +283,7 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
                     return 1.0;
                 }
             }
+MARK;
             else
             {
                 // For homotypic interactions between cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
@@ -309,15 +311,19 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
                     // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
                     return mHomotypicLabelledSpringConstantMultiplier;
                 }
+MARK;
             }
         }
+MARK;
         else // node is particle
         {
             ECM_node.push_back(nodeBGlobalIndex);
             return 1.0;
+MARK; 
         }
        return 1.0;
     }
+MARK;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
