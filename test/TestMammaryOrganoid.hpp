@@ -241,6 +241,7 @@ public:
         {
             delete nodes[i];
         }
+        MARK;
     }
 };
 #endif /* TESTMAMMARYORGANOID_HPP_ */
