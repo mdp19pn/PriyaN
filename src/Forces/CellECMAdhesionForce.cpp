@@ -26,15 +26,14 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
     {
         return 1.0;
     }
-MARK;
     else 
     {
         Node<SPACE_DIM>* p_node_a = rCellPopulation.GetNode(nodeAGlobalIndex);
         Node<SPACE_DIM>* p_node_b = rCellPopulation.GetNode(nodeBGlobalIndex);
-MARK;
+TRACE("a")
         // Create a vector to record the nodes corresponding only to particles (ECM Nodes)
         std::vector<unsigned> ECM_node;
-MARK;
+
         if (!p_node_a->IsParticle())
         {
             // Determine if cell A is luminal (if not, assume it is myoepithelial)
@@ -47,7 +46,7 @@ MARK;
             // Determine if cell expresses b1 and/or b4 integrin
             bool cell_A_b1_expn = true;
             bool cell_A_b4_expn = true;
-MARK;
+TRACE("b")
             if (cell_A_is_luminal)
             {
                 CellPropertyCollection collection = p_cell_A->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
@@ -76,7 +75,7 @@ MARK;
                 cell_A_b1_expn = p_prop_A->GetB1IntegrinExpression();
                 cell_A_b4_expn = p_prop_A->GetB4IntegrinExpression();
             }
-            
+TRACE("c")            
             // For heterotypic interactions, scale the spring constant by mHeterotypicSpringConstantMultiplier
             if (cell_A_is_luminal && p_node_b->IsParticle())
             {
@@ -138,7 +137,6 @@ MARK;
                     return 1.0;
                 }
             }
-MARK;
             else
             {
                 // For homotypic interactions between cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
@@ -170,16 +168,14 @@ MARK;
                 {
                     return 1.0;
                 }
-MARK;
             }
         }
         else // node is particle
         {
             ECM_node.push_back(nodeAGlobalIndex);
             return 1.0;
-MARK;
         }
-MARK;
+TRACE("d")
         if (!p_node_b->IsParticle())
         {
             // Determine if cell B is luminal (if not, assume it is myoepithelial)
@@ -192,7 +188,7 @@ MARK;
             // Determine if cell expresses b1 and/or b4 integrin
             bool cell_B_b1_expn = true;
             bool cell_B_b4_expn = true;
-MARK;
+TRACE("e")
             if (cell_B_is_luminal)
             {
                 CellPropertyCollection collection = p_cell_B->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
@@ -221,7 +217,6 @@ MARK;
                 cell_B_b1_expn = p_prop_B->GetB1IntegrinExpression();
                 cell_B_b4_expn = p_prop_B->GetB4IntegrinExpression();
             }
-MARK;
             // For heterotypic interactions, scale the spring constant by mHeterotypicSpringConstantMultiplier
             if (cell_B_is_luminal && p_node_a->IsParticle())
             {
@@ -283,7 +278,6 @@ MARK;
                     return 1.0;
                 }
             }
-MARK;
             else
             {
                 // For homotypic interactions between cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
@@ -311,19 +305,16 @@ MARK;
                     // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
                     return mHomotypicLabelledSpringConstantMultiplier;
                 }
-MARK;
             }
         }
-MARK;
         else // node is particle
         {
             ECM_node.push_back(nodeBGlobalIndex);
             return 1.0;
-MARK; 
         }
-       return 1.0;
+TRACE("f")
+        return 1.0;
     }
-MARK;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
@@ -357,7 +348,6 @@ void CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::OutputForceParameters(out_str
 {
     *rParamsFile << "\t\t\t<HomotypicLabelledSpringConstantMultiplier>" << mHomotypicLabelledSpringConstantMultiplier << "</HomotypicLabelledSpringConstantMultiplier>\n";
     *rParamsFile << "\t\t\t<HeterotypicSpringConstantMultiplier>" << mHeterotypicSpringConstantMultiplier << "</HeterotypicSpringConstantMultiplier>\n";
-
     // Call direct parent class
     GeneralisedLinearSpringForce<ELEMENT_DIM, SPACE_DIM>::OutputForceParameters(rParamsFile);
 }
