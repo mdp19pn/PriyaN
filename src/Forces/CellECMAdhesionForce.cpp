@@ -24,6 +24,7 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
 {
     if (isCloserThanRestLength)
     {
+TRACE("z")
         return 1.0;
     }
     else 
