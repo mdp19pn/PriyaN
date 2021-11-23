@@ -80,6 +80,8 @@ public:
                                                       AbstractCellPopulation<ELEMENT_DIM,SPACE_DIM>& rCellPopulation,
                                                       bool isCloserThanRestLength);
 
+    virtual void AddForceContribution(AbstractCellPopulation<ELEMENT_DIM, SPACE_DIM>& rCellPopulation);
+
     /**
      * @return #mHomotypicLabelledSpringConstantMultiplier.
      */

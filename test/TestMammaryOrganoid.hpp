@@ -133,7 +133,7 @@ public:
     void TestMammaryOrganoidWithParticles()
     {
         EXIT_IF_PARALLEL;
-        MARK;
+        
         // Create a simple 3D mesh with some particles
         std::vector<Node<3>*> nodes;
         nodes.push_back(new Node<3>(0,  false, -0.5, -0.5, 0.0));
@@ -170,26 +170,27 @@ public:
         nodes.push_back(new Node<3>(28,  false, -1.0,  1.0, 1.0)); //corner
         nodes.push_back(new Node<3>(29,  false, -1.0,  0.0, 1.0));
         nodes.push_back(new Node<3>(30,  false, 0.0,  0.0, 1.0));
-        MARK;
+        
         // Convert this to a NodesOnlyMesh
         MAKE_PTR(NodesOnlyMesh<3>, p_mesh);
         p_mesh->ConstructNodesWithoutMesh(nodes, 1.5);
-        MARK;
+        //p_mesh->Scale(4.0, 4.0, 4.0);
+        
         // Specify the node indices corresponding to cells (the others correspond to particles)
         std::vector<unsigned> location_indices;
         for (unsigned index=0; index<5; index++)
         {
             location_indices.push_back(index);
         }
-        MARK;
+        
         // Set up cells
         std::vector<CellPtr> cells;
         CellsGenerator<UniformCellCycleModel, 3> cells_generator;
         cells_generator.GenerateGivenLocationIndices(cells, location_indices);
-        MARK;
+        
         // Create cell population
         NodeBasedCellPopulationWithParticles<3> cell_population(*p_mesh, cells, location_indices);
-        MARK;
+        
         /* 
         * Create the different cell types: luminal stem cells, myoepithelial stem differentiated luminal cells and 
         * differentiated myoepithelial cell, (we do it this way to make sure they're tracked correctly in the simulation)
@@ -198,29 +199,29 @@ public:
         boost::shared_ptr<AbstractCellProperty> p_myo(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>());
         boost::shared_ptr<AbstractCellProperty> p_luminal_stem(cell_population.GetCellPropertyRegistry()->Get<LuminalStemCellProperty>());
         boost::shared_ptr<AbstractCellProperty> p_myo_stem(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialStemCellProperty>());
-        MARK;
+        
         // Assign these properties to cells
         cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_myo_stem);
         cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_luminal_stem);
         cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
-        MARK;
+        
         // Add a cell writer so that mammary cell types are written to file
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
-        MARK;
+        
         // Add a cell writer so that the cell location is written to file
         cell_population.AddCellWriter<CellLocationWriter>();
-        MARK;
+        
         // Add a cell writer so that cell velocities are written to file
         cell_population.AddCellWriter<CellVelocityWriter>();
-        MARK;
+        
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
         simulator.SetOutputDirectory("TestMammaryOrganoidWithParticles");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(96.0); // Hours
-        MARK;
+        
         // Add linear spring force which has different spring stiffness constants, depending on the pair of nodes (cells, particles) it is connecting.
         MAKE_PTR(LinearSpringForce<3>, p_linear_force);
         p_linear_force->SetCutOffLength(1.5);
@@ -228,20 +229,20 @@ public:
         p_linear_force->SetCellECMSpringStiffness(15.0);
         p_linear_force->SetECMECMSpringStiffness(15.0);
         simulator.AddForce(p_linear_force);
-        MARK;
-        // Create a cell-ECM adhesion force law and pass it to the simulation
-        MAKE_PTR(CellECMAdhesionForce<3>, p_cell_ECM_force);
-        simulator.AddForce(p_cell_ECM_force);
-        MARK;
+        
+        // // Create a cell-ECM adhesion force law and pass it to the simulation
+        // MAKE_PTR(CellECMAdhesionForce<3>, p_cell_ECM_force);
+        // simulator.AddForce(p_cell_ECM_force);
+        
         // Run the simulation
         simulator.Solve();
-        MARK;
+        
         // Since we created pointers to nodes, we delete them here to avoid memory leaks
         for (unsigned i=0; i<nodes.size(); i++)
         {
             delete nodes[i];
         }
-        MARK;
+        
     }
 };
 #endif /* TESTMAMMARYORGANOID_HPP_ */

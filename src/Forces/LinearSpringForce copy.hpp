@@ -86,9 +86,6 @@ protected:
      */
     double mMeinekeSpringGrowthDuration;
 
-    double mHomotypicLabelledSpringConstantMultiplier;
-    double mHeterotypicSpringConstantMultiplier;
-
 public:
 
     /**
@@ -134,31 +131,6 @@ public:
     c_vector<double, SPACE_DIM> CalculateForceBetweenNodes(unsigned nodeAGlobalIndex,
                                                      unsigned nodeBGlobalIndex,
                                                      AbstractCellPopulation<ELEMENT_DIM,SPACE_DIM>& rCellPopulation);
-
-     /**
-      * @return #mHomotypicLabelledSpringConstantMultiplier.
-      */
-     double GetHomotypicLabelledSpringConstantMultiplier();
-
-     /**
-      * Set mHomotypicLabelledSpringConstantMultiplier.
-      *
-      * @param labelledSpringConstantMultiplier the new value of mHomotypicLabelledSpringConstantMultiplier
-      */
-     void SetHomotypicLabelledSpringConstantMultiplier(double labelledSpringConstantMultiplier);
-
-     /**
-      * @return #mHeterotypicSpringConstantMultiplier.
-      */
-     double GetHeterotypicSpringConstantMultiplier();
-
-     /**
-      * Set mHeterotypicSpringConstantMultiplier.
-      *
-      * @param heterotypicSpringConstantMultiplier the new value of mHeterotypicSpringConstantMultiplier
-      */
-     void SetHeterotypicSpringConstantMultiplier(double heterotypicSpringConstantMultiplier);
-
     /**
      * @return mCellCellSpringStiffness
      */
