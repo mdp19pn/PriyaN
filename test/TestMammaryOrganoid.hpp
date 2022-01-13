@@ -142,39 +142,24 @@ public:
         nodes.push_back(new Node<3>(3,  false, -0.5, 0.5, 0.5));
         nodes.push_back(new Node<3>(4,  false, 0.0, 0.0, 0.0));
         
-        nodes.push_back(new Node<3>(5,  false, -1.0, -1.0, -1.0)); //corner
-        nodes.push_back(new Node<3>(6,  false, 0.0, -1.0, -1.0));
-        nodes.push_back(new Node<3>(7,  false, 1.0, -1.0, -1.0)); //corner
-        nodes.push_back(new Node<3>(8,  false, 1.0, 0.0, -1.0));
-        nodes.push_back(new Node<3>(9,  false, 1.0,  1.0, -1.0)); //corner
-        nodes.push_back(new Node<3>(10,  false, 0.0,  1.0, -1.0));
-        nodes.push_back(new Node<3>(11,  false, -1.0,  1.0, -1.0)); //corner
-        nodes.push_back(new Node<3>(12,  false, -1.0,  0.0, -1.0));
-        nodes.push_back(new Node<3>(13,  false, 0.0,  0.0, -1.0));
-
-        nodes.push_back(new Node<3>(14,  false, -1.0, -1.0, 0.0)); //corner
-        nodes.push_back(new Node<3>(15,  false, 0.0, -1.0, 0.0));
-        nodes.push_back(new Node<3>(16,  false, 1.0, -1.0, 0.0)); //corner
-        nodes.push_back(new Node<3>(17,  false, 1.0, 0.0, 0.0));
-        nodes.push_back(new Node<3>(18,  false, 1.0,  1.0, 0.0)); //corner
-        nodes.push_back(new Node<3>(19,  false, 0.0,  1.0, 0.0));
-        nodes.push_back(new Node<3>(20,  false, -1.0,  1.0, 0.0)); //corner
-        nodes.push_back(new Node<3>(21,  false, -1.0,  0.0, 0.0));
-
-        nodes.push_back(new Node<3>(22,  false, -1.0, -1.0, 1.0)); //corner
-        nodes.push_back(new Node<3>(23,  false, 0.0, -1.0, 1.0));
-        nodes.push_back(new Node<3>(24,  false, 1.0, -1.0, 1.0)); //corner 
-        nodes.push_back(new Node<3>(25,  false, 1.0, 0.0, 1.0));
-        nodes.push_back(new Node<3>(26,  false, 1.0,  1.0, 1.0)); //corner
-        nodes.push_back(new Node<3>(27,  false, 0.0,  1.0, 1.0));
-        nodes.push_back(new Node<3>(28,  false, -1.0,  1.0, 1.0)); //corner
-        nodes.push_back(new Node<3>(29,  false, -1.0,  0.0, 1.0));
-        nodes.push_back(new Node<3>(30,  false, 0.0,  0.0, 1.0));
+        for (unsigned i=0; i<50; i++) 
+        {
+            for (unsigned j=0; j<50; j++) 
+            {
+                for (unsigned k=0; k<50; k++)
+                {
+                    double spacing = 1.0; 
+                    double x = spacing*i; 
+                    double y = spacing*j; 
+                    double z = spacing*k;
+                    Node (x, y, z);
+                }
+            }
+        }
         
         // Convert this to a NodesOnlyMesh
         MAKE_PTR(NodesOnlyMesh<3>, p_mesh);
         p_mesh->ConstructNodesWithoutMesh(nodes, 1.5);
-        //p_mesh->Scale(4.0, 4.0, 4.0);
         
         // Specify the node indices corresponding to cells (the others correspond to particles)
         std::vector<unsigned> location_indices;
@@ -227,7 +212,7 @@ public:
         p_linear_force->SetCutOffLength(1.5);
         p_linear_force->SetCellCellSpringStiffness(15.0);
         p_linear_force->SetCellECMSpringStiffness(15.0);
-        p_linear_force->SetECMECMSpringStiffness(15.0);
+        p_linear_force->SetECMECMSpringStiffness(30.0);
         simulator.AddForce(p_linear_force);
         
         // // Create a cell-ECM adhesion force law and pass it to the simulation
@@ -242,7 +227,6 @@ public:
         {
             delete nodes[i];
         }
-        
     }
 };
 #endif /* TESTMAMMARYORGANOID_HPP_ */

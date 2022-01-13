@@ -1,5 +1,5 @@
-#ifndef LINEARSPRINGFORCE_HPP_
-#define LINEARSPRINGFORCE_HPP_
+#ifndef LINEARSPRINGFORCECOPY_HPP_
+#define LINEARSPRINGFORCECOPY_HPP_
 
 #include "AbstractTwoBodyInteractionForce.hpp"
 
@@ -27,7 +27,7 @@
  * Time is in hours.
  */
 template<unsigned  ELEMENT_DIM, unsigned SPACE_DIM=ELEMENT_DIM>
-class LinearSpringForce : public AbstractTwoBodyInteractionForce<ELEMENT_DIM, SPACE_DIM>
+class LinearSpringForceCopy : public AbstractTwoBodyInteractionForce<ELEMENT_DIM, SPACE_DIM>
 {
     friend class TestForces;
 
@@ -91,12 +91,12 @@ public:
     /**
      * Constructor.
      */
-    LinearSpringForce();
+    LinearSpringForceCopy();
 
     /**
      * Destructor.
      */
-    virtual ~LinearSpringForce();
+    virtual ~LinearSpringForceCopy();
 
     /**
      * Return a multiplication factor for the spring constant, which
@@ -200,6 +200,6 @@ public:
 };
 
 #include "SerializationExportWrapper.hpp"
-EXPORT_TEMPLATE_CLASS_ALL_DIMS(LinearSpringForce)
+EXPORT_TEMPLATE_CLASS_ALL_DIMS(LinearSpringForceCopy)
 
-#endif /*LINEARSPRINGFORCE_HPP_*/
+#endif /*LINEARSPRINGFORCECOPY_HPP_*/

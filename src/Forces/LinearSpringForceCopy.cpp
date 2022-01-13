@@ -1,9 +1,9 @@
-#include "LinearSpringForce.hpp"
+#include "LinearSpringForceCopy.hpp"
 #include "NodeBasedCellPopulationWithParticles.hpp"
 #include "Debug.hpp"
  
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::LinearSpringForce()
+LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::LinearSpringForceCopy()
    : AbstractTwoBodyInteractionForce<ELEMENT_DIM,SPACE_DIM>(),
      mCellCellSpringStiffness(15.0),
      mCellECMSpringStiffness(15.0),
@@ -20,7 +20,7 @@ LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::LinearSpringForce()
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplicationFactor(unsigned nodeAGlobalIndex,
+double LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplicationFactor(unsigned nodeAGlobalIndex,
                                                                                      unsigned nodeBGlobalIndex,
                                                                                      AbstractCellPopulation<ELEMENT_DIM,SPACE_DIM>& rCellPopulation,
                                                                                      bool isCloserThanRestLength)
@@ -29,12 +29,12 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::~LinearSpringForce()
+LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::~LinearSpringForceCopy()
 {
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-c_vector<double, SPACE_DIM> LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::CalculateForceBetweenNodes(unsigned nodeAGlobalIndex,
+c_vector<double, SPACE_DIM> LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::CalculateForceBetweenNodes(unsigned nodeAGlobalIndex,
                                                                                     unsigned nodeBGlobalIndex,
                                                                                     AbstractCellPopulation<ELEMENT_DIM,SPACE_DIM>& rCellPopulation)
 {
@@ -263,58 +263,58 @@ c_vector<double, SPACE_DIM> LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::CalculateF
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::GetCellCellSpringStiffness()
+double LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::GetCellCellSpringStiffness()
 {
     return mCellCellSpringStiffness;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::GetCellECMSpringStiffness()
+double LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::GetCellECMSpringStiffness()
 {
     return mCellECMSpringStiffness;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::GetECMECMSpringStiffness()
+double LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::GetECMECMSpringStiffness()
 {
     return mECMECMSpringStiffness;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::GetMeinekeDivisionRestingSpringLength()
+double LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::GetMeinekeDivisionRestingSpringLength()
 {
     return mMeinekeDivisionRestingSpringLength;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::GetMeinekeSpringGrowthDuration()
+double LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::GetMeinekeSpringGrowthDuration()
 {
     return mMeinekeSpringGrowthDuration;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::SetCellCellSpringStiffness(double cellcellSpringStiffness)
+void LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::SetCellCellSpringStiffness(double cellcellSpringStiffness)
 {
     assert(springStiffness > 0.0);
     mCellCellSpringStiffness = cellcellSpringStiffness;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::SetCellECMSpringStiffness(double cellECMSpringStiffness)
+void LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::SetCellECMSpringStiffness(double cellECMSpringStiffness)
 {
     assert(springStiffness > 0.0);
     mCellECMSpringStiffness = cellECMSpringStiffness;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::SetECMECMSpringStiffness(double eCMECMSpringStiffness)
+void LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::SetECMECMSpringStiffness(double eCMECMSpringStiffness)
 {
     assert(springStiffness > 0.0);
     mECMECMSpringStiffness = eCMECMSpringStiffness;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::SetMeinekeDivisionRestingSpringLength(double divisionRestingSpringLength)
+void LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::SetMeinekeDivisionRestingSpringLength(double divisionRestingSpringLength)
 {
     assert(divisionRestingSpringLength <= 1.0);
     assert(divisionRestingSpringLength >= 0.0);
@@ -323,7 +323,7 @@ void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::SetMeinekeDivisionRestingSpringLe
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::SetMeinekeSpringGrowthDuration(double springGrowthDuration)
+void LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::SetMeinekeSpringGrowthDuration(double springGrowthDuration)
 {
     assert(springGrowthDuration >= 0.0);
 
@@ -331,7 +331,7 @@ void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::SetMeinekeSpringGrowthDuration(do
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::OutputForceParameters(out_stream& rParamsFile)
+void LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::OutputForceParameters(out_stream& rParamsFile)
 {
     *rParamsFile << "\t\t\t<CellECMSpringStiffness>" << mCellCellSpringStiffness << "</CellCellSpringStiffness>\n";
     *rParamsFile << "\t\t\t<ECMECMSpringStiffness>" << mCellECMSpringStiffness << "</CellECMSpringStiffness>\n";
@@ -344,13 +344,13 @@ void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::OutputForceParameters(out_stream&
 }
 
 // Explicit instantiation
-template class LinearSpringForce<1,1>;
-template class LinearSpringForce<1,2>;
-template class LinearSpringForce<2,2>;
-template class LinearSpringForce<1,3>;
-template class LinearSpringForce<2,3>;
-template class LinearSpringForce<3,3>;
+template class LinearSpringForceCopy<1,1>;
+template class LinearSpringForceCopy<1,2>;
+template class LinearSpringForceCopy<2,2>;
+template class LinearSpringForceCopy<1,3>;
+template class LinearSpringForceCopy<2,3>;
+template class LinearSpringForceCopy<3,3>;
 
 // Serialization for Boost >= 1.36
 #include "SerializationExportWrapperForCpp.hpp"
-EXPORT_TEMPLATE_CLASS_ALL_DIMS(LinearSpringForce)
+EXPORT_TEMPLATE_CLASS_ALL_DIMS(LinearSpringForceCopy)
