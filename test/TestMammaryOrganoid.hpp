@@ -142,17 +142,21 @@ public:
         nodes.push_back(new Node<3>(3,  false, -0.5, 0.5, 0.5));
         nodes.push_back(new Node<3>(4,  false, 0.0, 0.0, 0.0));
         
-        for (unsigned i=0; i<50; i++) 
+        int counter = 5;
+
+        for (unsigned i=0; i<5; i++) 
         {
-            for (unsigned j=0; j<50; j++) 
+            for (unsigned j=0; j<5; j++) 
             {
-                for (unsigned k=0; k<50; k++)
+                for (unsigned k=0; k<5; k++)
                 {
                     double spacing = 1.0; 
-                    double x = spacing*i; 
-                    double y = spacing*j; 
-                    double z = spacing*k;
-                    Node (x, y, z);
+                    double L = 10;
+                    double x = -L/2 + spacing*i; 
+                    double y = -L/2 + spacing*j; 
+                    double z = -L/2 + spacing*k;
+                    nodes.push_back(new Node<3>(counter,  false, x, y, z));
+                    counter += 1;
                 }
             }
         }
