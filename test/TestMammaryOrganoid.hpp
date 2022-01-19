@@ -10,6 +10,7 @@
 
 #include "SmartPointers.hpp"
 #include "PetscSetupAndFinalize.hpp"
+#include "UblasCustomFunctions.hpp" // required for 'Create_c_vector'
 #include "CellsGenerator.hpp"
 #include "OffLatticeSimulation.hpp"
 #include "NodesOnlyMesh.hpp"
@@ -36,7 +37,7 @@
 #include "LumenExpansionForce.hpp"
 #include "Debug.hpp"
 
-#include "UblasCustomFunctions.hpp"
+
 
 /*
  * The results of each test below can be visualised using Paraview. 
@@ -152,18 +153,18 @@ public:
 
         int counter = 5; // the node count number starts from 5
 
-        for (unsigned i=0; i<5; i++) 
+        for (unsigned i=0; i<10; i++) 
         {
-            for (unsigned j=0; j<5; j++) 
+            for (unsigned j=0; j<10; j++) 
             {
-                for (unsigned k=0; k<5; k++)
+                for (unsigned k=0; k<10; k++)
                 {
                     double spacing = 1.0; 
-                    double L = 10;
+                    double L = 20;
                     
-                    double x = -L/5 + spacing*i; // "-L/5" ensures the particle mesh is offset from the origin
-                    double y = -L/5 + spacing*j; // "-L/5" ensures the particle mesh is offset from the origin
-                    double z = -L/5 + spacing*k; // "-L/5" ensures the particle mesh is offset from the origin
+                    double x = -L/4 + spacing*i; // "-L/4" ensures the particle mesh is offset from the origin
+                    double y = -L/4 + spacing*j; // "-L/4" ensures the particle mesh is offset from the origin
+                    double z = -L/4 + spacing*k; // "-L/4" ensures the particle mesh is offset from the origin
                     
                     c_vector< double, 3 > CurrentLocation = Create_c_vector(x,y,z);
 
@@ -225,9 +226,9 @@ public:
         // Assign these properties to cells
         cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_myo_stem);
-        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_luminal_stem);
-        cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_luminal);
         
         // Add a cell writer so that mammary cell types are written to file
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
@@ -249,12 +250,12 @@ public:
         p_linear_force->SetCutOffLength(1.5);
         p_linear_force->SetCellCellSpringStiffness(15.0);
         p_linear_force->SetCellECMSpringStiffness(15.0);
-        p_linear_force->SetECMECMSpringStiffness(30.0);
+        p_linear_force->SetECMECMSpringStiffness(15.0);
         simulator.AddForce(p_linear_force);
         
-        // // Create a cell-ECM adhesion force law and pass it to the simulation
-        // MAKE_PTR(CellECMAdhesionForce<3>, p_cell_ECM_force);
-        // simulator.AddForce(p_cell_ECM_force);
+        // Create a cell-ECM adhesion force law and pass it to the simulation
+        MAKE_PTR(CellECMAdhesionForce<3>, p_cell_ECM_force);
+        simulator.AddForce(p_cell_ECM_force);
         
         // Run the simulation
         simulator.Solve();

@@ -106,15 +106,15 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_A_b1_expn && cell_A_b4_expn)
                 {
-                    return 4.0*mHeterotypicSpringConstantMultiplier;
+                    return 10.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_A_b1_expn != cell_A_b4_expn)
                 {
-                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                    return 5.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else
                 {
-                    return 1.0;
+                    return 2.0;
                 }
             }
             else if (cell_A_is_luminal_stem && p_node_b->IsParticle())
@@ -136,15 +136,15 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_A_b1_expn && cell_A_b4_expn)
                 {
-                    return 4.0*mHeterotypicSpringConstantMultiplier;
+                    return 10.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_A_b1_expn != cell_A_b4_expn)
                 {
-                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                    return 5.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else
                 {
-                    return 1.0;
+                    return 2.0;
                 }
             }
             else
@@ -247,15 +247,15 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_B_b1_expn && cell_B_b4_expn)
                 {
-                    return 4.0*mHeterotypicSpringConstantMultiplier;
+                    return 10.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_B_b1_expn != cell_B_b4_expn)
                 {
-                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                    return 5.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else
                 {
-                    return 1.0;
+                    return 2.0;
                 }
             }
             else if (cell_B_is_luminal_stem && p_node_a->IsParticle())
@@ -277,15 +277,15 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_B_b1_expn && cell_B_b4_expn)
                 {
-                    return 4.0*mHeterotypicSpringConstantMultiplier;
+                    return 10.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_B_b1_expn != cell_B_b4_expn)
                 {
-                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                    return 5.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else
                 {
-                    return 1.0;
+                    return 2.0;
                 }
             }
             else
