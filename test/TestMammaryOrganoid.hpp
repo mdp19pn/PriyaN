@@ -36,6 +36,8 @@
 #include "LumenExpansionForce.hpp"
 #include "Debug.hpp"
 
+#include "UblasCustomFunctions.hpp"
+
 /*
  * The results of each test below can be visualised using Paraview. 
  */
@@ -142,7 +144,13 @@ public:
         nodes.push_back(new Node<3>(3,  false, -0.5, 0.5, 0.5));
         nodes.push_back(new Node<3>(4,  false, 0.0, 0.0, 0.0));
         
-        int counter = 5;
+        c_vector< double, 3 > Node0Pos = Create_c_vector(-0.5, -0.5, 0.0);
+        c_vector< double, 3 > Node1Pos = Create_c_vector(0.5, 0.5, 0.0);
+        c_vector< double, 3 > Node2Pos = Create_c_vector(0.5, -0.5, -0.5);
+        c_vector< double, 3 > Node3Pos = Create_c_vector(-0.5, 0.5, 0.0);
+        c_vector< double, 3 > Node4Pos = Create_c_vector(0.0, 0.0, 0.0);
+
+        int counter = 5; // the node count number starts from 5
 
         for (unsigned i=0; i<5; i++) 
         {
@@ -152,11 +160,36 @@ public:
                 {
                     double spacing = 1.0; 
                     double L = 10;
-                    double x = -L/2 + spacing*i; 
-                    double y = -L/2 + spacing*j; 
-                    double z = -L/2 + spacing*k;
+                    
+                    double x = -L/5 + spacing*i; // "-L/5" ensures the particle mesh is offset from the origin
+                    double y = -L/5 + spacing*j; // "-L/5" ensures the particle mesh is offset from the origin
+                    double z = -L/5 + spacing*k; // "-L/5" ensures the particle mesh is offset from the origin
+                    
+                    c_vector< double, 3 > CurrentLocation = Create_c_vector(x,y,z);
+
+                    if ((CurrentLocation[0] == Node0Pos[0]) & (CurrentLocation[1] == Node0Pos[1]) & (CurrentLocation[2] == Node0Pos[2]))
+                    {
+                        continue; // skips the rest of this iteration
+                    }
+                    else if ((CurrentLocation[0] == Node1Pos[0]) & (CurrentLocation[1] == Node1Pos[1]) & (CurrentLocation[2] == Node1Pos[2]))
+                    {
+                        continue; // skips the rest of this iteration
+                    }
+                    else if ((CurrentLocation[0] == Node2Pos[0]) & (CurrentLocation[1] == Node2Pos[1]) & (CurrentLocation[2] == Node2Pos[2]))
+                    {
+                        continue; // skips the rest of this iteration
+                    }
+                    else if ((CurrentLocation[0] == Node3Pos[0]) & (CurrentLocation[1] == Node3Pos[1]) & (CurrentLocation[2] == Node3Pos[2]))
+                    {
+                        continue; // skips the rest of this iteration
+                    }
+                    else if ((CurrentLocation[0] == Node4Pos[0]) & (CurrentLocation[1] == Node4Pos[1]) & (CurrentLocation[2] == Node4Pos[2]))
+                    {
+                        continue; // skips the rest of this iteration
+                    }
+
                     nodes.push_back(new Node<3>(counter,  false, x, y, z));
-                    counter += 1;
+                    counter += 1; // the number of nodes increases by 1 each time
                 }
             }
         }
