@@ -1,20 +1,20 @@
 #include "LinearSpringForce.hpp"
 #include "NodeBasedCellPopulationWithParticles.hpp"
-#include "CellECMAdhesionForce.hpp"
-#include "Debug.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
 #include "LuminalStemCellProperty.hpp"
 #include "MyoepithelialStemCellProperty.hpp"
+#include "Debug.hpp"
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::LinearSpringForce()
    : AbstractTwoBodyInteractionForce<ELEMENT_DIM,SPACE_DIM>(),
-     mCellCellSpringStiffness(15.0),
-     mCellECMSpringStiffness(15.0),
-     mECMECMSpringStiffness(15.0),          // denoted by mu in Meineke et al, 2001 (doi:10.1046/j.0960-7722.2001.00216.x)
+     mCellCellSpringStiffness(15.0), 
+     mCellECMSpringStiffness(15.0), 
+     mECMECMSpringStiffness(15.0), 
      mMeinekeDivisionRestingSpringLength(0.5),
      mMeinekeSpringGrowthDuration(1.0),
+
      mHomotypicLabelledSpringConstantMultiplier(1.0),
      mHeterotypicSpringConstantMultiplier(1.0)
 {
@@ -152,27 +152,27 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
                 // For homotypic interactions between cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
                 if (cell_A_is_luminal)
                 {
-                    return mHomotypicLabelledSpringConstantMultiplier;
+                    return mHomotypicSpringConstantMultiplier;
                 }
                 else if (cell_A_is_myoepithelial)
                 {
                     // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                    return mHomotypicLabelledSpringConstantMultiplier;
+                    return mHomotypicSpringConstantMultiplier;
                 }
                 else if (cell_A_is_luminal_stem)
                 {
                     // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                    return mHomotypicLabelledSpringConstantMultiplier;
+                    return mHomotypicSpringConstantMultiplier;
                 }
                 else if (cell_A_is_myo_stem)
                 {
                     // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                    return mHomotypicLabelledSpringConstantMultiplier;
+                    return mHomotypicSpringConstantMultiplier;
                 }
                 else if (p_node_a->IsParticle())
                 {
                     // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                    return mHomotypicLabelledSpringConstantMultiplier;
+                    return mHomotypicSpringConstantMultiplier;
                 }
                 else
                 {
@@ -293,27 +293,27 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
                 // For homotypic interactions between cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
                 if (cell_B_is_luminal)
                 {
-                    return mHomotypicLabelledSpringConstantMultiplier;
+                    return mHomotypicSpringConstantMultiplier;
                 }
                 else if (cell_B_is_myoepithelial)
                 {
                     // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                    return mHomotypicLabelledSpringConstantMultiplier;
+                    return mHomotypicSpringConstantMultiplier;
                 }
                 else if (cell_B_is_luminal_stem)
                 {
                     // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                    return mHomotypicLabelledSpringConstantMultiplier;
+                    return mHomotypicSpringConstantMultiplier;
                 }
                 else if (cell_B_is_myo_stem)
                 {
                     // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                    return mHomotypicLabelledSpringConstantMultiplier;
+                    return mHomotypicSpringConstantMultiplier;
                 }
                 else if (p_node_b->IsParticle())
                 {
                     // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                    return mHomotypicLabelledSpringConstantMultiplier;
+                    return mHomotypicSpringConstantMultiplier;
                 }
             }
         }
@@ -468,8 +468,7 @@ c_vector<double, SPACE_DIM> LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::CalculateF
         rest_length = a_rest_length + b_rest_length;
         //assert(rest_length <= 1.0+1e-12); ///\todo #1884 Magic number: would "<= 1.0" do?
 
-        // Although in this class the 'spring constant' is a constant parameter, in
-        // subclasses it can depend on properties of each of the cells
+        // Although in this class the 'spring constant' is a constant parameter, in subclasses it can depend on properties of each of the cells
         double overlap = distance_between_nodes - rest_length;
         bool is_closer_than_rest_length = (overlap <= 0);
         double multiplication_factor = VariableSpringConstantMultiplicationFactor(nodeAGlobalIndex, nodeBGlobalIndex, rCellPopulation, is_closer_than_rest_length);
@@ -499,8 +498,6 @@ c_vector<double, SPACE_DIM> LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::CalculateF
     }
     else if (p_node_a->IsParticle() && p_node_b->IsParticle()) // if we have ECM-ECM pair
     {
-        rest_length = 1;
-
         double overlap = distance_between_nodes - rest_length;
         bool is_closer_than_rest_length = (overlap <= 0);
         double multiplication_factor = VariableSpringConstantMultiplicationFactor(nodeAGlobalIndex, nodeBGlobalIndex, rCellPopulation, is_closer_than_rest_length);
@@ -530,8 +527,6 @@ c_vector<double, SPACE_DIM> LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::CalculateF
     }
     else // if we have cell-ECM pair
     {
-        rest_length = 1;
-
         double overlap = distance_between_nodes - rest_length;
         bool is_closer_than_rest_length = (overlap <= 0);
         double multiplication_factor = VariableSpringConstantMultiplicationFactor(nodeAGlobalIndex, nodeBGlobalIndex, rCellPopulation, is_closer_than_rest_length);
@@ -658,12 +653,14 @@ void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::SetMeinekeSpringGrowthDuration(do
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 void LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::OutputForceParameters(out_stream& rParamsFile)
 {
-    *rParamsFile << "\t\t\t<CellECMSpringStiffness>" << mCellCellSpringStiffness << "</CellCellSpringStiffness>\n";
-    *rParamsFile << "\t\t\t<ECMECMSpringStiffness>" << mCellECMSpringStiffness << "</CellECMSpringStiffness>\n";
+    *rParamsFile << "\t\t\t<CellCellSpringStiffness>" << mCellCellSpringStiffness << "</CellCellSpringStiffness>\n";
+    *rParamsFile << "\t\t\t<CellECMSpringStiffness>" << mCellECMSpringStiffness << "</CellECMSpringStiffness>\n";
     *rParamsFile << "\t\t\t<ECMECMSpringStiffness>" << mECMECMSpringStiffness << "</ECMECMSpringStiffness>\n";
     *rParamsFile << "\t\t\t<MeinekeDivisionRestingSpringLength>" << mMeinekeDivisionRestingSpringLength << "</MeinekeDivisionRestingSpringLength>\n";
     *rParamsFile << "\t\t\t<MeinekeSpringGrowthDuration>" << mMeinekeSpringGrowthDuration << "</MeinekeSpringGrowthDuration>\n";
-
+    *rParamsFile << "\t\t\t<HomotypicSpringConstantMultiplier>" << mHomotypicSpringConstantMultiplier << "</HomotypicSpringConstantMultiplier>\n";
+    *rParamsFile << "\t\t\t<HeterotypicSpringConstantMultiplier>" << mHeterotypicSpringConstantMultiplier << "</HeterotypicSpringConstantMultiplier>\n";
+   
     // Call method on direct parent class
     AbstractTwoBodyInteractionForce<ELEMENT_DIM,SPACE_DIM>::OutputForceParameters(rParamsFile);
 }
