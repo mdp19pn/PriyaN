@@ -2,6 +2,7 @@
 #define LINEARSPRINGFORCE_HPP_
 
 #include "AbstractTwoBodyInteractionForce.hpp"
+#include "GeneralisedLinearSpringForce.hpp"
 
 #include "ChasteSerialization.hpp"
 #include <boost/serialization/base_object.hpp>
@@ -33,6 +34,24 @@ class LinearSpringForce : public AbstractTwoBodyInteractionForce<ELEMENT_DIM, SP
 
 private:
 
+    /**
+     * A scalar determining the relative spring constant for homotypic
+     * interactions between neighbouring LE-LE/ME-ME,SLE-SLE,SME-SME cells, used in the
+     * overridden method VariableSpringConstantMultiplicationFactor().
+     *
+     * Defaults to 1.0 in the constructor.
+     */
+    double mHomotypicSpringConstantMultiplier;
+
+    /**
+     * A scalar determining the relative spring constant for heterotypic
+     * (LE-ECM, ME-ECM, SLE-ECM, SME-ECM) interactions between neighbouring cells, used
+     * in the overridden method VariableSpringConstantMultiplicationFactor().
+     *
+     * Defaults to 1.0 in the constructor.
+     */
+    double mHeterotypicSpringConstantMultiplier;
+
     /** Needed for serialization. */
     friend class boost::serialization::access;
     /**
@@ -50,10 +69,14 @@ private:
         archive & mECMECMSpringStiffness;
         archive & mMeinekeDivisionRestingSpringLength;
         archive & mMeinekeSpringGrowthDuration;
+        
+        archive & boost::serialization::base_object<GeneralisedLinearSpringForce<ELEMENT_DIM, SPACE_DIM> >(*this);
+        archive & mHomotypicSpringConstantMultiplier;
+        archive & mHeterotypicSpringConstantMultiplier;
     }
 
 protected:
-
+    
     /**
      * Cell cell Spring stiffness.
      */
@@ -86,7 +109,8 @@ protected:
      */
     double mMeinekeSpringGrowthDuration;
 
-    double mHomotypicLabelledSpringConstantMultiplier;
+    double mHomotypicSpringConstantMultiplier;
+    
     double mHeterotypicSpringConstantMultiplier;
 
 public:
@@ -134,30 +158,6 @@ public:
     c_vector<double, SPACE_DIM> CalculateForceBetweenNodes(unsigned nodeAGlobalIndex,
                                                      unsigned nodeBGlobalIndex,
                                                      AbstractCellPopulation<ELEMENT_DIM,SPACE_DIM>& rCellPopulation);
-
-     /**
-      * @return #mHomotypicLabelledSpringConstantMultiplier.
-      */
-     double GetHomotypicLabelledSpringConstantMultiplier();
-
-     /**
-      * Set mHomotypicLabelledSpringConstantMultiplier.
-      *
-      * @param labelledSpringConstantMultiplier the new value of mHomotypicLabelledSpringConstantMultiplier
-      */
-     void SetHomotypicLabelledSpringConstantMultiplier(double labelledSpringConstantMultiplier);
-
-     /**
-      * @return #mHeterotypicSpringConstantMultiplier.
-      */
-     double GetHeterotypicSpringConstantMultiplier();
-
-     /**
-      * Set mHeterotypicSpringConstantMultiplier.
-      *
-      * @param heterotypicSpringConstantMultiplier the new value of mHeterotypicSpringConstantMultiplier
-      */
-     void SetHeterotypicSpringConstantMultiplier(double heterotypicSpringConstantMultiplier);
 
     /**
      * @return mCellCellSpringStiffness
@@ -218,6 +218,30 @@ public:
      * @param springGrowthDuration the new value of mMeinekeSpringGrowthDuration
      */
     void SetMeinekeSpringGrowthDuration(double springGrowthDuration);
+    
+    /**
+      * @return #mHomotypicSpringConstantMultiplier.
+      */
+     double GetHomotypicSpringConstantMultiplier();
+
+     /**
+      * Set mHomotypicSpringConstantMultiplier.
+      *
+      * @param SpringConstantMultiplier the new value of mHomotypicSpringConstantMultiplier
+      */
+     void SetHomotypicSpringConstantMultiplier(double SpringConstantMultiplier);
+
+     /**
+      * @return #mHeterotypicSpringConstantMultiplier.
+      */
+     double GetHeterotypicSpringConstantMultiplier();
+
+     /**
+      * Set mHeterotypicSpringConstantMultiplier.
+      *
+      * @param heterotypicSpringConstantMultiplier the new value of mHeterotypicSpringConstantMultiplier
+      */
+     void SetHeterotypicSpringConstantMultiplier(double heterotypicSpringConstantMultiplier);
 
     /**
      * Overridden OutputForceParameters() method.
