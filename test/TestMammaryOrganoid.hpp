@@ -37,8 +37,6 @@
 #include "LumenExpansionForce.hpp"
 #include "Debug.hpp"
 
-
-
 /*
  * The results of each test below can be visualised using Paraview. 
  */
@@ -251,11 +249,13 @@ public:
         p_linear_force->SetCellCellSpringStiffness(15.0);
         p_linear_force->SetCellECMSpringStiffness(15.0);
         p_linear_force->SetECMECMSpringStiffness(15.0);
+	p_linear_force->SetHomotypicSpringConstantMultiplier(1.0);
+	p_linear_force->SetHeterotypicSpringConstantMultiplier(0.1);
         simulator.AddForce(p_linear_force);
         
-        // Create a cell-ECM adhesion force law and pass it to the simulation
-        MAKE_PTR(CellECMAdhesionForce<3>, p_cell_ECM_force);
-        simulator.AddForce(p_cell_ECM_force);
+//         // Create a cell-ECM adhesion force law and pass it to the simulation
+//         MAKE_PTR(CellECMAdhesionForce<3>, p_cell_ECM_force);
+//         simulator.AddForce(p_cell_ECM_force);
         
         // Run the simulation
         simulator.Solve();
