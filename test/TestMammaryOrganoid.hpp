@@ -249,6 +249,7 @@ public:
         p_linear_force->SetCellCellSpringStiffness(15.0);
         p_linear_force->SetCellECMSpringStiffness(15.0);
         p_linear_force->SetECMECMSpringStiffness(15.0);
+//	p_linear_force->SetMeinekeSpringStiffness(50.0);
 	p_linear_force->SetHomotypicSpringConstantMultiplier(1.0);
 	p_linear_force->SetHeterotypicSpringConstantMultiplier(0.1);
         simulator.AddForce(p_linear_force);
@@ -267,4 +268,5 @@ public:
         }
     }
 };
+
 #endif /* TESTMAMMARYORGANOID_HPP_ */
