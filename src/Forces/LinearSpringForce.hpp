@@ -2,7 +2,6 @@
 #define LINEARSPRINGFORCE_HPP_
 
 #include "AbstractTwoBodyInteractionForce.hpp"
-#include "GeneralisedLinearSpringForce.hpp"
 
 #include "ChasteSerialization.hpp"
 #include <boost/serialization/base_object.hpp>
@@ -70,7 +69,6 @@ private:
         archive & mMeinekeDivisionRestingSpringLength;
         archive & mMeinekeSpringGrowthDuration;
         
-        archive & boost::serialization::base_object<GeneralisedLinearSpringForce<ELEMENT_DIM, SPACE_DIM> >(*this);
         archive & mHomotypicSpringConstantMultiplier;
         archive & mHeterotypicSpringConstantMultiplier;
     }
@@ -108,10 +106,6 @@ protected:
      * The value of this parameter is usually the same as the M Phase of the cell cycle and defaults to 1.
      */
     double mMeinekeSpringGrowthDuration;
-
-    double mHomotypicSpringConstantMultiplier;
-    
-    double mHeterotypicSpringConstantMultiplier;
 
 public:
 

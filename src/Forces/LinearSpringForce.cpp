@@ -14,8 +14,7 @@ LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::LinearSpringForce()
      mECMECMSpringStiffness(15.0), 
      mMeinekeDivisionRestingSpringLength(0.5),
      mMeinekeSpringGrowthDuration(1.0),
-
-     mHomotypicLabelledSpringConstantMultiplier(1.0),
+     mHomotypicSpringConstantMultiplier(1.0),
      mHeterotypicSpringConstantMultiplier(1.0)
 {
     if (SPACE_DIM == 1)
@@ -91,7 +90,7 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_A_b1_expn && cell_A_b4_expn)
                 {
-                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                    return 4.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_A_b1_expn != cell_A_b4_expn)
                 {
@@ -106,22 +105,22 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_A_b1_expn && cell_A_b4_expn)
                 {
-                    return 10.0*mHeterotypicSpringConstantMultiplier;
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_A_b1_expn != cell_A_b4_expn)
                 {
-                    return 5.0*mHeterotypicSpringConstantMultiplier;
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else
                 {
-                    return 2.0;
+                    return 1.0;
                 }
             }
             else if (cell_A_is_luminal_stem && p_node_b->IsParticle())
             {
                 if (cell_A_b1_expn && cell_A_b4_expn)
                 {
-                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                    return 4.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_A_b1_expn != cell_A_b4_expn)
                 {
@@ -136,20 +135,20 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_A_b1_expn && cell_A_b4_expn)
                 {
-                    return 10.0*mHeterotypicSpringConstantMultiplier;
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_A_b1_expn != cell_A_b4_expn)
                 {
-                    return 5.0*mHeterotypicSpringConstantMultiplier;
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else
                 {
-                    return 2.0;
+                    return 1.0;
                 }
             }
             else
             {
-                // For homotypic interactions between cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
+                // For homotypic interactions between cells, scale the spring constant by mHomotypicSpringConstantMultiplier
                 if (cell_A_is_luminal)
                 {
                     return mHomotypicSpringConstantMultiplier;
@@ -169,12 +168,7 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
                     // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
                     return mHomotypicSpringConstantMultiplier;
                 }
-                else if (p_node_a->IsParticle())
-                {
-                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                    return mHomotypicSpringConstantMultiplier;
-                }
-                else
+                else 
                 {
                     return 1.0;
                 }
@@ -232,7 +226,7 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_B_b1_expn && cell_B_b4_expn)
                 {
-                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                    return 4.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_B_b1_expn != cell_B_b4_expn)
                 {
@@ -247,22 +241,22 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_B_b1_expn && cell_B_b4_expn)
                 {
-                    return 10.0*mHeterotypicSpringConstantMultiplier;
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_B_b1_expn != cell_B_b4_expn)
                 {
-                    return 5.0*mHeterotypicSpringConstantMultiplier;
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else
                 {
-                    return 2.0;
+                    return 1.0;
                 }
             }
             else if (cell_B_is_luminal_stem && p_node_a->IsParticle())
             {
                 if (cell_B_b1_expn && cell_B_b4_expn)
                 {
-                    return 2.0*mHeterotypicSpringConstantMultiplier;
+                    return 4.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_B_b1_expn != cell_B_b4_expn)
                 {
@@ -277,20 +271,20 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_B_b1_expn && cell_B_b4_expn)
                 {
-                    return 10.0*mHeterotypicSpringConstantMultiplier;
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_B_b1_expn != cell_B_b4_expn)
                 {
-                    return 5.0*mHeterotypicSpringConstantMultiplier;
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else
                 {
-                    return 2.0;
+                    return 1.0;
                 }
             }
             else
             {
-                // For homotypic interactions between cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
+                // For homotypic interactions between cells, scale the spring constant by mHomotypicSpringConstantMultiplier
                 if (cell_B_is_luminal)
                 {
                     return mHomotypicSpringConstantMultiplier;
@@ -310,10 +304,9 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
                     // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
                     return mHomotypicSpringConstantMultiplier;
                 }
-                else if (p_node_b->IsParticle())
+                else
                 {
-                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                    return mHomotypicSpringConstantMultiplier;
+                    return 1.0;
                 }
             }
         }
@@ -322,8 +315,6 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             ECM_node.push_back(nodeBGlobalIndex);
             return 1.0;
         }
-        
-        return 1.0;
     }
 }
 
@@ -557,26 +548,26 @@ c_vector<double, SPACE_DIM> LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::CalculateF
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::GetHomotypicLabelledSpringConstantMultiplier()
+double LinearSpringForce<ELEMENT_DIM, SPACE_DIM>::GetHomotypicSpringConstantMultiplier()
 {
-    return mHomotypicLabelledSpringConstantMultiplier;
+    return mHomotypicSpringConstantMultiplier;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-void CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::SetHomotypicLabelledSpringConstantMultiplier(double labelledSpringConstantMultiplier)
+void LinearSpringForce<ELEMENT_DIM, SPACE_DIM>::SetHomotypicSpringConstantMultiplier(double homotypicSpringConstantMultiplier)
 {
-    assert(labelledSpringConstantMultiplier > 0.0);
-    mHomotypicLabelledSpringConstantMultiplier = labelledSpringConstantMultiplier;
+    assert(homotypicSpringConstantMultiplier > 0.0);
+    mHomotypicSpringConstantMultiplier = homotypicSpringConstantMultiplier;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::GetHeterotypicSpringConstantMultiplier()
+double LinearSpringForce<ELEMENT_DIM, SPACE_DIM>::GetHeterotypicSpringConstantMultiplier()
 {
     return mHeterotypicSpringConstantMultiplier;
 }
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
-void CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::SetHeterotypicSpringConstantMultiplier(double heterotypicSpringConstantMultiplier)
+void LinearSpringForce<ELEMENT_DIM, SPACE_DIM>::SetHeterotypicSpringConstantMultiplier(double heterotypicSpringConstantMultiplier)
 {
     assert(heterotypicSpringConstantMultiplier > 0.0);
     mHeterotypicSpringConstantMultiplier = heterotypicSpringConstantMultiplier;
@@ -676,4 +667,3 @@ template class LinearSpringForce<3,3>;
 // Serialization for Boost >= 1.36
 #include "SerializationExportWrapperForCpp.hpp"
 EXPORT_TEMPLATE_CLASS_ALL_DIMS(LinearSpringForce)
-

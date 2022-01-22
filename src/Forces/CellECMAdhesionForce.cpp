@@ -32,6 +32,7 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
 
         Node<SPACE_DIM>* p_node_a = rCellPopulation.GetNode(nodeAGlobalIndex);
         Node<SPACE_DIM>* p_node_b = rCellPopulation.GetNode(nodeBGlobalIndex);
+        
         // Create a vector to record the nodes corresponding only to particles (ECM Nodes)
         std::vector<unsigned> ECM_node;
         return 1.0;
@@ -148,25 +149,17 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
                 }
                 else if (cell_A_is_myoepithelial)
                 {
-                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
                     return mHomotypicLabelledSpringConstantMultiplier;
                 }
                 else if (cell_A_is_luminal_stem)
                 {
-                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
                     return mHomotypicLabelledSpringConstantMultiplier;
                 }
                 else if (cell_A_is_myo_stem)
                 {
-                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
                     return mHomotypicLabelledSpringConstantMultiplier;
                 }
-                else if (p_node_a->IsParticle())
-                {
-                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                    return mHomotypicLabelledSpringConstantMultiplier;
-                }
-                else
+                else 
                 {
                     return 1.0;
                 }
@@ -174,7 +167,6 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
         }
         else // node is particle
         {
-          
             ECM_node.push_back(nodeAGlobalIndex);
             return 1.0;
         }
@@ -290,23 +282,19 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
                 }
                 else if (cell_B_is_myoepithelial)
                 {
-                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
                     return mHomotypicLabelledSpringConstantMultiplier;
                 }
                 else if (cell_B_is_luminal_stem)
                 {
-                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
                     return mHomotypicLabelledSpringConstantMultiplier;
                 }
                 else if (cell_B_is_myo_stem)
                 {
-                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
                     return mHomotypicLabelledSpringConstantMultiplier;
                 }
-                else if (p_node_b->IsParticle())
+                else 
                 {
-                    // For homotypic interactions between myoepitehlial cells, leave the spring constant unchanged from its normal value
-                    return mHomotypicLabelledSpringConstantMultiplier;
+                    return 1.0;
                 }
             }
         }
@@ -315,7 +303,6 @@ double CellECMAdhesionForce<ELEMENT_DIM, SPACE_DIM>::VariableSpringConstantMulti
             ECM_node.push_back(nodeBGlobalIndex);
             return 1.0;
         }
-        return 1.0;
     }
 }
 
