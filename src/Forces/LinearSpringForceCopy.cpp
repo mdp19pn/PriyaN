@@ -1,5 +1,9 @@
 #include "LinearSpringForceCopy.hpp"
 #include "NodeBasedCellPopulationWithParticles.hpp"
+#include "LuminalCellProperty.hpp"
+#include "MyoepithelialCellProperty.hpp"
+#include "LuminalStemCellProperty.hpp"
+#include "MyoepithelialStemCellProperty.hpp"
 #include "Debug.hpp"
  
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
@@ -200,8 +204,6 @@ c_vector<double, SPACE_DIM> LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::Calcul
     }
     else if (p_node_a->IsParticle() && p_node_b->IsParticle()) // if we have ECM-ECM pair
     {
-        rest_length = 1;
-
         double overlap = distance_between_nodes - rest_length;
         bool is_closer_than_rest_length = (overlap <= 0);
         double multiplication_factor = VariableSpringConstantMultiplicationFactor(nodeAGlobalIndex, nodeBGlobalIndex, rCellPopulation, is_closer_than_rest_length);
@@ -231,12 +233,12 @@ c_vector<double, SPACE_DIM> LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::Calcul
     }
     else // if we have cell-ECM pair
     {
-        rest_length = 1;
-
         double overlap = distance_between_nodes - rest_length;
         bool is_closer_than_rest_length = (overlap <= 0);
         double multiplication_factor = VariableSpringConstantMultiplicationFactor(nodeAGlobalIndex, nodeBGlobalIndex, rCellPopulation, is_closer_than_rest_length);
         double spring_cell_ecm_stiffness = mCellECMSpringStiffness;
+        double spring_ecm_ecm_stiffness = mECMECMSpringStiffness;
+        double spring_cell_cell_stiffness = mCellCellSpringStiffness;
 
         if (bool(dynamic_cast<MeshBasedCellPopulation<ELEMENT_DIM,SPACE_DIM>*>(&rCellPopulation)))
         {
@@ -254,9 +256,289 @@ c_vector<double, SPACE_DIM> LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::Calcul
             }
             else
             {
-                double alpha = 5.0;
-                c_vector<double, SPACE_DIM> temp = multiplication_factor*spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
-                return temp;
+                Node<SPACE_DIM>* p_node_a = rCellPopulation.GetNode(nodeAGlobalIndex);
+                Node<SPACE_DIM>* p_node_b = rCellPopulation.GetNode(nodeBGlobalIndex);
+
+                if (!p_node_a->IsParticle())
+                {
+                    // Determine if cell A is luminal, myoepithelial or stem cell
+                    CellPtr p_cell_A = rCellPopulation.GetCellUsingLocationIndex(nodeAGlobalIndex);
+                    bool cell_A_is_luminal = p_cell_A->template HasCellProperty<LuminalCellProperty>();
+                    bool cell_A_is_myoepithelial = p_cell_A->template HasCellProperty<MyoepithelialCellProperty>();
+                    bool cell_A_is_luminal_stem = p_cell_A->template HasCellProperty<LuminalStemCellProperty>();
+                    bool cell_A_is_myo_stem = p_cell_A->template HasCellProperty<MyoepithelialStemCellProperty>();
+
+                    // Determine if cell expresses b1 and/or b4 integrin
+                    bool cell_A_b1_expn = true;
+                    bool cell_A_b4_expn = true;
+
+                    if (cell_A_is_luminal)
+                    {
+                        CellPropertyCollection collection = p_cell_A->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
+                        boost::shared_ptr<LuminalCellProperty> p_prop_A = boost::static_pointer_cast<LuminalCellProperty>(collection.GetProperty());
+                        cell_A_b1_expn = p_prop_A->GetB1IntegrinExpression();
+                        cell_A_b4_expn = p_prop_A->GetB4IntegrinExpression();
+                    }
+                    else if (cell_A_is_myoepithelial)
+                    {
+                        CellPropertyCollection collection =  p_cell_A->rGetCellPropertyCollection().GetProperties<MyoepithelialCellProperty>();
+                        boost::shared_ptr<MyoepithelialCellProperty> p_prop_A = boost::static_pointer_cast<MyoepithelialCellProperty>(collection.GetProperty());
+                        cell_A_b1_expn = p_prop_A->GetB1IntegrinExpression();
+                        cell_A_b4_expn = p_prop_A->GetB4IntegrinExpression();
+                    }
+                    else if (cell_A_is_luminal_stem)
+                    {
+                        CellPropertyCollection collection =  p_cell_A->rGetCellPropertyCollection().GetProperties<LuminalStemCellProperty>();
+                        boost::shared_ptr<LuminalStemCellProperty> p_prop_A = boost::static_pointer_cast<LuminalStemCellProperty>(collection.GetProperty());
+                        cell_A_b1_expn = p_prop_A->GetB1IntegrinExpression();
+                        cell_A_b4_expn = p_prop_A->GetB4IntegrinExpression();
+                    }
+                    else if (cell_A_is_myo_stem)
+                    {
+                        CellPropertyCollection collection =  p_cell_A->rGetCellPropertyCollection().GetProperties<MyoepithelialStemCellProperty>();
+                        boost::shared_ptr<MyoepithelialStemCellProperty> p_prop_A = boost::static_pointer_cast<MyoepithelialStemCellProperty>(collection.GetProperty());
+                        cell_A_b1_expn = p_prop_A->GetB1IntegrinExpression();
+                        cell_A_b4_expn = p_prop_A->GetB4IntegrinExpression();
+                    }
+
+                    // For heterotypic interactions, scale the spring constant by mHeterotypicSpringConstantMultiplier
+                    if (cell_A_is_luminal && p_node_b->IsParticle())
+                    {
+                        if (cell_A_b1_expn && cell_A_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 2.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else if (cell_A_b1_expn != cell_A_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 1.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 0.5 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                    }
+                    else if (cell_A_is_myoepithelial && p_node_b->IsParticle())
+                    {
+                        if (cell_A_b1_expn && cell_A_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 4.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else if (cell_A_b1_expn != cell_A_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 2.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 1.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                    }
+                    else if (cell_A_is_luminal_stem && p_node_b->IsParticle())
+                    {
+                        if (cell_A_b1_expn && cell_A_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 2.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else if (cell_A_b1_expn != cell_A_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 1.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 0.5 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                    }
+                    else if (cell_A_is_myo_stem && p_node_b->IsParticle())
+                    {
+                        if (cell_A_b1_expn && cell_A_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 4.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else if (cell_A_b1_expn != cell_A_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 2.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 1.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                    }
+                    else
+                    {
+                        double alpha = 5.0;
+                        c_vector<double, SPACE_DIM> temp = multiplication_factor*spring_cell_cell_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                        return temp;
+                    }
+                }
+                else // node is particle
+                {
+                    double alpha = 5.0;
+                    c_vector<double, SPACE_DIM> temp = multiplication_factor*spring_ecm_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                    return temp;
+                }
+                
+                if (!p_node_b->IsParticle())
+                {
+                    // Determine if cell B is luminal (if not, assume it is myoepithelial)
+                    CellPtr p_cell_B = rCellPopulation.GetCellUsingLocationIndex(nodeBGlobalIndex);
+                    bool cell_B_is_luminal = p_cell_B->template HasCellProperty<LuminalCellProperty>();
+                    bool cell_B_is_myoepithelial = p_cell_B->template HasCellProperty<MyoepithelialCellProperty>();
+                    bool cell_B_is_luminal_stem = p_cell_B->template HasCellProperty<LuminalStemCellProperty>();
+                    bool cell_B_is_myo_stem = p_cell_B->template HasCellProperty<MyoepithelialStemCellProperty>();
+
+                    // Determine if cell expresses b1 and/or b4 integrin
+                    bool cell_B_b1_expn = true;
+                    bool cell_B_b4_expn = true;
+
+                    if (cell_B_is_luminal)
+                    {
+                        CellPropertyCollection collection = p_cell_B->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
+                        boost::shared_ptr<LuminalCellProperty> p_prop_B = boost::static_pointer_cast<LuminalCellProperty>(collection.GetProperty());
+                        cell_B_b1_expn = p_prop_B->GetB1IntegrinExpression();
+                        cell_B_b4_expn = p_prop_B->GetB4IntegrinExpression();
+                    }
+                    else if (cell_B_is_myoepithelial)
+                    {
+                        CellPropertyCollection collection =  p_cell_B->rGetCellPropertyCollection().GetProperties<MyoepithelialCellProperty>();
+                        boost::shared_ptr<MyoepithelialCellProperty> p_prop_B = boost::static_pointer_cast<MyoepithelialCellProperty>(collection.GetProperty());
+                        cell_B_b1_expn = p_prop_B->GetB1IntegrinExpression();
+                        cell_B_b4_expn = p_prop_B->GetB4IntegrinExpression();
+                    }
+                    else if (cell_B_is_luminal_stem)
+                    {
+                        CellPropertyCollection collection =  p_cell_B->rGetCellPropertyCollection().GetProperties<LuminalStemCellProperty>();
+                        boost::shared_ptr<LuminalStemCellProperty> p_prop_B= boost::static_pointer_cast<LuminalStemCellProperty>(collection.GetProperty());
+                        cell_B_b1_expn = p_prop_B->GetB1IntegrinExpression();
+                        cell_B_b4_expn = p_prop_B->GetB4IntegrinExpression();
+                    }
+                    else if (cell_B_is_myo_stem)
+                    {
+                        CellPropertyCollection collection =  p_cell_B->rGetCellPropertyCollection().GetProperties<MyoepithelialStemCellProperty>();
+                        boost::shared_ptr<MyoepithelialStemCellProperty> p_prop_B = boost::static_pointer_cast<MyoepithelialStemCellProperty>(collection.GetProperty());
+                        cell_B_b1_expn = p_prop_B->GetB1IntegrinExpression();
+                        cell_B_b4_expn = p_prop_B->GetB4IntegrinExpression();
+                    }
+                    // For heterotypic interactions, scale the spring constant by mHeterotypicSpringConstantMultiplier
+                    if (cell_B_is_luminal && p_node_a->IsParticle())
+                    {
+                        if (cell_B_b1_expn && cell_B_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 2.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else if (cell_B_b1_expn != cell_B_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 1.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 0.5 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                    }
+                    else if (cell_B_is_myoepithelial && p_node_a->IsParticle())
+                    {
+                        if (cell_B_b1_expn && cell_B_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 4.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else if (cell_B_b1_expn != cell_B_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 2.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 1.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                    }
+                    else if (cell_B_is_luminal_stem && p_node_a->IsParticle())
+                    {
+                       if (cell_B_b1_expn && cell_B_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 2.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else if (cell_B_b1_expn != cell_B_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 1.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 0.5 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                    }
+                    else if (cell_B_is_myo_stem && p_node_a->IsParticle())
+                    {
+                        if (cell_B_b1_expn && cell_B_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 4.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else if (cell_B_b1_expn != cell_B_b4_expn)
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 2.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                        else
+                        {
+                            double alpha = 5.0;
+                            c_vector<double, SPACE_DIM> temp = 1.0 * multiplication_factor * spring_cell_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                            return temp;
+                        }
+                    }
+                    else
+                    {
+                        double alpha = 5.0;
+                        c_vector<double, SPACE_DIM> temp = multiplication_factor*spring_cell_cell_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                        return temp;
+                    }
+                }
+                else // node is particle
+                {
+                    double alpha = 5.0;
+                    c_vector<double, SPACE_DIM> temp = multiplication_factor*spring_ecm_ecm_stiffness * unit_difference * overlap * exp(-alpha * overlap/rest_length_final);
+                    return temp;
+                }
             }
         }
     }
@@ -333,8 +615,8 @@ void LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::SetMeinekeSpringGrowthDuratio
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 void LinearSpringForceCopy<ELEMENT_DIM,SPACE_DIM>::OutputForceParameters(out_stream& rParamsFile)
 {
-    *rParamsFile << "\t\t\t<CellECMSpringStiffness>" << mCellCellSpringStiffness << "</CellCellSpringStiffness>\n";
-    *rParamsFile << "\t\t\t<ECMECMSpringStiffness>" << mCellECMSpringStiffness << "</CellECMSpringStiffness>\n";
+    *rParamsFile << "\t\t\t<CellCellSpringStiffness>" << mCellCellSpringStiffness << "</CellCellSpringStiffness>\n";
+    *rParamsFile << "\t\t\t<CellECMSpringStiffness>" << mCellECMSpringStiffness << "</CellECMSpringStiffness>\n";
     *rParamsFile << "\t\t\t<ECMECMSpringStiffness>" << mECMECMSpringStiffness << "</ECMECMSpringStiffness>\n";
     *rParamsFile << "\t\t\t<MeinekeDivisionRestingSpringLength>" << mMeinekeDivisionRestingSpringLength << "</MeinekeDivisionRestingSpringLength>\n";
     *rParamsFile << "\t\t\t<MeinekeSpringGrowthDuration>" << mMeinekeSpringGrowthDuration << "</MeinekeSpringGrowthDuration>\n";

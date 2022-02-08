@@ -32,6 +32,7 @@
 #include "OrientedDivisionRule.hpp"
 #include "AnoikisCellKiller3D.hpp"
 #include "LinearSpringForce.hpp"
+#include "LinearSpringForceCopy.hpp"
 #include "RepulsionForce.hpp"
 #include "CellECMAdhesionForce.hpp"
 #include "LumenExpansionForce.hpp"
@@ -137,19 +138,23 @@ public:
         
         // Create a simple 3D mesh with some particles
         std::vector<Node<3>*> nodes;
-        nodes.push_back(new Node<3>(0,  false, -0.5, -0.5, 0.0));
-        nodes.push_back(new Node<3>(1,  false, 0.5, 0.5, 0.0));
-        nodes.push_back(new Node<3>(2,  false, 0.5, -0.5, -0.5));
-        nodes.push_back(new Node<3>(3,  false, -0.5, 0.5, 0.5));
-        nodes.push_back(new Node<3>(4,  false, 0.0, 0.0, 0.0));
+        nodes.push_back(new Node<3>(0,  false,  0.0, 0.0, 0.0));
+        nodes.push_back(new Node<3>(1,  false,  0.75, 0.0, 0.0));
+        nodes.push_back(new Node<3>(2,  false,  -0.5, -0.5, 0.0));
+        nodes.push_back(new Node<3>(3,  false,  1.25, -0.5, 0.0));
+        nodes.push_back(new Node<3>(4,  false,  0.0, 0.75, 0.0));
+        nodes.push_back(new Node<3>(5,  false,  0.75, 0.75, 0.0));
+        nodes.push_back(new Node<3>(6,  false,  0.0, 1.0, 0.0));
         
         c_vector< double, 3 > Node0Pos = Create_c_vector(-0.5, -0.5, 0.0);
         c_vector< double, 3 > Node1Pos = Create_c_vector(0.5, 0.5, 0.0);
         c_vector< double, 3 > Node2Pos = Create_c_vector(0.5, -0.5, -0.5);
         c_vector< double, 3 > Node3Pos = Create_c_vector(-0.5, 0.5, 0.0);
         c_vector< double, 3 > Node4Pos = Create_c_vector(0.0, 0.0, 0.0);
+        c_vector< double, 3 > Node5Pos = Create_c_vector(0.75, 0.75, 0.0);
+        c_vector< double, 3 > Node6Pos = Create_c_vector(0.0, 1.0, 0.0);
 
-        int counter = 5; // the node count number starts from 5
+        int counter = 7; // the node count number starts from 11
 
         for (unsigned i=0; i<10; i++) 
         {
@@ -160,9 +165,9 @@ public:
                     double spacing = 1.0; 
                     double L = 20;
                     
-                    double x = -L/4 + spacing*i; // "-L/4" ensures the particle mesh is offset from the origin
-                    double y = -L/4 + spacing*j; // "-L/4" ensures the particle mesh is offset from the origin
-                    double z = -L/4 + spacing*k; // "-L/4" ensures the particle mesh is offset from the origin
+                    double x = -L/5 + spacing*i; // "-L/x" ensures the particle mesh is offset from the origin
+                    double y = -L/5 + spacing*j; // "-L/x" ensures the particle mesh is offset from the origin
+                    double z = -L/5 + spacing*k; // "-L/x" ensures the particle mesh is offset from the origin
                     
                     c_vector< double, 3 > CurrentLocation = Create_c_vector(x,y,z);
 
@@ -186,7 +191,15 @@ public:
                     {
                         continue; // skips the rest of this iteration
                     }
-
+                    else if ((CurrentLocation[0] == Node5Pos[0]) & (CurrentLocation[1] == Node5Pos[1]) & (CurrentLocation[2] == Node5Pos[2]))
+                    {
+                        continue; // skips the rest of this iteration
+                    }
+                    else if ((CurrentLocation[0] == Node6Pos[0]) & (CurrentLocation[1] == Node6Pos[1]) & (CurrentLocation[2] == Node6Pos[2]))
+                    {
+                        continue; // skips the rest of this iteration
+                    }
+                    
                     nodes.push_back(new Node<3>(counter,  false, x, y, z));
                     counter += 1; // the number of nodes increases by 1 each time
                 }
@@ -199,7 +212,7 @@ public:
         
         // Specify the node indices corresponding to cells (the others correspond to particles)
         std::vector<unsigned> location_indices;
-        for (unsigned index=0; index<5; index++)
+        for (unsigned index=0; index<7; index++)
         {
             location_indices.push_back(index);
         }
@@ -223,11 +236,13 @@ public:
         
         // Assign these properties to cells
         cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_myo_stem);
-        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_myo_stem);
         cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_luminal_stem);
-        cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_luminal);
-        
+        cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(5)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(6)->AddCellProperty(p_myo_stem);
+
         // Add a cell writer so that mammary cell types are written to file
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
         
@@ -247,11 +262,18 @@ public:
         MAKE_PTR(LinearSpringForce<3>, p_linear_force);
         p_linear_force->SetCutOffLength(1.5);
         p_linear_force->SetCellCellSpringStiffness(15.0);
-        p_linear_force->SetCellECMSpringStiffness(15.0);
-        p_linear_force->SetECMECMSpringStiffness(15.0);
+        p_linear_force->SetCellECMSpringStiffness(5.0);
+        p_linear_force->SetECMECMSpringStiffness(5.0);
 	    p_linear_force->SetHomotypicSpringConstantMultiplier(1.0);
-	    p_linear_force->SetHeterotypicSpringConstantMultiplier(0.1);
+	    p_linear_force->SetHeterotypicSpringConstantMultiplier(1.0);
         simulator.AddForce(p_linear_force);
+
+        // MAKE_PTR(LinearSpringForceCopy<3>, p_linear_force);
+        // p_linear_force->SetCutOffLength(1.5);
+        // p_linear_force->SetCellCellSpringStiffness(15.0);
+        // p_linear_force->SetCellECMSpringStiffness(5.0);
+        // p_linear_force->SetECMECMSpringStiffness(5.0);
+        // simulator.AddForce(p_linear_force);
         
         // Run the simulation
         simulator.Solve();
