@@ -1,3 +1,6 @@
+#ifndef TESTCELLSORTING_HPP_
+#define TESTCELLSORTING_HPP_
+
 #include <cxxtest/TestSuite.h>
 
 // Must be included before other cell_based headers
@@ -53,24 +56,35 @@ public:
     void TestNodeBasedMonolayerCellSorting()
         {
             // Create a simple mesh
-            HoneycombMeshGenerator generator(M_NUM_CELLS_ACROSS, M_NUM_CELLS_ACROSS, 0);
-            TetrahedralMesh<2,2>* p_generating_mesh = generator.GetMesh();
-
+            TrianglesMeshReader<2,2> mesh_reader("mesh/test/data/square_128_elements");
+            TetrahedralMesh<2,2> generating_mesh;
+            generating_mesh.ConstructFromMeshReader(mesh_reader);
+            
             //Extended to allow sorting for longer distances
             double cut_off_length = 2.5;
 
             // Convert this to a NodesOnlyMesh
             NodesOnlyMesh<2> mesh;
-            mesh.ConstructNodesWithoutMesh(*p_generating_mesh, cut_off_length);
+            mesh.ConstructNodesWithoutMesh(generating_mesh, 1.2);
+
+            // Create vector of cell location indices
+            std::vector<unsigned> cell_location_indices;
+            for (unsigned i=10; i<mesh.GetNumNodes(); i++)
+            {
+                if (i != 80)
+                {
+                    cell_location_indices.push_back(i);
+                }
+            }
 
             // Set up cells, one for each Node
             std::vector<CellPtr> cells;
             MAKE_PTR(DifferentiatedCellProliferativeType, p_differentiated_type);
             CellsGenerator<UniformG1GenerationalCellCycleModel, 2> cells_generator;
-            cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes(), p_differentiated_type);
+            cells_generator.GenerateBasicRandom(cells, cell_location_indices, p_differentiated_type);
 
-            // Create cell population
-            NodeBasedCellPopulation<2> cell_population(mesh, cells);
+            // Create a cell population, with some random particles
+            NodeBasedCellPopulationWithParticles<2> cell_population_with_particles(mesh, cells, cell_location_indices);
 
             // Set population to output all data to results files
             cell_population.AddCellWriter<CellIdWriter>();
@@ -122,3 +136,4 @@ public:
             TS_ASSERT_EQUALS(simulator.GetNumDeaths(), 0u);
         }
    };
+#endif /*TESTCELLSORTING_HPP_*/
