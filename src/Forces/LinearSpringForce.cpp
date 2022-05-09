@@ -90,7 +90,7 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_A_b1_expn && cell_A_b4_expn)
                 {
-                    return 4.0*mHeterotypicSpringConstantMultiplier;
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_A_b1_expn != cell_A_b4_expn)
                 {
@@ -105,7 +105,7 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_A_b1_expn && cell_A_b4_expn)
                 {
-                    return 1.0*mHeterotypicSpringConstantMultiplier;
+                    return 4.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_A_b1_expn != cell_A_b4_expn)
                 {
@@ -120,7 +120,7 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_A_b1_expn && cell_A_b4_expn)
                 {
-                    return 4.0*mHeterotypicSpringConstantMultiplier;
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_A_b1_expn != cell_A_b4_expn)
                 {
@@ -135,7 +135,7 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_A_b1_expn && cell_A_b4_expn)
                 {
-                    return 1.0*mHeterotypicSpringConstantMultiplier;
+                    return 4.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_A_b1_expn != cell_A_b4_expn)
                 {
@@ -204,7 +204,7 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_B_b1_expn && cell_B_b4_expn)
                 {
-                    return 4.0*mHeterotypicSpringConstantMultiplier;
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_B_b1_expn != cell_B_b4_expn)
                 {
@@ -219,7 +219,7 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_B_b1_expn && cell_B_b4_expn)
                 {
-                    return 1.0*mHeterotypicSpringConstantMultiplier;
+                    return 4.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_B_b1_expn != cell_B_b4_expn)
                 {
@@ -234,7 +234,7 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_B_b1_expn && cell_B_b4_expn)
                 {
-                    return 4.0*mHeterotypicSpringConstantMultiplier;
+                    return 2.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_B_b1_expn != cell_B_b4_expn)
                 {
@@ -249,7 +249,7 @@ double LinearSpringForce<ELEMENT_DIM,SPACE_DIM>::VariableSpringConstantMultiplic
             {
                 if (cell_B_b1_expn && cell_B_b4_expn)
                 {
-                    return 1.0*mHeterotypicSpringConstantMultiplier;
+                    return 4.0*mHeterotypicSpringConstantMultiplier;
                 }
                 else if (cell_B_b1_expn != cell_B_b4_expn)
                 {

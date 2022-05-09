@@ -9,6 +9,8 @@
 
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
+#include "LuminalStemCellProperty.hpp"
+#include "MyoepithelialStemCellProperty.hpp"
 #include "Debug.hpp"
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
@@ -39,6 +41,8 @@ void BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(NodeBasedCellPopulation
         // Store whether this cell is luminal or myoepithelial
         bool cell_is_luminal = cell_iter->template HasCellProperty<LuminalCellProperty>();
         bool cell_is_myoepithelial = cell_iter->template HasCellProperty<MyoepithelialCellProperty>();
+        bool cell_is_luminal_stem = cell_iter->template HasCellProperty<LuminalStemCellProperty>();
+        bool cell_is_myoepithelial_stem = cell_iter->template HasCellProperty<MyoepithelialStemCellProperty>();
 
         // Store the radius of the node corresponding to this cell
         unsigned node_index = pCellPopulation->GetLocationIndexUsingCell(*cell_iter);
@@ -83,8 +87,14 @@ void BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(NodeBasedCellPopulation
                     CellPtr p_neighbour_cell_B = pCellPopulation->GetCellUsingLocationIndex(*neighbour_iter);
                     bool neighbour_is_myoepithelial = p_neighbour_cell_B->template HasCellProperty<MyoepithelialCellProperty>();
                     
+                    CellPtr p_neighbour_cell_C = pCellPopulation->GetCellUsingLocationIndex(*neighbour_iter);
+                    bool neighbour_is_luminal_stem = p_neighbour_cell_C->template HasCellProperty<LuminalStemCellProperty>();
+
+                    CellPtr p_neighbour_cell_D = pCellPopulation->GetCellUsingLocationIndex(*neighbour_iter);
+                    bool neighbour_is_myoepithelial_stem = p_neighbour_cell_D->template HasCellProperty<MyoepithelialStemCellProperty>();
+
                     // If this cell is luminal and its neighbour is not, or vice versa...
-                    if (cell_is_luminal != neighbour_is_luminal)
+                    if ((cell_is_luminal || cell_is_luminal_stem) != (neighbour_is_luminal || neighbour_is_luminal_stem))
                     {
                         // ... then increment the fractional boundary length
                         heterotypic_boundary_length += edge_length;
@@ -92,7 +102,7 @@ void BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(NodeBasedCellPopulation
                     }
                     
                     // If this cell is luminal and its neighbour is not, or vice versa...
-                    if (cell_is_luminal != neighbour_is_myoepithelial)
+                    if ((cell_is_luminal || cell_is_luminal_stem) != (neighbour_is_myoepithelial || neighbour_is_myoepithelial_stem))
                     {
                         // ... then increment the fractional boundary length
                         heterotypic_boundary_length += 0;
@@ -100,7 +110,7 @@ void BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(NodeBasedCellPopulation
                     }
                     
                     // If this cell is myoepithelial and its neighbour is not, or vice versa...
-                    if (cell_is_myoepithelial != neighbour_is_luminal)
+                    if ((cell_is_myoepithelial || cell_is_myoepithelial_stem) != (neighbour_is_luminal || neighbour_is_luminal_stem))
                     {
                         // ... then increment the fractional boundary length
                         heterotypic_boundary_length += 0;
@@ -108,7 +118,7 @@ void BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(NodeBasedCellPopulation
                     }
                     
                     // If this cell is myoepithelial and its neighbour is not, or vice versa...
-                    if (cell_is_myoepithelial != neighbour_is_myoepithelial)
+                    if ((cell_is_myoepithelial || cell_is_myoepithelial_stem) != (neighbour_is_myoepithelial || neighbour_is_myoepithelial_stem))
                     {
                         // ... then increment the fractional boundary length
                         heterotypic_boundary_length += edge_length;
