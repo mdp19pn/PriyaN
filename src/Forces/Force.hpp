@@ -1,60 +1,51 @@
-#ifndef LUMENEXPANSIONFORCE_HPP_
-#define LUMENEXPANSIONFORCE_HPP_
+#ifndef FORCE_HPP_
+#define FORCE_HPP_
 
 #include "ChasteSerialization.hpp"
 #include <boost/serialization/base_object.hpp>
 
 #include "AbstractForce.hpp"
 
+///\todo Document this class
 template<unsigned DIM>
-class LumenExpansionForce : public AbstractForce<DIM>
+class Force : public AbstractForce<DIM>
 {
-    friend class TestForcesNotForRelease;
 private:
 
+    /** Spring stiffness. */
+    double mStiffness;
+
     friend class boost::serialization::access;
-    /**
-     * Boost Serialization method for archiving/checkpointing.
-     * Archives the object and its member variables.
-     *
-     * @param archive  The boost archive.
-     * @param version  The current version of this class.
-     */
     template<class Archive>
     void serialize(Archive & archive, const unsigned int version)
     {
         archive & boost::serialization::base_object<AbstractForce<DIM> >(*this);
-        archive & mStrength;
+        archive & mStiffness;
     }
-
-    /**
-     * @return strength.
-     */
-    double mStrength;
 
 public:
 
     /**
      * Constructor.
      */
-    LumenExpansionForce();
+    Force();
 
     /**
-     * @return mStrength.
+     * Destructor.
      */
-    double GetStrength();
+    ~Force();
 
-    /**
-     * Set mStrength.
+    /*
+     * Set the spring stiffness.
      *
-     * @param strength the new value of mStrength
+     * @params springStiffness the value to assign to the spring stiffness.
      */
-    void SetStrength(double strength);
+    void SetStiffness(double stiffness);
 
     /**
      * Overridden AddForceContribution() method.
      *
-     * @param rCellPopulation a cell population object
+     * @param rCellPopulation reference to the tissue
      */
     void AddForceContribution(AbstractCellPopulation<DIM>& rCellPopulation);
 
@@ -67,6 +58,6 @@ public:
 };
 
 #include "SerializationExportWrapper.hpp"
-EXPORT_TEMPLATE_CLASS_SAME_DIMS(LumenExpansionForce)
+EXPORT_TEMPLATE_CLASS_SAME_DIMS(Force)
 
-#endif /*LUMENEXPANSIONFORCE_*/
+#endif /*FORCE_HPP_*/
