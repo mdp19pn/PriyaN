@@ -34,7 +34,7 @@ void Force<DIM>::AddForceContribution(AbstractCellPopulation<DIM>& rCellPopulati
          cell_iter != rCellPopulation.End();
          ++cell_iter)
     {
-        // Only labelled cells move inwards towards teh origin
+        // Labelled cells move away from the origin
         if (cell_iter->template HasCellProperty<CellLabel>())
         {
             unsigned node_index = rCellPopulation.GetLocationIndexUsingCell(*cell_iter);
