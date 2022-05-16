@@ -39,7 +39,6 @@ void CellECMAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulation<DIM>
          cell_iter != rCellPopulation.End();
          ++cell_iter)
     {
-
         unsigned node_index = rCellPopulation.GetLocationIndexUsingCell(*cell_iter);
         
         // Determine cell type

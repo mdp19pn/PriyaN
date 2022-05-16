@@ -53,7 +53,6 @@ void BoundaryLengthWriter<ELEMENT_DIM, SPACE_DIM>::Visit(NodeBasedCellPopulation
 
         if (!neighbour_indices.empty())
         {
-            PRINT_VARIABLE(SimulationTime::Instance()->GetTime());
             // Iterate over these neighbours
             for (std::set<unsigned>::iterator neighbour_iter = neighbour_indices.begin();
                  neighbour_iter != neighbour_indices.end();

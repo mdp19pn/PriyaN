@@ -12,6 +12,7 @@ CellCoverslipAdhesionForce<DIM>::CellCoverslipAdhesionForce()
       mStiffness(1.0),
       mEquilibriumLength(1.0)
 {
+    assert(mStiffness > 0.0);
 }
 
 template<unsigned DIM>
@@ -34,113 +35,97 @@ void CellCoverslipAdhesionForce<DIM>::SetEquilibriumLength(double equilibriumLen
 template<unsigned DIM>
 void CellCoverslipAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulation<DIM>& rCellPopulation)
 {
-    // This force class is defined for NodeBasedCellPopulations only
-    assert(dynamic_cast<NodeBasedCellPopulation<DIM>*>(&rCellPopulation) != nullptr);
+    /* Inside the method, we loop over cells, and add a vector to each node associated with cells 
+     * with the LuminalCellPorperty, which is proportional (with constant mStiffness) to the negative of the position. 
+    */
 
-    // Helper variable that is a static cast of the cell population
-    NodeBasedCellPopulation<DIM>* p_cell_population = static_cast<NodeBasedCellPopulation<DIM>*>(&rCellPopulation);
+    for (typename AbstractCellPopulation<DIM>::Iterator cell_iter = rCellPopulation.Begin();
+         cell_iter != rCellPopulation.End();
+         ++cell_iter)
+    { 
+        unsigned node_index = rCellPopulation.GetLocationIndexUsingCell(*cell_iter);
+    
+        // Determine cell type
+        CellPtr p_cell = rCellPopulation.GetCellUsingLocationIndex(node_index);
+        bool cell_is_luminal = p_cell->template HasCellProperty<LuminalCellProperty>();
+        bool cell_is_myo = p_cell->template HasCellProperty<MyoepithelialCellProperty>();
+        bool cell_is_luminal_stem = p_cell->template HasCellProperty<LuminalStemCellProperty>();
+        bool cell_is_myo_stem = p_cell->template HasCellProperty<MyoepithelialStemCellProperty>();
 
-    // loop over nodes in the cell population
-    for (typename AbstractMesh<DIM, DIM>::NodeIterator node_iter = rCellPopulation.rGetMesh().GetNodeIteratorBegin(); 
-    node_iter != rCellPopulation.rGetMesh().GetNodeIteratorEnd();++node_iter)
-    {
-        // Get the index, height of this node
-        unsigned node_index = node_iter->GetIndex();
-        double cell_height = p_cell_population->GetNode(node_index)->rGetLocation()[2];
+        // Determine if cell expresses b1 and/or b4 integrin
+        bool cell_b1_expn = true;
+        bool cell_b4_expn = true;
+        
+        if (cell_is_luminal)
+        {
+            CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
+            boost::shared_ptr<LuminalCellProperty> p_prop = boost::static_pointer_cast<LuminalCellProperty>(collection.GetProperty());
+            cell_b1_expn = p_prop->GetB1IntegrinExpression();
+            cell_b4_expn = p_prop->GetB4IntegrinExpression();
+        }
+        else if (cell_is_myo)
+        {
+            CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<MyoepithelialCellProperty>();
+            boost::shared_ptr<MyoepithelialCellProperty> p_prop = boost::static_pointer_cast<MyoepithelialCellProperty>(collection.GetProperty());
+            cell_b1_expn = p_prop->GetB1IntegrinExpression();
+            cell_b4_expn = p_prop->GetB4IntegrinExpression();
+        }
+        else if (cell_is_luminal_stem) 
+        {
+            CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<LuminalStemCellProperty>();
+            boost::shared_ptr<LuminalStemCellProperty> p_prop = boost::static_pointer_cast<LuminalStemCellProperty>(collection.GetProperty());
+            cell_b1_expn = p_prop->GetB1IntegrinExpression();
+            cell_b4_expn = p_prop->GetB4IntegrinExpression();
+        }
+        else
+        {
+            CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<MyoepithelialStemCellProperty>();
+            boost::shared_ptr<MyoepithelialStemCellProperty> p_prop = boost::static_pointer_cast<MyoepithelialStemCellProperty>(collection.GetProperty());
+            cell_b1_expn = p_prop->GetB1IntegrinExpression();
+            cell_b4_expn = p_prop->GetB4IntegrinExpression();
+        }
 
-        c_vector<double, DIM> force_contribution;
-        for (unsigned i=0; i<DIM; i++)
-        {           
-            // Determine if cell is luminal (if not, assume it is myoepithelial)
-            CellPtr p_cell = p_cell_population->GetCellUsingLocationIndex(node_index);
-            bool cell_is_luminal = p_cell->template HasCellProperty<LuminalCellProperty>();
-            bool cell_is_myoepithelial = p_cell->template HasCellProperty<MyoepithelialCellProperty>();
-            bool cell_is_luminal_stem = p_cell->template HasCellProperty<LuminalStemCellProperty>();
+        // Get the height of the node
+        double cell_height = rCellPopulation.GetLocationOfCellCentre(*cell_iter)[2];
+        c_vector<double, DIM> force;
 
-            // Determine if cell expresses b1 and/or b4 integrin
-            bool cell_b1_expn = true;
-            bool cell_b4_expn = true;
-            
-            if (cell_is_luminal)
+        // Myoepithelial cells move towards the coverslip (ECM)
+        if (cell_is_luminal || cell_is_luminal_stem)
+        {
+            if (cell_b1_expn && cell_b4_expn)
             {
-                CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
-                boost::shared_ptr<LuminalCellProperty> p_prop = boost::static_pointer_cast<LuminalCellProperty>(collection.GetProperty());
-                cell_b1_expn = p_prop->GetB1IntegrinExpression();
-                cell_b4_expn = p_prop->GetB4IntegrinExpression();
+                force[2]= -2.0 * mStiffness * cell_height;
+                rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force);
             }
-            else if (cell_is_myoepithelial)
+            else if (cell_b1_expn || cell_b4_expn)
             {
-                CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<MyoepithelialCellProperty>();
-                boost::shared_ptr<MyoepithelialCellProperty> p_prop = boost::static_pointer_cast<MyoepithelialCellProperty>(collection.GetProperty());
-                cell_b1_expn = p_prop->GetB1IntegrinExpression();
-                cell_b4_expn = p_prop->GetB4IntegrinExpression();
-            }
-            else if (cell_is_luminal_stem) 
-            {
-                CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<LuminalStemCellProperty>();
-                boost::shared_ptr<LuminalStemCellProperty> p_prop = boost::static_pointer_cast<LuminalStemCellProperty>(collection.GetProperty());
-                cell_b1_expn = p_prop->GetB1IntegrinExpression();
-                cell_b4_expn = p_prop->GetB4IntegrinExpression();
+                force[2]= -1.0 * mStiffness * cell_height;
+                rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force);
             }
             else
             {
-                CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<MyoepithelialStemCellProperty>();
-                boost::shared_ptr<MyoepithelialStemCellProperty> p_prop = boost::static_pointer_cast<MyoepithelialStemCellProperty>(collection.GetProperty());
-                cell_b1_expn = p_prop->GetB1IntegrinExpression();
-                cell_b4_expn = p_prop->GetB4IntegrinExpression();
+                force[2]= -0.5 * mStiffness * cell_height;
+                rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force);
             }
-            
-            if (cell_is_luminal) // if cell is luminal
-            {
-                if (cell_b1_expn && cell_b4_expn)
-                {
-                    mEquilibriumLength = 2.0;
-                }
-                else if (cell_b1_expn || cell_b4_expn)
-                {
-                    mEquilibriumLength = 1.0;
-                }
-                else
-                {
-                    mEquilibriumLength = 0.5;
-                }
-            }
-            else if (cell_is_myoepithelial) // if cell is myoepithelial
-            {
-                if (cell_b1_expn && cell_b4_expn)
-                {
-                    mEquilibriumLength = 4.0;
-                }
-                else if (cell_b1_expn || cell_b4_expn)
-                {
-                    mEquilibriumLength = 2.0;
-                }
-                else
-                {
-                    mEquilibriumLength = 1.0;
-                }
-            }
-            else // if cell is mammary stem cell
-            {
-                if (cell_b1_expn && cell_b4_expn)
-                {
-                    mEquilibriumLength = 4.0;
-                }
-                else if (cell_b1_expn || cell_b4_expn)
-                {
-                    mEquilibriumLength = 2.0;
-                }
-                else
-                {
-                    mEquilibriumLength = 1.0;
-                }
-            }
-        
-            force_contribution[0] = 0.0;
-            force_contribution[1] = 0.0;
-            force_contribution[2] = -mEquilibriumLength*cell_height;
         }
-        node_iter->AddAppliedForceContribution(force_contribution);
+        else if (cell_is_myo || cell_is_myo_stem)
+        {
+            if (cell_b1_expn && cell_b4_expn)
+            {
+                force[2]= -8.0 * mStiffness * cell_height;
+                rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force);
+            }
+            else if (cell_b1_expn || cell_b4_expn)
+            {
+                force[2]= -4.0 * mStiffness * cell_height;
+                rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force);
+            }
+            else
+            {
+                force[2]= -2.0 * mStiffness * cell_height;
+                rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force);
+            }
+        }
     }
 }
 

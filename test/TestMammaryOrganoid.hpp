@@ -22,12 +22,8 @@
 #include "LuminalStemCellProperty.hpp"
 #include "MyoepithelialStemCellProperty.hpp"
 
-#include "CellHeightTrackingModifier.hpp"
-
 #include "CellIdWriter.hpp"
-#include "HeterotypicBoundaryLengthWriter.hpp"
 #include "CellPopulationAdjacencyMatrixWriter.hpp"
-#include "CellMutationStatesWriter.hpp"
 #include "CellVelocityWriter.hpp"
 #include "CellLocationWriter.hpp"
 #include "BoundaryLengthWriter.hpp"
@@ -43,8 +39,8 @@
 #include "AnoikisCellKiller3D.hpp"
 
 #include "LinearSpringForce.hpp"
-#include "RepulsionForce.hpp"
 #include "CellECMAdhesionForce.hpp"
+#include "DifferentialAdhesionLinearSpringForce.hpp"
 #include "RandomMotionForce.hpp"
 
 #include "Debug.hpp"
@@ -81,8 +77,8 @@ public:
         // Set population to output all data to results files
         cell_population.AddCellWriter<CellIdWriter>();
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
-        cell_population.AddCellWriter<CellMutationStatesWriter>();
-        cell_population.AddPopulationWriter<HeterotypicBoundaryLengthWriter>();
+        cell_population.AddCellWriter<CellLocationWriter>();
+        cell_population.AddPopulationWriter<BoundaryLengthWriter>();
         cell_population.AddPopulationWriter<CellPopulationAdjacencyMatrixWriter>();
 
         /* We randomly assign some cells luminal or myoepithelial using the cell property {{{LuminalCellProperty or MyoepithleilaCellproperty}}}. 
@@ -125,7 +121,7 @@ public:
         simulator.Solve();
     }
 
-        void xTestMammaryOrganoid2CellType()
+    void TestMammaryOrganoid2CellTypeDifferentialAdhesion()    
     {
         // Create a 3D 'nodes only' mesh, specifying nodes manually
         std::vector<Node<3>*> nodes;
@@ -156,8 +152,79 @@ public:
         // Set population to output all data to results files
         cell_population.AddCellWriter<CellIdWriter>();
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
-        cell_population.AddCellWriter<CellMutationStatesWriter>();
-        cell_population.AddPopulationWriter<HeterotypicBoundaryLengthWriter>();
+        cell_population.AddPopulationWriter<CellPopulationAdjacencyMatrixWriter>();
+
+        /* We randomly assign some cells luminal or myoepithelial using the cell property {{{LuminalCellProperty or MyoepithleilaCellproperty}}}. 
+         * We begin by creating a shared pointer to this cell property using the helper singleton {{{CellPropertyRegistry}}}.  
+         * We then loop over the cells and label each cell luminal independently with probability 0.6. 
+        */
+        boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
+        boost::shared_ptr<AbstractCellProperty> p_myo(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>());
+
+        for (AbstractCellPopulation<3>::Iterator cell_iter = cell_population.Begin();
+             cell_iter != cell_population.End();
+             ++cell_iter)
+        {
+            if (RandomNumberGenerator::Instance()->ranf() < 0.6)
+            {
+                cell_iter->AddCellProperty(p_luminal);
+            }
+            else
+            {
+                cell_iter->AddCellProperty(p_myo);
+            }
+        }
+
+        // Set up cell-based simulation and output directory
+        OffLatticeSimulation<3> simulator(cell_population);
+        simulator.SetOutputDirectory("TestMammaryOrganoid/DifferentialAdhesion");
+        simulator.SetSamplingTimestepMultiple(12);
+        simulator.SetEndTime(120.0);
+
+        // Create a force law and pass it to the simulation
+        MAKE_PTR(DifferentialAdhesionLinearSpringForce<3>, p_differential_adhesion_force);
+        p_differential_adhesion_force->SetHomotypicLabelledSpringConstantMultiplier(1.0);
+        p_differential_adhesion_force->SetHeterotypicSpringConstantMultiplier(0.1);
+        p_differential_adhesion_force->SetCutOffLength(3.0);
+        simulator.AddForce(p_differential_adhesion_force);
+
+        // Run simulation
+        simulator.Solve();
+    }
+
+    void xTestMammaryOrganoid2CellType()
+    {
+        // Create a 3D 'nodes only' mesh, specifying nodes manually
+        std::vector<Node<3>*> nodes;
+        nodes.push_back(new Node<3>(0,  false,  0.0, 0.0, 0.0));
+        nodes.push_back(new Node<3>(1,  false,  0.75, 0.0, 0.0));
+        nodes.push_back(new Node<3>(2,  false,  -0.5, -0.5, 0.0));
+        nodes.push_back(new Node<3>(3,  false,  1.25, -0.5, 0.0));
+        nodes.push_back(new Node<3>(4,  false,  0.0, 0.75, 0.0));
+        nodes.push_back(new Node<3>(5,  false,  0.75, 0.75, 0.0));
+        nodes.push_back(new Node<3>(6,  false,  0.0, 0.0, 1.0));
+        nodes.push_back(new Node<3>(7,  false,  -0.5, -0.5, 1.0));
+        nodes.push_back(new Node<3>(8,  false,  -0.5, 0.5, 1.0));
+        nodes.push_back(new Node<3>(9,  false,  1.25, 0.0, 0.0));
+        nodes.push_back(new Node<3>(10,  false,  0.0, 1.0, 0.0));
+        nodes.push_back(new Node<3>(11,  false,  0.0, 0.75, 1.0));
+        
+        NodesOnlyMesh<3> mesh;
+        mesh.ConstructNodesWithoutMesh(nodes, 1.5);
+       
+        // Create a vector of proliferative cells using the helper CellsGenerator
+        std::vector<CellPtr> cells;
+        CellsGenerator<UniformG1GenerationalCellCycleModel, 3> cells_generator;
+        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
+      
+        // Use the mesh and cells to create a cell population
+        NodeBasedCellPopulation<3> cell_population(mesh, cells);
+
+        // Set population to output all data to results files
+        cell_population.AddCellWriter<CellIdWriter>();
+        cell_population.AddCellWriter<MammaryCellTypeWriter>();
+        cell_population.AddCellWriter<CellLocationWriter>();
+        cell_population.AddPopulationWriter<BoundaryLengthWriter>();
         cell_population.AddPopulationWriter<CellPopulationAdjacencyMatrixWriter>();
 
         /* We randomly assign some cells luminal or myoepithelial using the cell property {{{LuminalCellProperty or MyoepithleilaCellproperty}}}. 
@@ -200,7 +267,7 @@ public:
         simulator.Solve();
     }
     
-    void TestMammaryOrganoidMammaryCellCycleModel()
+    void xTestMammaryOrganoidMammaryCellCycleModel()
     {
         EXIT_IF_PARALLEL;
         
@@ -254,8 +321,8 @@ public:
         // Set population to output all data to results files
         cell_population.AddCellWriter<CellIdWriter>();
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
-        cell_population.AddCellWriter<CellMutationStatesWriter>();
-        cell_population.AddPopulationWriter<HeterotypicBoundaryLengthWriter>();
+        cell_population.AddCellWriter<CellLocationWriter>();
+        cell_population.AddPopulationWriter<BoundaryLengthWriter>();
         cell_population.AddPopulationWriter<CellPopulationAdjacencyMatrixWriter>();
 
         // Pass the cell population to the simulation and specify duration and output parameters
@@ -332,14 +399,12 @@ public:
         boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
         cell_population.SetCentreBasedDivisionRule(p_division_rule_to_set);
 
-        // Add a cell writer so that mammary cell types are written to file
+        // Set population to output all data to results files
+        cell_population.AddCellWriter<CellIdWriter>();
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
-
-        // Add a cell writer so that the cell location is written to file
         cell_population.AddCellWriter<CellLocationWriter>();
-
-        // Add a cell writer so that cell velocities are written to file
-        cell_population.AddCellWriter<CellVelocityWriter>();
+        cell_population.AddPopulationWriter<BoundaryLengthWriter>();
+        cell_population.AddPopulationWriter<CellPopulationAdjacencyMatrixWriter>();
 
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);

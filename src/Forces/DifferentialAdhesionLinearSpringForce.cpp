@@ -1,5 +1,8 @@
 #include "DifferentialAdhesionLinearSpringForce.hpp"
 #include "NodeBasedCellPopulationWithParticles.hpp"
+
+#include "LuminalCellProperty.hpp"
+#include "MyoepithelialCellProperty.hpp"
 #include "CellLabel.hpp"
 #include "Debug.hpp"
 
@@ -24,31 +27,29 @@ double DifferentialAdhesionLinearSpringForce<ELEMENT_DIM, SPACE_DIM>::VariableSp
     }
     else
     {
-        Node<SPACE_DIM>* p_node_a = rCellPopulation.GetNode(nodeAGlobalIndex);
-        Node<SPACE_DIM>* p_node_b = rCellPopulation.GetNode(nodeBGlobalIndex);
-
-        // Determine which (if any) of the cells corresponding to these nodes are labelled
+        // Determine if cell A is luminal (if not, assume it is myoepithelial)
         CellPtr p_cell_A = rCellPopulation.GetCellUsingLocationIndex(nodeAGlobalIndex);
-        bool cell_A_is_labelled = p_cell_A->template HasCellProperty<CellLabel>();
+        bool cell_A_is_luminal = p_cell_A->template HasCellProperty<LuminalCellProperty>();
 
+        // Determine if cell B is luminal (if not, assume it is myoepithelial)
         CellPtr p_cell_B = rCellPopulation.GetCellUsingLocationIndex(nodeBGlobalIndex);
-        bool cell_B_is_labelled = p_cell_B->template HasCellProperty<CellLabel>();
+        bool cell_B_is_luminal = p_cell_B->template HasCellProperty<LuminalCellProperty>();
         
         // For heterotypic interactions, scale the spring constant by mHeterotypicSpringConstantMultiplier
-        if ((!p_node_a->IsParticle() && cell_A_is_labelled) != (!p_node_b->IsParticle() && cell_B_is_labelled))
+        if (cell_A_is_luminal != cell_B_is_luminal)
         {
             return mHeterotypicSpringConstantMultiplier;
         }
         else
         {
-            // For homotypic interactions between labelled cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
-            if (!p_node_a->IsParticle() && cell_A_is_labelled)
+            // For homotypic interactions between luminal and myoepithlelial cells, scale the spring constant by mHomotypicLabelledSpringConstantMultiplier
+            if (cell_A_is_luminal)
             {
                 return mHomotypicLabelledSpringConstantMultiplier;
             }
             else
             {
-                // For homotypic interactions between unlabelled cells, leave the spring constant unchanged from its normal value
+                // For homotypic interactions between myoepithelial cells, leave the spring constant unchanged from its normal value
                 return 1.0;
             }
         }

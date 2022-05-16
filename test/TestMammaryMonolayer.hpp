@@ -13,31 +13,39 @@
 #include "CellsGenerator.hpp"
 #include "OffLatticeSimulation.hpp"
 #include "NodesOnlyMesh.hpp"
+#include "MutableVertexMesh.hpp"
 #include "NodeBasedCellPopulationWithVariableDamping.hpp"
 #include "NodeBasedCellPopulation.hpp"
+
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
 #include "LuminalStemCellProperty.hpp"
 #include "MyoepithelialStemCellProperty.hpp"
+
 #include "CellHeightTrackingModifier.hpp"
+
 #include "CellVelocityWriter.hpp"
 #include "CellLocationWriter.hpp"
 #include "BoundaryLengthWriter.hpp"
 #include "MammaryCellTypeWriter.hpp"
+#include "VertexMeshWriter.hpp"
+
 #include "MammaryCellCycleModel.hpp"
-#include "UniformCellCycleModel.hpp"
+#include "UniformG1GenerationalCellCycleModel.hpp"
 #include "SubstrateDependentCellCycleModel.hpp"
+
 #include "WildTypeCellMutationState.hpp"
 #include "StemCellProliferativeType.hpp"
 #include "OrientedDivisionRule.hpp"
 #include "AnoikisCellKiller.hpp"
+
 #include "GeneralisedLinearSpringForce.hpp"
 #include "RepulsionForce.hpp"
 #include "CellCellAdhesionForce.hpp"
 #include "CellCoverslipAdhesionForce.hpp"
+
 #include "PlaneBoundaryCondition.hpp"
-#include "VertexMeshWriter.hpp"
-#include "MutableVertexMesh.hpp"
+
 #include "Debug.hpp"
 
 /*
@@ -83,14 +91,10 @@ public:
         cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_myo);
         cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
         
-        // Add a cell writer so that cell velocities are written to file
-        cell_population.AddCellWriter<CellVelocityWriter>();
-        
-        // Add a cell writer so that mammary cell types are written to file
+        // Set population to output all data to results files
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
-
-        // Add a population writer so that cell sorting (bilayer formation) is written to file
-        cell_population.AddPopulationWriter<BoundaryLengthWriter>();
+        cell_population.AddCellWriter<CellLocationWriter>();
+        // cell_population.AddPopulationWriter<BoundaryLengthWriter>();
 
         // Add a vertex mesh writer so that a rectangular coverslip  is written to file
         std::vector<Node<2>*> coverslip;
@@ -119,10 +123,8 @@ public:
         simulator.Solve();
     }
 
-    void xTestMammaryMonolayer2CellPopulation()
-    {
-        // EXIT_IF_PARALLEL;
-        
+    void TestMammaryMonolayer2CellPopulation()
+    {        
         // Create a 3D 'nodes only' mesh, specifying nodes manually
         std::vector<Node<3>*> nodes;
         nodes.push_back(new Node<3>(0,  false,  0.5, 0.0, 0.0));
@@ -134,48 +136,15 @@ public:
         nodes.push_back(new Node<3>(6,  false,  1.0, 0.5, 1.0));
 
         NodesOnlyMesh<3> mesh;
-        mesh.ConstructNodesWithoutMesh(nodes, 1.5);
-       
-        /* Create a vector of cell pointers. */
+        mesh.ConstructNodesWithoutMesh(nodes, 1.5);    
+
+        // Create a vector of proliferative cells using the helper CellsGenerator
         std::vector<CellPtr> cells;
-
-        /*
-         * This line defines a mutation state to be used for all cells, of type
-         * `WildTypeCellMutationState` (i.e. 'healthy'):
-         */
-        MAKE_PTR(WildTypeCellMutationState, p_state);
-        MAKE_PTR(StemCellProliferativeType, p_stem_type);
-
-        /* Create a cell-cycle (only contact inhibited) model for these cells and loop over the
-        * nodes of the mesh to create as many elements in the vector of cell pointers as there are
-        * in the initial mesh. */
-        for (unsigned i=0; i<mesh.GetNumNodes(); i++)
-        {
-            SubstrateDependentCellCycleModel* p_cycle_model = new SubstrateDependentCellCycleModel();
-            p_cycle_model->SetDimension(3);
-            p_cycle_model->SetBirthTime(-2.0*(double)i);
-            p_cycle_model->SetQuiescentHeightFraction(0.5);
-            p_cycle_model->SetEquilibriumHeight(1.0);
-            
-            CellPtr p_cell(new Cell(p_state,p_cycle_model));
-            p_cell->SetCellProliferativeType(p_stem_type);
-            
-            //Alter the defult cell-cyle duration
-            p_cycle_model->SetStemCellG1Duration(8.0);
-            p_cycle_model->SetTransitCellG1Duration(8.0);
-
-            /*
-            * push the cell back into the vector of cells.
-            */
-            p_cell->InitialiseCellCycleModel();
-            cells.push_back(p_cell);
-        }
+        CellsGenerator<UniformG1GenerationalCellCycleModel, 3> cells_generator;
+        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
       
         // Use the mesh and cells to create a cell population
-        NodeBasedCellPopulationWithVariableDamping<3> cell_population(mesh, cells);
-
-        cell_population.SetLuminalCellDampingConstant(3.0); 
-        cell_population.SetMyoepithelialCellDampingConstant(5.0);
+        NodeBasedCellPopulation<3> cell_population(mesh, cells);
         
         // Create the luminal/myoepithelial cell properties (we do it this way to make sure they're tracked correctly in the simulation)
         boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
@@ -190,24 +159,11 @@ public:
         cell_population.GetCellUsingLocationIndex(5)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(6)->AddCellProperty(p_myo);
 
-        // Set the division rule for our population to be the oriented division rule
-        boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
-        cell_population.SetCentreBasedDivisionRule(p_division_rule_to_set);
-
-        // Add a cell writer so that mammary cell types are written to file
+        // Set population to output all data to results files
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
-
-        // Add a cell writer so that the cell location is written to file
         cell_population.AddCellWriter<CellLocationWriter>();
-
-        // Add a cell writer so that cell velocities are written to file
         cell_population.AddCellWriter<CellVelocityWriter>();
-
-        // // Add a population writer so that cell sorting (bilayer formation) is written to file
         // cell_population.AddPopulationWriter<BoundaryLengthWriter>();
-
-        // Construct a cell killer object
-        MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
 
         // Add a vertex mesh writer so that a rectangular coverslip is written to file
         std::vector<Node<3>*> coverslip;
@@ -227,9 +183,9 @@ public:
         
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryMonolayerWT");
+        simulator.SetOutputDirectory("TestMammaryMonolayer/WT");
         simulator.SetSamplingTimestepMultiple(12);
-        simulator.SetEndTime(96.0); // Hours
+        simulator.SetEndTime(120.0); // Hours
         
         // Create a cell-cell repulsion force law and pass it to the simulation
         MAKE_PTR(RepulsionForce<3>, p_force); 
@@ -248,24 +204,15 @@ public:
         MAKE_PTR_ARGS(PlaneBoundaryCondition<3>, p_bc, (&cell_population, point, normal));
         simulator.AddCellPopulationBoundaryCondition(p_bc);
 
-        // Pass the cell killer into the cell-based simulation
-        simulator.AddCellKiller(p_killer);
-
         // Add and pass the modifier to the simulation
         MAKE_PTR(CellHeightTrackingModifier<3>, p_modifier);
         simulator.AddSimulationModifier(p_modifier);
        
         // Run the simulation
         simulator.Solve();
-      
-        // Since we created pointers to nodes, we delete them here to avoid memory leaks
-        for (unsigned i=0; i<nodes.size(); i++)
-        {
-            delete nodes[i];
-        }
     }
 
-    void TestMammaryMonolayerSubstrateDependentCellCycleModel()
+    void xTestMammaryMonolayerSubstrateDependentCellCycleModel()
     {
         EXIT_IF_PARALLEL;
         
@@ -384,16 +331,10 @@ public:
         boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
         cell_population.SetCentreBasedDivisionRule(p_division_rule_to_set);
 
-        // Add a cell writer so that mammary cell types are written to file
+        // Set population to output all data to results files
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
-
-        // Add a cell writer so that the cell location is written to file
         cell_population.AddCellWriter<CellLocationWriter>();
-
-        // Add a cell writer so that cell velocities are written to file
         cell_population.AddCellWriter<CellVelocityWriter>();
-
-        // // Add a population writer so that cell sorting (bilayer formation) is written to file
         // cell_population.AddPopulationWriter<BoundaryLengthWriter>();
 
         // Construct a cell killer object
@@ -544,18 +485,12 @@ public:
         boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
         cell_population.SetCentreBasedDivisionRule(p_division_rule_to_set);
         
-        // Add a cell writer so that mammary cell types are written to file
+        // Set population to output all data to results files
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
-
-        // Add a cell writer so that the cell location is written to file
         cell_population.AddCellWriter<CellLocationWriter>();
-
-        // Add a cell writer so that cell velocities are written to file
         cell_population.AddCellWriter<CellVelocityWriter>();
-
-        // // Add a population writer so that cell sorting (bilayer formation) is written to file
         // cell_population.AddPopulationWriter<BoundaryLengthWriter>();
-
+        
         // Construct a cell killer object
         MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
       
