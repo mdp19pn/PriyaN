@@ -23,10 +23,10 @@
 #include "MyoepithelialStemCellProperty.hpp"
 
 #include "CellIdWriter.hpp"
-#include "CellPopulationAdjacencyMatrixWriter.hpp"
+#include "CellPopulationAdjacencyWriter.hpp"
 #include "CellVelocityWriter.hpp"
 #include "CellLocationWriter.hpp"
-#include "BoundaryLengthWriter.hpp"
+#include "RadialCellDataDistributionWriter.hpp"
 #include "MammaryCellTypeWriter.hpp"
 
 #include "MammaryCellCycleModel.hpp"
@@ -78,8 +78,7 @@ public:
         cell_population.AddCellWriter<CellIdWriter>();
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
         cell_population.AddCellWriter<CellLocationWriter>();
-        cell_population.AddPopulationWriter<BoundaryLengthWriter>();
-        cell_population.AddPopulationWriter<CellPopulationAdjacencyMatrixWriter>();
+        cell_population.AddPopulationWriter<CellPopulationAdjacencyWriter>();
 
         /* We randomly assign some cells luminal or myoepithelial using the cell property {{{LuminalCellProperty or MyoepithleilaCellproperty}}}. 
          * We begin by creating a shared pointer to this cell property using the helper singleton {{{CellPropertyRegistry}}}.  
@@ -121,7 +120,7 @@ public:
         simulator.Solve();
     }
 
-    void TestMammaryOrganoid2CellTypeDifferentialAdhesion()    
+    void xTestMammaryOrganoid2CellTypeDifferentialAdhesion()    
     {
         // Create a 3D 'nodes only' mesh, specifying nodes manually
         std::vector<Node<3>*> nodes;
@@ -152,7 +151,7 @@ public:
         // Set population to output all data to results files
         cell_population.AddCellWriter<CellIdWriter>();
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
-        cell_population.AddPopulationWriter<CellPopulationAdjacencyMatrixWriter>();
+        cell_population.AddPopulationWriter<CellPopulationAdjacencyWriter>();
 
         /* We randomly assign some cells luminal or myoepithelial using the cell property {{{LuminalCellProperty or MyoepithleilaCellproperty}}}. 
          * We begin by creating a shared pointer to this cell property using the helper singleton {{{CellPropertyRegistry}}}.  
@@ -224,8 +223,7 @@ public:
         cell_population.AddCellWriter<CellIdWriter>();
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
         cell_population.AddCellWriter<CellLocationWriter>();
-        cell_population.AddPopulationWriter<BoundaryLengthWriter>();
-        cell_population.AddPopulationWriter<CellPopulationAdjacencyMatrixWriter>();
+        cell_population.AddPopulationWriter<CellPopulationAdjacencyWriter>();
 
         /* We randomly assign some cells luminal or myoepithelial using the cell property {{{LuminalCellProperty or MyoepithleilaCellproperty}}}. 
          * We begin by creating a shared pointer to this cell property using the helper singleton {{{CellPropertyRegistry}}}.  
@@ -267,7 +265,7 @@ public:
         simulator.Solve();
     }
     
-    void xTestMammaryOrganoidMammaryCellCycleModel()
+    void TestMammaryOrganoidMammaryCellCycleModel()
     {
         EXIT_IF_PARALLEL;
         
@@ -322,8 +320,8 @@ public:
         cell_population.AddCellWriter<CellIdWriter>();
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
         cell_population.AddCellWriter<CellLocationWriter>();
-        cell_population.AddPopulationWriter<BoundaryLengthWriter>();
-        cell_population.AddPopulationWriter<CellPopulationAdjacencyMatrixWriter>();
+        //cell_population.AddPopulationWriter<RadialCellDataDistributionWriter>();
+        cell_population.AddPopulationWriter<CellPopulationAdjacencyWriter>();
 
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
@@ -403,8 +401,7 @@ public:
         cell_population.AddCellWriter<CellIdWriter>();
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
         cell_population.AddCellWriter<CellLocationWriter>();
-        cell_population.AddPopulationWriter<BoundaryLengthWriter>();
-        cell_population.AddPopulationWriter<CellPopulationAdjacencyMatrixWriter>();
+        cell_population.AddPopulationWriter<CellPopulationAdjacencyWriter>();
 
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
