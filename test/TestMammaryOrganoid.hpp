@@ -496,8 +496,8 @@ public:
         simulator.AddForce(p_force);
 
         // // Add an anoikis-based cell killer and pass it to the simulation
-		// MAKE_PTR_ARGS(AnoikisCellKiller3D<3>, p_anoikis_killer, (&cell_population));
-		// simulator.AddCellKiller(p_anoikis_killer);
+        // MAKE_PTR_ARGS(AnoikisCellKiller3D<3>, p_anoikis_killer, (&cell_population));
+        // simulator.AddCellKiller(p_anoikis_killer);
 
         // Run the simulation
         simulator.Solve();
