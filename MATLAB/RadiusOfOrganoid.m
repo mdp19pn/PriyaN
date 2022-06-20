@@ -20,8 +20,19 @@ y = M;
 
 ylim([1 2.4])
 xlim([0 120])
+
 hold on
+
 scatter(x(1:55:end),y(1:55:end))
+
+hold off
+
+ylabel ('Radius of Organoid (a.u)')
+xlabel('Time (h)')
+
+folder = '~/Desktop/';
+exportgraphics(gca, 'FigureRadiusofOrganoid.pdf');
+movefile('FigureRadiusofOrganoid.pdf', folder);
 
 return;
 

@@ -13,7 +13,7 @@ x = [1 2];
 y = [numberofcells(end,1),numberofcells(end,2)];
 
 b = bar(x,y)
-ylabel('Number of Cells at t = 96')
+ylabel('Number of Cells at End')
 ax = gca;
 ax.XTick = [1 2]; 
 ax.XTickLabels = {'LE Cells', 'ME Cells'};
