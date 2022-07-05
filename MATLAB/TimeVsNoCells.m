@@ -1,4 +1,4 @@
-function [numberofcells, yLE, yME, yTotal, ME, LE] = TimeVsNoCells(directory)
+function [numberofcells, x, yLE, yME, yTotal, ME, LE] = TimeVsNoCells(directory)
 %% Importfiles
 
 cells = importfile_displacement(directory);
