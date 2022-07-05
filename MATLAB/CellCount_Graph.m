@@ -17,7 +17,6 @@ ylabel('Number of Cells at End')
 ax = gca;
 ax.XTick = [1 2]; 
 ax.XTickLabels = {'LE Cells', 'ME Cells'};
-ax.XTickLabelRotation = 45;
 
 b.FaceColor = 'flat';
 b.CData(1,:) = [.4 .8 .3];
