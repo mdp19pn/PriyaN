@@ -324,7 +324,7 @@ public:
 
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryOrganoid/MammaryCellCycleModel/WT/n=5");
+        simulator.SetOutputDirectory("TestMammaryOrganoid/MammaryCellCycleModel/WT/n=3");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(120.0);
 
@@ -336,6 +336,11 @@ public:
         // Create a force law and pass it to the simulation
         MAKE_PTR(CellECMAdhesionForce<3>, p_force);
         simulator.AddForce(p_force);
+
+        // Add some noise to avoid local minimum
+        MAKE_PTR(RandomMotionForce<3>, p_random_force);
+        p_random_force->SetMovementParameter(0.05); //0.1 causes dissasociation, 0.001 is not enough
+        simulator.AddForce(p_random_force);
 
         // Run simulation
         simulator.Solve();
