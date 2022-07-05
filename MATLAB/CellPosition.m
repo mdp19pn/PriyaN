@@ -1,4 +1,4 @@
-function [LuminalPositions, MyoepithelialPositions] = CellPosition(directory)
+function [LuminalPositions, MyoepithelialPositions, r, r2] = CellPosition(directory)
 %% Importfiles
 
 displacement = importfile_displacement(directory);
@@ -52,20 +52,20 @@ for row = 1:height (MyoepithelialPositions)
     end
 end
 
-%% Plot data
-
-luminal = r(end,:);
-myo = r2(end,:);
-g = [luminal myo];
-C = [zeros(1,length(luminal)) ones(1,length(myo))];
-
-boxplot(g,C, 'Labels', {'LE Cells', 'ME Cells'})
-
-ylabel ('Position of Cell from the Center (a.u.)')
-
-folder = '~/Desktop/';
-exportgraphics(gca, 'CellPosition.pdf');
-movefile('CellPosition.pdf', folder);
+% %% Plot data
+% 
+% luminal = r(end,:);
+% myo = r2(end,:);
+% g = [luminal myo];
+% C = [zeros(1,length(luminal)) ones(1,length(myo))];
+% 
+% boxplot(g,C, 'Labels', {'LE Cells', 'ME Cells'})
+% 
+% ylabel ('Position of Cell from the Center (a.u.)')
+% 
+% folder = '~/Desktop/';
+% exportgraphics(gca, 'CellPosition.pdf');
+% movefile('CellPosition.pdf', folder);
 
 return;
 
