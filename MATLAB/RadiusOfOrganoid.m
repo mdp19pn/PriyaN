@@ -23,7 +23,7 @@ xlim([0 120])
 
 hold on
 
-scatter(x(1:55:end),y(1:55:end))
+plot(x(1:55:end),y(1:55:end))
 
 hold off
 
