@@ -35,7 +35,7 @@ public:
      * @param b1IntegrinExpression  whether B1 integrin by this myoepithelial cell
      * @param b4IntegrinExpression  whether B4 integrin by this myoepithelial cell
      */
-    MyoepithelialStemCellProperty(bool b1IntegrinExpression=false, bool b4IntegrinExpression=true);
+    MyoepithelialStemCellProperty(bool b1IntegrinExpression=true, bool b4IntegrinExpression=true);
 
     /**
      * Virtual destructor, to make this class polymorphic.

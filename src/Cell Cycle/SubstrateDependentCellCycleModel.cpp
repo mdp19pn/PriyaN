@@ -53,9 +53,8 @@ void SubstrateDependentCellCycleModel::UpdateCellCyclePhase()
         // Update G1 duration based on cell height
         double dt = SimulationTime::Instance()->GetTimeStep();
         double quiescent_height = mEquilibriumHeight * mQuiescentHeightFraction;
-        //PRINT_VARIABLE(cell_height);
         
-        if (cell_height > 0.5)
+        if (cell_height > 2)
         {
             // Update the duration of the current period of contact inhibition.
             mCurrentQuiescentDuration = SimulationTime::Instance()->GetTime() - mCurrentQuiescentOnsetTime;
@@ -72,7 +71,11 @@ void SubstrateDependentCellCycleModel::UpdateCellCyclePhase()
     double time_since_birth = GetAge();
     assert(time_since_birth >= 0);
 
-    if (mpCell->HasCellProperty<LuminalCellProperty>()) // luminal cell is DifferentiatedCellProliferativeType (mpCell->GetCellProliferativeType()->IsType<DifferentiatedCellProliferativeType>())
+    // if (mpCell->GetCellProliferativeType()->IsType<DifferentiatedCellProliferativeType>())
+    // {
+    //     mCurrentCellCyclePhase = G_ZERO_PHASE;
+    // }
+    if (mpCell->HasCellProperty<LuminalCellProperty>()) // luminal cell is DifferentiatedCellProliferativeType
     {
         mCurrentCellCyclePhase = G_ZERO_PHASE;
     }

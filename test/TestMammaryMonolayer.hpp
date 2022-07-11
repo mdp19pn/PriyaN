@@ -123,7 +123,7 @@ public:
         simulator.Solve();
     }
 
-    void TestMammaryMonolayer2CellPopulation()
+    void xTestMammaryMonolayer2CellPopulation()
     {        
         // Create a 3D 'nodes only' mesh, specifying nodes manually
         std::vector<Node<3>*> nodes;
@@ -136,12 +136,47 @@ public:
         nodes.push_back(new Node<3>(6,  false,  1.0, 0.5, 1.0));
 
         NodesOnlyMesh<3> mesh;
-        mesh.ConstructNodesWithoutMesh(nodes, 1.5);    
+        mesh.ConstructNodesWithoutMesh(nodes, 1.5);
 
-        // Create a vector of proliferative cells using the helper CellsGenerator
+        // // Create a vector of proliferative cells using the helper CellsGenerator
+        // std::vector<CellPtr> cells;
+        // CellsGenerator<UniformG1GenerationalCellCycleModel, 3> cells_generator;
+        // cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
+
+        /* Create a vector of cell pointers. */
         std::vector<CellPtr> cells;
-        CellsGenerator<UniformG1GenerationalCellCycleModel, 3> cells_generator;
-        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
+
+        /*
+         * This line defines a mutation state to be used for all cells, of type
+         * `WildTypeCellMutationState` (i.e. 'healthy'):
+         */
+        MAKE_PTR(WildTypeCellMutationState, p_state);
+        MAKE_PTR(StemCellProliferativeType, p_stem_type);
+
+        /* Create a cell-cycle (only contact inhibited) model for these cells and loop over the
+        * nodes of the mesh to create as many elements in the vector of cell pointers as there are
+        * in the initial mesh. */
+        for (unsigned i=0; i<mesh.GetNumNodes(); i++)
+        {
+            SubstrateDependentCellCycleModel* p_cycle_model = new SubstrateDependentCellCycleModel();
+            p_cycle_model->SetDimension(3);
+            p_cycle_model->SetBirthTime(-2.0*(double)i);
+            p_cycle_model->SetQuiescentHeightFraction(0.5);
+            p_cycle_model->SetEquilibriumHeight(1.0);
+            
+            CellPtr p_cell(new Cell(p_state,p_cycle_model));
+            p_cell->SetCellProliferativeType(p_stem_type);
+            
+            //Alter the defult cell-cyle duration
+            p_cycle_model->SetStemCellG1Duration(8.0);
+            p_cycle_model->SetTransitCellG1Duration(8.0);
+
+            /*WithStemCells
+            * push the cell back into the vector of cells.
+            */
+            p_cell->InitialiseCellCycleModel();
+            cells.push_back(p_cell);
+        }
       
         // Use the mesh and cells to create a cell population
         NodeBasedCellPopulation<3> cell_population(mesh, cells);
@@ -159,22 +194,25 @@ public:
         cell_population.GetCellUsingLocationIndex(5)->AddCellProperty(p_luminal);
         cell_population.GetCellUsingLocationIndex(6)->AddCellProperty(p_myo);
 
+        // Set the division rule for our population to be the oriented division rule
+        boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
+        cell_population.SetCentreBasedDivisionRule(p_division_rule_to_set);
+
         // Set population to output all data to results files
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
         cell_population.AddCellWriter<CellLocationWriter>();
         cell_population.AddCellWriter<CellVelocityWriter>();
-        // cell_population.AddPopulationWriter<BoundaryLengthWriter>();
 
         // Add a vertex mesh writer so that a rectangular coverslip is written to file
         std::vector<Node<3>*> coverslip;
-        coverslip.push_back(new Node<3>(0, true, -25.0, 25.0, -0.4));
-        coverslip.push_back(new Node<3>(1, true, 25.0, 25.0, -0.4));
-        coverslip.push_back(new Node<3>(2, true, 25.0, -25.0, -0.4));
-        coverslip.push_back(new Node<3>(3, true, -25.0, -25.0, -0.4));
-        coverslip.push_back(new Node<3>(4, true, -25.0, 25.0, -0.5));
-        coverslip.push_back(new Node<3>(5, true, 25.0, 25.0, -0.5));
-        coverslip.push_back(new Node<3>(6, true, 25.0, -25.0, -0.5));
-        coverslip.push_back(new Node<3>(7, true, -25.0, -25.0, -0.5));
+        coverslip.push_back(new Node<3>(0, true, -10.0, 10.0, -0.4));
+        coverslip.push_back(new Node<3>(1, true, 10.0, 10.0, -0.4));
+        coverslip.push_back(new Node<3>(2, true, 10.0, -10.0, -0.4));
+        coverslip.push_back(new Node<3>(3, true, -10.0, -10.0, -0.4));
+        coverslip.push_back(new Node<3>(4, true, -10.0, 10.0, -0.6));
+        coverslip.push_back(new Node<3>(5, true, 10.0, 10.0, -0.6));
+        coverslip.push_back(new Node<3>(6, true, 10.0, -10.0, -0.6));
+        coverslip.push_back(new Node<3>(7, true, -10.0, -10.0, -0.6));
         std::vector<VertexElement<3,3>* > elements = {new VertexElement<3,3>(0, coverslip)};
         MutableVertexMesh<3,3>* p_mesh = new MutableVertexMesh<3,3>(coverslip, elements);
         
@@ -183,13 +221,22 @@ public:
         
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryMonolayer/WT");
+        simulator.SetOutputDirectory("TestMammaryMonolayer");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(120.0); // Hours
+
+        // Construct a cell killer object and pass the cell killer into the cell-based simulation
+        MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
+        simulator.AddCellKiller(p_killer);
         
         // Create a cell-cell repulsion force law and pass it to the simulation
         MAKE_PTR(RepulsionForce<3>, p_force); 
         simulator.AddForce(p_force);
+
+        // We create a force law and pass it to the
+        MAKE_PTR(GeneralisedLinearSpringForce<3>, p_linear_force);
+        p_linear_force->SetCutOffLength(1.5);
+        simulator.AddForce(p_linear_force);
 
         // Create a cell-coverslip adhesion force law and pass it to the simulation
         MAKE_PTR(CellCoverslipAdhesionForce<3>, p_cell_coverslip_force);
@@ -212,7 +259,7 @@ public:
         simulator.Solve();
     }
 
-    void xTestMammaryMonolayerSubstrateDependentCellCycleModel()
+    void TestMammaryMonolayerWithStemCells()
     {
         EXIT_IF_PARALLEL;
         
@@ -335,21 +382,17 @@ public:
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
         cell_population.AddCellWriter<CellLocationWriter>();
         cell_population.AddCellWriter<CellVelocityWriter>();
-        // cell_population.AddPopulationWriter<BoundaryLengthWriter>();
-
-        // Construct a cell killer object
-        MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
 
         // Add a vertex mesh writer so that a rectangular coverslip is written to file
         std::vector<Node<3>*> coverslip;
-        coverslip.push_back(new Node<3>(0, true, -25.0, 25.0, -0.4));
-        coverslip.push_back(new Node<3>(1, true, 25.0, 25.0, -0.4));
-        coverslip.push_back(new Node<3>(2, true, 25.0, -25.0, -0.4));
-        coverslip.push_back(new Node<3>(3, true, -25.0, -25.0, -0.4));
-        coverslip.push_back(new Node<3>(4, true, -25.0, 25.0, -0.5));
-        coverslip.push_back(new Node<3>(5, true, 25.0, 25.0, -0.5));
-        coverslip.push_back(new Node<3>(6, true, 25.0, -25.0, -0.5));
-        coverslip.push_back(new Node<3>(7, true, -25.0, -25.0, -0.5));
+        coverslip.push_back(new Node<3>(0, true, -10.0, 10.0, -0.4));
+        coverslip.push_back(new Node<3>(1, true, 10.0, 10.0, -0.4));
+        coverslip.push_back(new Node<3>(2, true, 10.0, -10.0, -0.4));
+        coverslip.push_back(new Node<3>(3, true, -10.0, -10.0, -0.4));
+        coverslip.push_back(new Node<3>(4, true, -10.0, 10.0, -0.6));
+        coverslip.push_back(new Node<3>(5, true, 10.0, 10.0, -0.6));
+        coverslip.push_back(new Node<3>(6, true, 10.0, -10.0, -0.6));
+        coverslip.push_back(new Node<3>(7, true, -10.0, -10.0, -0.6));
         std::vector<VertexElement<3,3>* > elements = {new VertexElement<3,3>(0, coverslip)};
         MutableVertexMesh<3,3>* p_mesh = new MutableVertexMesh<3,3>(coverslip, elements);
         
@@ -358,13 +401,22 @@ public:
         
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryMonolayerWT");
+        simulator.SetOutputDirectory("TestMammaryMonolayer/StemCells/Control/WT");
         simulator.SetSamplingTimestepMultiple(12);
-        simulator.SetEndTime(96.0); // Hours
+        simulator.SetEndTime(120.0); // Hours
+        
+        /// Construct a cell killer object and pass the cell killer into the cell-based simulation
+        MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
+        simulator.AddCellKiller(p_killer);
         
         // Create a cell-cell repulsion force law and pass it to the simulation
         MAKE_PTR(RepulsionForce<3>, p_force); 
         simulator.AddForce(p_force);
+
+        // We create a force law and pass it to the
+        MAKE_PTR(GeneralisedLinearSpringForce<3>, p_linear_force);
+        p_linear_force->SetCutOffLength(1.5);
+        simulator.AddForce(p_linear_force);
 
         // Create a cell-coverslip adhesion force law and pass it to the simulation
         MAKE_PTR(CellCoverslipAdhesionForce<3>, p_cell_coverslip_force);
@@ -379,24 +431,15 @@ public:
         MAKE_PTR_ARGS(PlaneBoundaryCondition<3>, p_bc, (&cell_population, point, normal));
         simulator.AddCellPopulationBoundaryCondition(p_bc);
 
-        // Pass the cell killer into the cell-based simulation
-        simulator.AddCellKiller(p_killer);
-
         // Add and pass the modifier to the simulation
         MAKE_PTR(CellHeightTrackingModifier<3>, p_modifier);
         simulator.AddSimulationModifier(p_modifier);
        
         // Run the simulation
         simulator.Solve();
-      
-        // Since we created pointers to nodes, we delete them here to avoid memory leaks
-        for (unsigned i=0; i<nodes.size(); i++)
-        {
-            delete nodes[i];
-        }
     }
 
-    void xTestMammaryMonolayerMammaryCellCycleModel()
+    void xTestMammaryMonolayerWithStemCellsMammaryCellCycleModel()
     {
         // EXIT_IF_PARALLEL;
         
@@ -489,21 +532,17 @@ public:
         cell_population.AddCellWriter<MammaryCellTypeWriter>();
         cell_population.AddCellWriter<CellLocationWriter>();
         cell_population.AddCellWriter<CellVelocityWriter>();
-        // cell_population.AddPopulationWriter<BoundaryLengthWriter>();
-        
-        // Construct a cell killer object
-        MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
       
         // Add a vertex mesh writer so that a rectangular coverslip  is written to file
         std::vector<Node<3>*> coverslip;
-        coverslip.push_back(new Node<3>(0, true, -25.0, 25.0, -0.4));
-        coverslip.push_back(new Node<3>(1, true, 25.0, 25.0, -0.4));
-        coverslip.push_back(new Node<3>(2, true, 25.0, -25.0, -0.4));
-        coverslip.push_back(new Node<3>(3, true, -25.0, -25.0, -0.4));
-        coverslip.push_back(new Node<3>(4, true, -25.0, 25.0, -0.5));
-        coverslip.push_back(new Node<3>(5, true, 25.0, 25.0, -0.5));
-        coverslip.push_back(new Node<3>(6, true, 25.0, -25.0, -0.5));
-        coverslip.push_back(new Node<3>(7, true, -25.0, -25.0, -0.5));
+        coverslip.push_back(new Node<3>(0, true, -10.0, 10.0, -0.4));
+        coverslip.push_back(new Node<3>(1, true, 10.0, 10.0, -0.4));
+        coverslip.push_back(new Node<3>(2, true, 10.0, -10.0, -0.4));
+        coverslip.push_back(new Node<3>(3, true, -10.0, -10.0, -0.4));
+        coverslip.push_back(new Node<3>(4, true, -10.0, 10.0, -0.6));
+        coverslip.push_back(new Node<3>(5, true, 10.0, 10.0, -0.6));
+        coverslip.push_back(new Node<3>(6, true, 10.0, -10.0, -0.6));
+        coverslip.push_back(new Node<3>(7, true, -10.0, -10.0, -0.6));
         std::vector<VertexElement<3,3>* > elements = {new VertexElement<3,3>(0, coverslip)};
         MutableVertexMesh<3,3>* p_mesh = new MutableVertexMesh<3,3>(coverslip, elements);
         
@@ -512,13 +551,22 @@ public:
         
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryMonolayerWT");
+        simulator.SetOutputDirectory("TestMammaryMonolayer/StemCells/-SDCCM");
         simulator.SetSamplingTimestepMultiple(12);
-        simulator.SetEndTime(96.0); // Hours
+        simulator.SetEndTime(120.0); // Hours
        
+        // Construct a cell killer object and pass the cell killer into the cell-based simulation
+        MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
+        simulator.AddCellKiller(p_killer);
+        
         // Create a cell-cell repulsion force law and pass it to the simulation
         MAKE_PTR(RepulsionForce<3>, p_force); 
         simulator.AddForce(p_force);
+
+        // We create a force law and pass it to the
+        MAKE_PTR(GeneralisedLinearSpringForce<3>, p_linear_force);
+        p_linear_force->SetCutOffLength(1.5);
+        simulator.AddForce(p_linear_force);
 
         // Create a cell-coverslip adhesion force law and pass it to the simulation
         MAKE_PTR(CellCoverslipAdhesionForce<3>, p_cell_coverslip_force);
@@ -528,26 +576,17 @@ public:
         c_vector<double,3> point = zero_vector<double>(3);
         c_vector<double,3> normal = zero_vector<double>(3);
         normal(2) = -1.0;
-        
+
         // Make a pointer to a PlaneBoundaryCondition (passing the point and normal to the plane) and pass it to the OffLatticeSimulation.
         MAKE_PTR_ARGS(PlaneBoundaryCondition<3>, p_bc, (&cell_population, point, normal));
         simulator.AddCellPopulationBoundaryCondition(p_bc);
-        
-        // Pass the cell killer into the cell-based simulation
-        simulator.AddCellKiller(p_killer);
-       
+
         // Add and pass the modifier to the simulation
         MAKE_PTR(CellHeightTrackingModifier<3>, p_modifier);
         simulator.AddSimulationModifier(p_modifier);
-
+       
         // Run the simulation
         simulator.Solve();
-      
-        // Since we created pointers to nodes, we delete them here to avoid memory leaks
-        for (unsigned i=0; i<nodes.size(); i++)
-        {
-            delete nodes[i];
-        }
     }
 };
 
