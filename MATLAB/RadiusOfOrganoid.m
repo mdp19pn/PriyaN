@@ -21,6 +21,8 @@ y = M;
 ylim([1 2.4])
 xlim([0 120])
 
+figure 
+
 hold on
 
 plot(x(1:55:end),y(1:55:end))

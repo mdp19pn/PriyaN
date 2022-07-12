@@ -1,79 +1,71 @@
-function [location1, location2, percentLuminal, percentMyoepithelial, LuminalAverage, MyoepithelialAverage] = CellLocation(directory)
+function [LuminalPositions, MyoepithelialPositions, LuminalLocation, MyoepithelialLocation, r, r2] = CellLocation(directory)
 %% Importfiles
 
 location = importfile_location(directory);
 
 %% Reshape data file
 
-location1 = reshape(location, 5,[])';
-location2 = array2table(location1, ...
-    'VariableNames',{'Cell Type', 'Cell ID', 'x-pos', 'y-pos', 'z-pos'});
+LuminalPositions = zeros(height(displacement), width(displacement)); % creates new table filled with zero the size of location data file
+MyoepithelialPositions = zeros(height(displacement), width(displacement)); % creates new table filled with zero the size of location data file
 
-LuminalPositions = zeros(height(location1), width(location1));
-MyoepithelialPositions = zeros(height(location1), width(location1));
-
-for i = 1:height(location1)
-    if location1(i,1) == "Luminal"
-        for j = 1:width(location1)
-            LuminalPositions(i,j) = str2double(location1(i,j));
+for i = 1:height(displacement)
+    
+    for j = 1:width(displacement)-5
+        
+        if displacement(i,j) == "Luminal"
+            LuminalPositions(i,j) = str2double(displacement(i,j));
+            LuminalPositions(i,j+1) = str2double(displacement(i,j+1));
+            LuminalPositions(i,j+2) = str2double(displacement(i,j+2));
+            LuminalPositions(i,j+3) = str2double(displacement(i,j+3));
+            LuminalPositions(i,j+4) = str2double(displacement(i,j+4));
+            LuminalPositions(i,j+5) = str2double(displacement(i,j+5));
+        
+        elseif displacement(i,j) == "Myoepithelial"
+            
+            MyoepithelialPositions(i,j) = str2double(displacement(i,j));
+            MyoepithelialPositions(i,j+1) = str2double(displacement(i,j+1));
+            MyoepithelialPositions(i,j+2) = str2double(displacement(i,j+2));
+            MyoepithelialPositions(i,j+3) = str2double(displacement(i,j+3));
+            MyoepithelialPositions(i,j+4) = str2double(displacement(i,j+4));
+            MyoepithelialPositions(i,j+5) = str2double(displacement(i,j+5));
+        
         end
-    elseif location1(i,1) == "Myoepithelial"
-        for j = 1:width(location1)
-            MyoepithelialPositions(i,j) = str2double(location1(i,j));
-        end
+    
     end
+
 end
 
 %% Compute Statistics
 
-LuminalPositions = LuminalPositions(any(LuminalPositions,2),:);
-MyoepithelialPositions = MyoepithelialPositions(any(MyoepithelialPositions,2),:);
+LuminalLocation = LuminalPositions(:,any(LuminalPositions)); % removes collumns containing only zeros
+MyoepithelialLocation = MyoepithelialPositions(:,any(MyoepithelialPositions)); % removes collumns containing only zeros
 
-[numRowsLuminal,numColsLuminal] = size(LuminalPositions);
-[numRowsMyoepithelial,numColsMyoepithelial] = size(MyoepithelialPositions);
-[numRowsTotal,numColsTotal] = size(location2);
-
-Luminal_z0 = 0;
-Myoepithelial_z0 = 0;
-
-for i = 1:numRowsLuminal
-    if LuminalPositions(i,5) == 0
-        Luminal_z0 = Luminal_z0 + 1;
+for row = 1:height (LuminalLocation)
+    for counter = 1:(width(LuminalLocation)-1)/4
+        j = (counter * 4)-2;
+        r(row,counter) = LuminalLocation(row,j+2);
     end
 end
 
-percentLuminal = Luminal_z0 / numRowsTotal
-
-for i = 1:numRowsMyoepithelial
-    if MyoepithelialPositions(i,5) == 0
-        Myoepithelial_z0 = Myoepithelial_z0 + 1;
+for row = 1:height (MyoepithelialLocation)
+    for counter = 1:(width(MyoepithelialLocation)-1)/4
+        j = (counter * 4)-2;
+        r2(row,counter) = MyoepithelialLocation(row,j+2);
     end
 end
-
-percentMyoepithelial = Myoepithelial_z0 / numRowsTotal
-
-LuminalAverage = mean (LuminalPositions(:,5))
-
-MyoepithelialAverage = mean (MyoepithelialPositions(:,5))
 
 %% Plot location of LE and ME cells
-x = [1 2];
-y = [LuminalAverage,MyoepithelialAverage];
+luminal = r(end,:);
+myo = r2(end,:);
+g = [luminal myo];
+C = [zeros(1,length(luminal)) ones(1,length(myo))];
 
-b = bar(x,y,'FaceColor','[0 0.1 0]')
-ylabel('Average Height of Cells from the Subtsrate (a.u.)')
-ax = gca;
-ax.XTick = [1 2]; 
-ax.XTickLabels = {'LE Cells', 'ME Cells'};
-ax.XTickLabelRotation = 45;
+boxplot(g,C, 'Labels', {'LE Cells', 'ME Cells'})
 
-b.FaceColor = 'flat';
-b.CData(1,:) = [.4 .8 .3];
-b.CData(2,:) = [.8 .1 .2];
+ylabel ('Position of Cell from the ECM (a.u.)')
 
 folder = '~/Desktop/';
-exportgraphics(gca, 'CellLocation.pdf');
-movefile('CellLocation.pdf', folder);
+exportgraphics(gca, 'CellPosition.pdf');
 
 return;
 

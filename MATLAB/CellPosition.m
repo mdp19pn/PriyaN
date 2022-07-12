@@ -37,7 +37,6 @@ end
 LuminalPositions = LuminalPositions(:,any(LuminalPositions)); % removes collumns containing only zeros
 MyoepithelialPositions = MyoepithelialPositions(:,any(MyoepithelialPositions)); % removes collumns containing only zeros
 
-
 for row = 1:height (LuminalPositions)
     for counter = 1:(width(LuminalPositions)-1)/4
         j = (counter * 4)-2;
@@ -52,20 +51,20 @@ for row = 1:height (MyoepithelialPositions)
     end
 end
 
-% %% Plot data
-% 
-% luminal = r(end,:);
-% myo = r2(end,:);
-% g = [luminal myo];
-% C = [zeros(1,length(luminal)) ones(1,length(myo))];
-% 
-% boxplot(g,C, 'Labels', {'LE Cells', 'ME Cells'})
-% 
-% ylabel ('Position of Cell from the Center (a.u.)')
-% 
-% folder = '~/Desktop/';
-% exportgraphics(gca, 'CellPosition.pdf');
-% movefile('CellPosition.pdf', folder);
+%% Plot data
+
+luminal = r(end,:);
+myo = r2(end,:);
+g = [luminal myo];
+C = [zeros(1,length(luminal)) ones(1,length(myo))];
+
+boxplot(g,C, 'Labels', {'LE Cells', 'ME Cells'})
+
+ylabel ('Position of Cell from the Center (a.u.)')
+
+folder = '~/Desktop/';
+exportgraphics(gca, 'CellPosition.pdf');
+movefile('CellPosition.pdf', folder);
 
 return;
 

@@ -1,50 +1,42 @@
 function [x,y] = TimeVsRadius(directory)
 %% Importfiles
 
-heterotypicboundaryall = importfile_heterotypicboundaryall(WT);
+position = importfile_position(directory);
 
-%% Plot Time vs Total Boundary Length
-x=table2array(heterotypicboundaryall(:,1));
+%% Calculate radial distance of cells and detremine max radial position
 
-y=table2array(heterotypicboundaryall(:,3));
+for row = 1:height (position)
+    for counter = 1:(width(position)-1)/5
+        j = (counter * 5) - 1;
+        r(row,counter) = sqrt(position(row,j)^2 + position(row,j+1)^2 + position(row,j+2)^2);
+    end
+    [M(row,1), index(row)] = max (r(row,:));
+end
 
-figure
+%% Plot radial distance of organoid over time
+
+x = position(:,1);
+y = M;
+
+ylim([1 2.4])
+xlim([0 120])
+
+figure 
+
 hold on
 
-scatter(x(1:11:960), y(1:11:960), 'k')
-pWT = polyfit(x,y,4);
-fWT = polyval(pWT,x);
-plot(x,fWT, 'k')
+plot(x(1:55:end),y(1:55:end))
 
 hold off
 
-ylabel ('Boundary Length (a.u.)')
+ylabel ('Radius of 2D Culture (a.u)')
 xlabel('Time (h)')
-%legend({'WT', 'ME B1 KO'})
 
-%% Plot Time vs Radius
-x=table2array(heterotypicboundaryall(:,1));
-
-y=table2array(heterotypicboundaryall(:,3));
-
-diameter = y(:,1)./pi;
-
-radius = diameter(:,1)./2;
-
-figure
-hold on
-
-scatter(x(1:11:960), radius(1:11:960), 'k')
-pWT = polyfit(x,radius,4);
-fWT = polyval(pWT,x);
-plot(x,fWT, 'k')
-
-hold off
-
-ylabel ('Average Radius (a.u.)')
-xlabel('Time (h)')
-%legend({'WT', 'ME B1 KO'})
+folder = '~/Desktop/';
+exportgraphics(gca, 'FigureRadiusof2DCulture.pdf');
+movefile('FigureRadiusof2DCulture.pdf', folder);
 
 return;
+
 end
 
