@@ -138,11 +138,6 @@ public:
         NodesOnlyMesh<3> mesh;
         mesh.ConstructNodesWithoutMesh(nodes, 1.5);
 
-        // // Create a vector of proliferative cells using the helper CellsGenerator
-        // std::vector<CellPtr> cells;
-        // CellsGenerator<UniformG1GenerationalCellCycleModel, 3> cells_generator;
-        // cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
-
         /* Create a vector of cell pointers. */
         std::vector<CellPtr> cells;
 
@@ -221,7 +216,7 @@ public:
         
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryMonolayer");
+        simulator.SetOutputDirectory("TestMammaryMonolayer/2CellType/Control/n=1");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(120.0); // Hours
 
@@ -401,7 +396,7 @@ public:
         
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryMonolayer/StemCells/Control/WT");
+        simulator.SetOutputDirectory("TestMammaryMonolayer/StemCells/Control/WT/n=5");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(120.0); // Hours
         
