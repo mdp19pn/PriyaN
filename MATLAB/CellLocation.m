@@ -3,8 +3,7 @@ function [LuminalPositions, MyoepithelialPositions, LuminalLocation, Myoepitheli
 
 location = importfile_location(directory);
 
-location(location=="0")=5597;
-
+location(location=="0")=5597; % replaces all the zeros in the table with "5597" to ensure these collumns don't get removed 
 
 %% Reshape data file
 
@@ -44,8 +43,8 @@ end
 LuminalLocation = LuminalPositions(:,any(LuminalPositions)); % removes collumns containing only zeros
 MyoepithelialLocation = MyoepithelialPositions(:,any(MyoepithelialPositions)); % removes collumns containing only zeros
 
-LuminalLocation(LuminalLocation==5597)=0;
-MyoepithelialLocation(MyoepithelialLocation==5597)=0;
+LuminalLocation(LuminalLocation==5597)=0; % replace "5597" with the original zero
+MyoepithelialLocation(MyoepithelialLocation==5597)=0; % replace "5597" with the original zero
 
 for row = 1:height (LuminalPositions)
     for counter = 1:(width(LuminalLocation)-1)/4

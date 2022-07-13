@@ -1,4 +1,4 @@
-function [LuminalPositions, MyoepithelialPositions, r, r2] = CellPosition(directory)
+function [LuminalLocation, MyoepithelialLocation, r, r2] = CellPosition(directory)
 %% Importfiles
 
 displacement = importfile_displacement(directory);
@@ -34,20 +34,23 @@ for i = 1:height(displacement)
 
 end
 
-LuminalPositions = LuminalPositions(:,any(LuminalPositions)); % removes collumns containing only zeros
-MyoepithelialPositions = MyoepithelialPositions(:,any(MyoepithelialPositions)); % removes collumns containing only zeros
+LuminalLocation = LuminalPositions(:,any(LuminalPositions)); % removes collumns containing only zeros
+MyoepithelialLocation = MyoepithelialPositions(:,any(MyoepithelialPositions)); % removes collumns containing only zeros
 
-for row = 1:height (LuminalPositions)
-    for counter = 1:(width(LuminalPositions)-1)/4
+LuminalLocation(LuminalLocation==5597)=0; % replace "5597" with the original zero
+MyoepithelialLocation(MyoepithelialLocation==5597)=0; % replace "5597" with the original zero
+
+for row = 1:height (LuminalLocation)
+    for counter = 1:(width(LuminalLocation)-1)/4
         j = (counter * 4)-2;
-        r(row,counter) = sqrt(LuminalPositions(row,j)^2 + LuminalPositions(row,j+1)^2 + LuminalPositions(row,j+2)^2);
+        r(row,counter) = sqrt(LuminalLocation(row,j)^2 + LuminalLocation(row,j+1)^2 + LuminalLocation(row,j+2)^2);
     end
 end
 
-for row = 1:height (MyoepithelialPositions)
-    for counter = 1:(width(MyoepithelialPositions)-1)/4
+for row = 1:height (MyoepithelialLocation)
+    for counter = 1:(width(MyoepithelialLocation)-1)/4
         j = (counter * 4)-2;
-        r2(row,counter) = sqrt(MyoepithelialPositions(row,j)^2 + MyoepithelialPositions(row,j+1)^2 + MyoepithelialPositions(row,j+2)^2);
+        r2(row,counter) = sqrt(MyoepithelialLocation(row,j)^2 + MyoepithelialLocation(row,j+1)^2 + MyoepithelialLocation(row,j+2)^2);
     end
 end
 
