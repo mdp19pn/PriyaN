@@ -254,7 +254,7 @@ public:
         simulator.Solve();
     }
 
-    void TestMammaryMonolayerWithStemCells()
+    void xTestMammaryMonolayerWithStemCells()
     {
         EXIT_IF_PARALLEL;
         
@@ -396,13 +396,13 @@ public:
         
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryMonolayer/StemCells/Control/WT/n=1");
+        simulator.SetOutputDirectory("TestMammaryMonolayer/StemCells/Control/WT/n=5");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(120.0); // Hours
         
-        // // Construct a cell killer object and pass the cell killer into the cell-based simulation
-        // MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
-        // simulator.AddCellKiller(p_killer);
+        // Construct a cell killer object and pass the cell killer into the cell-based simulation
+        MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
+        simulator.AddCellKiller(p_killer);
         
         // Create a cell-cell repulsion force law and pass it to the simulation
         MAKE_PTR(RepulsionForce<3>, p_force); 
@@ -434,7 +434,7 @@ public:
         simulator.Solve();
     }
 
-    void xTestMammaryMonolayerWithStemCellsMammaryCellCycleModel()
+    void TestMammaryMonolayerWithStemCellsMammaryCellCycleModel()
     {
         // EXIT_IF_PARALLEL;
         
@@ -546,13 +546,13 @@ public:
         
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryMonolayer/StemCells/-SDCCM");
+        simulator.SetOutputDirectory("TestMammaryMonolayer/StemCells/-SDCCM/WT/n=1");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(120.0); // Hours
        
-        // Construct a cell killer object and pass the cell killer into the cell-based simulation
-        MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
-        simulator.AddCellKiller(p_killer);
+        // // Construct a cell killer object and pass the cell killer into the cell-based simulation
+        // MAKE_PTR_ARGS(AnoikisCellKiller<3>, p_killer, (&cell_population, 0.5));
+        // simulator.AddCellKiller(p_killer);
         
         // Create a cell-cell repulsion force law and pass it to the simulation
         MAKE_PTR(RepulsionForce<3>, p_force); 
