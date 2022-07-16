@@ -94,12 +94,12 @@ void CellECMAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulation<DIM>
             }
             else if (cell_b1_expn || cell_b4_expn)
             {
-                c_vector<double, DIM> force = -4.0 * mStiffness * location;
+                c_vector<double, DIM> force = -3.0 * mStiffness * location;
                 rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force);
             }
             else
             {
-                c_vector<double, DIM> force = -8.0 * mStiffness * location;
+                c_vector<double, DIM> force = -0.0 * mStiffness * location;
                 rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force);
             }
         }
@@ -107,17 +107,17 @@ void CellECMAdhesionForce<DIM>::AddForceContribution(AbstractCellPopulation<DIM>
         {
             if (cell_b1_expn && cell_b4_expn)
             {
-                c_vector<double, DIM> force = -0.5 * mStiffness * location;
+                c_vector<double, DIM> force = -1.0 * mStiffness * location;
                 rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force);
             }
             else if (cell_b1_expn || cell_b4_expn)
             {
-                c_vector<double, DIM> force = -1.0 * mStiffness * location;
+                c_vector<double, DIM> force = -1.5 * mStiffness * location;
                 rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force);
             }
             else
             {
-                c_vector<double, DIM> force = -2.0 * mStiffness * location;
+                c_vector<double, DIM> force = -0.0 * mStiffness * location;
                 rCellPopulation.GetNode(node_index)->AddAppliedForceContribution(force);
             }
         }
