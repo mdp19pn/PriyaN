@@ -324,7 +324,7 @@ public:
 
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryOrganoid/MammaryCellCycleModel/MEB1KO/n=5");
+        simulator.SetOutputDirectory("TestMammaryOrganoid/MammaryCellCycleModel/DOKO/n=5");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(120.0);
 
@@ -396,6 +396,10 @@ public:
         cell_population.GetCellUsingLocationIndex(9)->AddCellProperty(p_myo_stem);
         cell_population.GetCellUsingLocationIndex(10)->AddCellProperty(p_luminal_stem);
         cell_population.GetCellUsingLocationIndex(11)->AddCellProperty(p_luminal);
+
+        // Set the division rule for our population to be the oriented division rule
+        boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
+        cell_population.SetCentreBasedDivisionRule(p_division_rule_to_set);
 
         // Set population to output all data to results files
         cell_population.AddCellWriter<CellIdWriter>();
@@ -500,7 +504,7 @@ public:
         MAKE_PTR(CellECMAdhesionForce<3>, p_force);
         simulator.AddForce(p_force);
 
-        // // Add an anoikis-based cell killer and pass it to the simulation
+        // Add an anoikis-based cell killer and pass it to the simulation
         // MAKE_PTR_ARGS(AnoikisCellKiller3D<3>, p_anoikis_killer, (&cell_population));
         // simulator.AddCellKiller(p_anoikis_killer);
 

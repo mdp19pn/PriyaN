@@ -22,18 +22,18 @@ double AnoikisCellKiller3D::GetRadius() const
 
 void AnoikisCellKiller3D::CheckAndLabelCellsForApoptosisOrDeath()
 {
-    // for (AbstractCellPopulation<3>::Iterator cell_iter = this->mpCellPopulation->Begin();
-    //      cell_iter != this->mpCellPopulation->End();
-    //      ++cell_iter)
-    // {
-    //     // Get distance from centre of cell population
-    //     double r = norm_2(this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter) - mCentre);
+    for (AbstractCellPopulation<3>::Iterator cell_iter = this->mpCellPopulation->Begin();
+         cell_iter != this->mpCellPopulation->End();
+         ++cell_iter)
+    {
+        // Get distance from centre of cell population
+        double r = norm_2(this->mpCellPopulation->GetLocationOfCellCentre(*cell_iter) - mCentre);
 
-    //     if (r < mRadius)
-    //     {
-    //         cell_iter->Kill();
-    //     }
-    // }
+        if (r < mRadius)
+        {
+            cell_iter->Kill();
+        }
+    }
 }
 
 void AnoikisCellKiller3D::OutputCellKillerParameters(out_stream& rParamsFile)
