@@ -264,7 +264,7 @@ public:
         simulator.Solve();
     }
     
-    void TestMammaryOrganoidMammaryCellCycleModel()
+    void xTestMammaryOrganoidMammaryCellCycleModel()
     {
         EXIT_IF_PARALLEL;
         
@@ -346,7 +346,7 @@ public:
         simulator.Solve();
     }
 
-    void xTestMammaryOrganoidIndividualCellStart()
+    void TestMammaryOrganoidIndividualCellStart()
     {
         EXIT_IF_PARALLEL;
         
@@ -383,19 +383,31 @@ public:
         boost::shared_ptr<AbstractCellProperty> p_luminal_stem(cell_population.GetCellPropertyRegistry()->Get<LuminalStemCellProperty>());
         boost::shared_ptr<AbstractCellProperty> p_myo_stem(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialStemCellProperty>());
         
-        // Assign these properties to cells
-        cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_myo_stem);
-        cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_luminal_stem);
-        cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_myo);
-        cell_population.GetCellUsingLocationIndex(5)->AddCellProperty(p_luminal_stem);
-        cell_population.GetCellUsingLocationIndex(6)->AddCellProperty(p_luminal);
-        cell_population.GetCellUsingLocationIndex(7)->AddCellProperty(p_luminal_stem);
-        cell_population.GetCellUsingLocationIndex(8)->AddCellProperty(p_myo);
-        cell_population.GetCellUsingLocationIndex(9)->AddCellProperty(p_myo_stem);
-        cell_population.GetCellUsingLocationIndex(10)->AddCellProperty(p_luminal_stem);
-        cell_population.GetCellUsingLocationIndex(11)->AddCellProperty(p_luminal);
+        for (AbstractCellPopulation<3>::Iterator cell_iter = cell_population.Begin();
+             cell_iter != cell_population.End();
+             ++cell_iter)
+        {
+            if (RandomNumberGenerator::Instance()->ranf() < 0.25)
+            {
+                cell_iter->AddCellProperty(p_myo); 
+            }
+            else if (RandomNumberGenerator::Instance()->ranf() < 0.15)
+            {
+                cell_iter->AddCellProperty(p_myo_stem);
+            }
+            else if (RandomNumberGenerator::Instance()->ranf() < 0.50)
+            {
+                cell_iter->AddCellProperty(p_luminal);
+            }
+            else if (RandomNumberGenerator::Instance()->ranf() < 0.05)
+            {
+                cell_iter->AddCellProperty(p_luminal_stem);
+            }
+            else
+            {
+                cell_iter->AddCellProperty(p_luminal_stem);
+            }
+        }
 
         // Set the division rule for our population to be the oriented division rule
         boost::shared_ptr<AbstractCentreBasedDivisionRule<3,3> > p_division_rule_to_set(new OrientedDivisionRule<3,3>());
@@ -410,7 +422,7 @@ public:
 
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryOrganoid/MammaryCellCycleModel/IndividualCells");
+        simulator.SetOutputDirectory("TestMammaryOrganoid/MammaryCellCycleModel/IndividualCells/WT/n=5");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(120.0);
 
@@ -422,6 +434,11 @@ public:
         // Create a force law and pass it to the simulation
         MAKE_PTR(CellECMAdhesionForce<3>, p_force);
         simulator.AddForce(p_force);
+
+        // Add some noise to avoid local minimum
+        MAKE_PTR(RandomMotionForce<3>, p_random_force);
+        p_random_force->SetMovementParameter(0.05); //0.1 causes dissasociation, 0.001 is not enough
+        simulator.AddForce(p_random_force);
 
         // Run simulation
         simulator.Solve();
