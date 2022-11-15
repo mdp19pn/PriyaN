@@ -32,9 +32,13 @@ hold off
 ylabel ('Radius of 2D Culture (a.u)')
 xlabel('Time (h)')
 
+ax = gca;
+ax.FontSize = 14; 
+ax.FontName = "Calibri";
+
 folder = '~/Desktop/';
-exportgraphics(gca, 'FigureRadiusof2DCulture.pdf');
-movefile('FigureRadiusof2DCulture.pdf', folder);
+exportgraphics(gca, 'FigureRadiusof2DCulture.tiff');
+movefile('FigureRadiusof2DCulture.tiff', folder);
 
 return;
 

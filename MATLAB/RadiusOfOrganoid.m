@@ -32,9 +32,13 @@ hold off
 ylabel ('Radius of Organoid (a.u)')
 xlabel('Time (h)')
 
+ax = gca;
+ax.FontSize = 14; 
+ax.FontName = "Calibri";
+
 folder = '~/Desktop/';
-exportgraphics(gca, 'FigureRadiusofOrganoid.pdf');
-movefile('FigureRadiusofOrganoid.pdf', folder);
+exportgraphics(gca, 'FigureRadiusofOrganoid.tiff');
+movefile('FigureRadiusofOrganoid.tiff', folder);
 
 return;
 

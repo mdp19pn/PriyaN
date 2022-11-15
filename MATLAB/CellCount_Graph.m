@@ -12,19 +12,24 @@ numberofcells (:,3) = transpose(sum(transpose(numberofcells())));
 x = [1 2];
 y = [numberofcells(end,1),numberofcells(end,2)];
 
+x=categorical({'LE cells', 'ME cells'});
+
 b = bar(x,y)
 ylabel('Number of Cells at End')
 ax = gca;
-ax.XTick = [1 2]; 
+
 ax.XTickLabels = {'LE Cells', 'ME Cells'};
 
 b.FaceColor = 'flat';
 b.CData(1,:) = [.4 .8 .3];
 b.CData(2,:) = [.8 .1 .2];
 
+ax.FontSize = 14; 
+ax.FontName = "Calibri";
+
 folder = '~/Desktop/';
-exportgraphics(gca, 'CellCount.pdf');
-movefile('CellCount.pdf', folder);
+exportgraphics(gca, 'CellCount.tiff');
+movefile('CellCount.tiff', folder);
 
 return;
 

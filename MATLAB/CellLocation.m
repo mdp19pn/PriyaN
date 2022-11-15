@@ -71,9 +71,13 @@ boxplot(g,C, 'Labels', {'LE Cells', 'ME Cells'})
 
 ylabel ('Position of Cell from the ECM (a.u.)')
 
+ax = gca;
+ax.FontSize = 14; 
+ax.FontName = "Calibri";
+
 folder = '~/Desktop/';
-exportgraphics(gca, 'CellPosition.pdf');
-movefile('CellPosition.pdf', folder);
+exportgraphics(gca, 'CellPosition.tiff');
+movefile('CellPosition.tiff', folder);
 
 %Calculate Mean
 LEaverage = mean(r,2);
@@ -98,9 +102,13 @@ b.FaceColor = 'flat';
 b.CData(1,:) = [.4 .8 .3];
 b.CData(2,:) = [.8 .1 .2];
 
+ax = gca;
+ax.FontSize = 14; 
+ax.FontName = "Calibri";
+
 folder = '~/Desktop/';
-exportgraphics(gca, 'AverageCellLocation.pdf');
-movefile('AverageCellLocation.pdf', folder);
+exportgraphics(gca, 'AverageCellLocation.tiff');
+movefile('AverageCellLocation.tiff', folder);
 
 return;
 end
