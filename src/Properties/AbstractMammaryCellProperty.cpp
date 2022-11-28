@@ -26,3 +26,13 @@ bool AbstractMammaryCellProperty::GetB4IntegrinExpression() const
 {
     return mB4IntegrinExpression;
 }
+
+void AbstractMammaryCellProperty::SetB1IntegrinExpression(bool b1IntegrinExpression)
+{
+	mB1IntegrinExpression = b1IntegrinExpression;
+}
+
+void AbstractMammaryCellProperty::SetB4IntegrinExpression(bool b4IntegrinExpression)
+{
+	mB4IntegrinExpression = b4IntegrinExpression;
+}

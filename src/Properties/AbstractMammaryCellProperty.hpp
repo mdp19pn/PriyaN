@@ -69,6 +69,20 @@ public:
      * @return #mB4IntegrinExpression.
      */
     bool GetB4IntegrinExpression() const;
+
+	/**
+	 * Set mB1IntegrinExpression.
+	 *
+	 * @param b1IntegrinExpression Boolean encoding whether B1 integrin is expressed by this luminal or myoepithelial cell.
+	 */
+	 void SetB1IntegrinExpression(bool b1IntegrinExpression);
+
+	/**
+	 * Set mB4IntegrinExpression.
+	 *
+	 * @param b4IntegrinExpression Boolean encoding whether B4 integrin is expressed by this luminal or myoepithelial cell.
+	 */
+	 void SetB4IntegrinExpression(bool b4IntegrinExpression);
 };
 
 #endif /*ABSTRACTMAMMARYCELLPROPERTY_HPP_*/
