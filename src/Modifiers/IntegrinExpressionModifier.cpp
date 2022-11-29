@@ -1,11 +1,17 @@
 #include "IntegrinExpressionModifier.hpp"
 #include "NodeBasedCellPopulation.hpp"
+#include "LuminalCellProperty.hpp"
+#include "MyoepithelialCellProperty.hpp"
+#include "LuminalStemCellProperty.hpp"
+#include "MyoepithelialStemCellProperty.hpp"
 
 template<unsigned DIM>
 IntegrinExpressionModifier<DIM>::IntegrinExpressionModifier()
     : AbstractCellBasedSimulationModifier<DIM>(),
 	  mIntegrinExpressionModified(false),
 	  mIntegrinExpressionModificationTime(0.0),
+	  mLuminalCellsAffected(false),
+	  mMyoepithelialCellsAffected(false),
 	  mB1GainOfFunction(false),
 	  mB1LossOfFunction(false),
 	  mB4GainOfFunction(false),
@@ -27,6 +33,16 @@ void IntegrinExpressionModifier<DIM>::UpdateAtEndOfTimeStep(AbstractCellPopulati
 template<unsigned DIM>
 void IntegrinExpressionModifier<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& rCellPopulation, std::string outputDirectory)
 {
+	// We must have at least one mammary cell lineage affected by the gain/loss of function
+	if (mLuminalCellsAffected == false)
+	{
+		assert(mMyoepithelialCellsAffected == true);
+	}
+	if (mMyoepithelialCellsAffected == false)
+	{
+		assert(mLuminalCellsAffected == true);
+	}
+	
 	// We cannot have both a gain and loss of function of a given integrin
     if (mB1GainOfFunction == true)
 	{
@@ -54,6 +70,12 @@ void IntegrinExpressionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
 
 	if (mIntegrinExpressionModified == false)
 	{
+		        // Determine if cell B is luminal (if not, assume it is myoepithelial)
+        CellPtr p_cell_B = rCellPopulation.GetCellUsingLocationIndex(nodeBGlobalIndex);
+        bool cell_B_is_luminal = p_cell_B->template HasCellProperty<LuminalCellProperty>();
+		
+		
+		
 		if (SimulationTime::Instance()->GetTime() >= mIntegrinExpressionModificationTime)
 		{
 			// Iterate over cell population
@@ -61,25 +83,47 @@ void IntegrinExpressionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
 				cell_iter != rCellPopulation.End();
 				++cell_iter)
 			{
-				// Get this cell's mammary cell property, so we can alter its mB1IntegrinExpression and/or mB4IntegrinExpression value(s)
-				boost::shared_ptr<AbstractCellProperty> p_mammary_cell_property =
-					mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<AbstractMammaryCellProperty >();
-
-				if (mB1GainOfFunction)
+				if (mLuminalCellsAffected == true)
 				{
-					p_mammary_cell_property->SetB1IntegrinExpression(true);
+					if (cell_iter->template HasCellProperty<LuminalCellProperty>())
+					{
+						if (mB1GainOfFunction)
+					{
+						p_mammary_cell_property->SetB1IntegrinExpression(true);
+					}
+					if (mB1LossOfFunction)
+					{
+						p_mammary_cell_property->SetB1IntegrinExpression(false);
+					}
+					if (mB4GainOfFunction)
+					{
+						p_mammary_cell_property->SetB4IntegrinExpression(true);
+					}
+					if (mB4LossOfFunction)
+					{
+						p_mammary_cell_property->SetB4IntegrinExpression(false);
+					}
 				}
-				if (mB1LossOfFunction)
+				if (mMyoepithelialCellsAffected == true)
 				{
-					p_mammary_cell_property->SetB1IntegrinExpression(false);
-				}
-				if (mB4GainOfFunction)
-				{
-					p_mammary_cell_property->SetB4IntegrinExpression(true);
-				}
-				if (mB4LossOfFunction)
-				{
-					p_mammary_cell_property->SetB4IntegrinExpression(false);
+					if (cell_iter->template HasCellProperty<MyoepithelialCellProperty>())
+					{
+						if (mB1GainOfFunction)
+					{
+						p_mammary_cell_property->SetB1IntegrinExpression(true);
+					}
+					if (mB1LossOfFunction)
+					{
+						p_mammary_cell_property->SetB1IntegrinExpression(false);
+					}
+					if (mB4GainOfFunction)
+					{
+						p_mammary_cell_property->SetB4IntegrinExpression(true);
+					}
+					if (mB4LossOfFunction)
+					{
+						p_mammary_cell_property->SetB4IntegrinExpression(false);
+					}
 				}
 			}
 			
@@ -93,6 +137,24 @@ void IntegrinExpressionModifier<DIM>::OutputSimulationModifierParameters(out_str
 {
     // No parameters to output, so just call method on direct parent class
     AbstractCellBasedSimulationModifier<DIM>::OutputSimulationModifierParameters(rParamsFile);
+}
+
+template<unsigned DIM>
+void IntegrinExpressionModifier<DIM>::SetIntegrinExpressionModificationTime(double integrinExpressionModificationTime)
+{
+    mIntegrinExpressionModificationTime = integrinExpressionModificationTime;
+}
+
+template<unsigned DIM>
+void IntegrinExpressionModifier<DIM>::SetLuminalCellsAffected(bool luminalCellsAffected)
+{
+	mLuminalCellsAffected = luminalCellsAffected;
+}
+
+template<unsigned DIM>
+void IntegrinExpressionModifier<DIM>::SetMyoepithelialCellsAffected(bool myoepithelialCellsAffected)
+{
+	mMyoepithelialCellsAffected = myoepithelialCellsAffected;
 }
 
 template<unsigned DIM>

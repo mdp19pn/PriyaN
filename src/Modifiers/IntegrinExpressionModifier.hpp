@@ -28,6 +28,18 @@ private:
 	 */
 	double mIntegrinExpressionModificationTime;
 	
+	/**
+     * Boolean encoding whether luminal cells are affected by the gain/loss of function. 
+     * Defaults to false.
+     */
+	bool mLuminalCellsAffected;
+	
+	/**
+     * Boolean encoding whether myoepithelial cells are affected by the gain/loss of function. 
+     * Defaults to false.
+     */
+	bool mMyoepithelialCellsAffected;
+	
     /**
      * Boolean encoding whether there is a B1 integrin gain of function.
      */
@@ -64,6 +76,8 @@ private:
 		
 		archive & mIntegrinExpressionModified;
 		archive & mIntegrinExpressionModificationTime;
+		archive & mLuminalCellsAffected;
+		archive & mMyoepithelialCellsAffected;
 		archive & mB1GainOfFunction;
 		archive & mB1LossOfFunction;
 		archive & mB4GainOfFunction;
@@ -116,6 +130,27 @@ public:
      */
     void OutputSimulationModifierParameters(out_stream& rParamsFile);
 	
+	/**
+	 * Set mIntegrinExpressionModificationTime.
+	 *
+	 * @param integrinExpressionModificationTime Double encoding time at which integrin expression should be modified.
+	 */
+	void SetIntegrinExpressionModificationTime(double integrinExpressionModificationTime);
+	 
+	/**
+     * Set mLuminalCellsAffected.
+     *
+     * @param luminalCellsAffected Boolean encoding whether luminal cells are affected.
+     */
+	void SetLuminalCellsAffected(bool luminalCellsAffected);
+	
+    /**
+     * Set mMyoepithelialCellsAffected.
+     *
+     * @param myoepithelialCellsAffected Boolean encoding whether myoepithelial cells are affected.
+     */
+	void SetMyoepithelialCellsAffected(bool myoepithelialCellsAffected);
+
 	/**
      * Set mB1GainOfFunction.
      *

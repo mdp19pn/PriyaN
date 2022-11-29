@@ -42,6 +42,8 @@
 #include "DifferentialAdhesionLinearSpringForce.hpp"
 #include "RandomMotionForce.hpp"
 
+#include "IntegrinExpressionModifier.hpp"
+
 #include "Debug.hpp"
 
 /*
@@ -341,6 +343,17 @@ public:
         MAKE_PTR(RandomMotionForce<3>, p_random_force);
         p_random_force->SetMovementParameter(0.05); //0.1 causes dissasociation, 0.001 is not enough
         simulator.AddForce(p_random_force);
+
+        // Add and pass a modifier to the simulation specifying when and how B1/B4 integrin expression should be gained/lost in luminal/myoepithelial cells
+        MAKE_PTR(IntegrinExpressionModifier<3>, p_integrin_modifier);
+		p_integrin_modifier->SetIntegrinExpressionModificationTime(60.0);
+		p_integrin_modifier->SetLuminalCellsAffected(true);
+		p_integrin_modifier->SetMyoepithelialCellsAffected(false);
+		p_integrin_modifier->SetB1GainOfFunction(true);
+		p_integrin_modifier->SetB1LossOfFunction(false);
+		p_integrin_modifier->SetB4GainOfFunction(false);
+		p_integrin_modifier->SetB4LossOfFunction(false);
+        simulator.AddSimulationModifier(p_integrin_modifier);
 
         // Run simulation
         simulator.Solve();
