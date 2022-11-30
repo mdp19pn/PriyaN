@@ -5,6 +5,7 @@
 #include "MyoepithelialCellProperty.hpp"
 #include "LuminalStemCellProperty.hpp"
 #include "MyoepithelialStemCellProperty.hpp"
+#include "Debug.hpp"
 
 template<unsigned DIM>
 IntegrinExpressionModifier<DIM>::IntegrinExpressionModifier()
@@ -79,7 +80,7 @@ void IntegrinExpressionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
 				++cell_iter)
 			{
 				unsigned node_index = rCellPopulation.GetLocationIndexUsingCell(*cell_iter);
-
+PRINT_VARIABLE("a");
 				// Determine cell type
        			CellPtr p_cell = rCellPopulation.GetCellUsingLocationIndex(node_index);
         		bool cell_is_luminal = p_cell->template HasCellProperty<LuminalCellProperty>();
@@ -89,51 +90,61 @@ void IntegrinExpressionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
 
 				if (mLuminalCellsAffected == true)
 				{
+					PRINT_VARIABLE("b")
 					if (cell_is_luminal || cell_is_luminal_stem)
 					{
+						CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<LuminalCellProperty>();
+            			boost::shared_ptr<LuminalCellProperty> p_luminal = boost::static_pointer_cast<LuminalCellProperty>(collection.GetProperty());
+PRINT_VARIABLE("c")
 						if (mB1GainOfFunction)
 						{
-							cell_is_luminal->SetB1IntegrinExpression(true);
+							p_luminal->SetB1IntegrinExpression(true);
 						}
 						if (mB1LossOfFunction)
 						{
-							cell_is_luminal->SetB1IntegrinExpression(false);
+							p_luminal->SetB1IntegrinExpression(false);
 						}
 						if (mB4GainOfFunction)
 						{
-							cell_is_luminal->SetB4IntegrinExpression(true);
+							p_luminal->SetB4IntegrinExpression(true);
 						}
 						if (mB4LossOfFunction)
 						{
-							cell_is_luminal->SetB4IntegrinExpression(false);
+							p_luminal->SetB4IntegrinExpression(false);
 						}
 					}
 				}
 				if (mMyoepithelialCellsAffected == true)
 				{
+					PRINT_VARIABLE("d")
 					if (cell_is_myo || cell_is_myo_stem)
 					{
+						PRINT_VARIABLE("e")
+						CellPropertyCollection collection = p_cell->rGetCellPropertyCollection().GetProperties<MyoepithelialCellProperty>();
+						boost::shared_ptr<MyoepithelialCellProperty> p_myo = boost::static_pointer_cast<MyoepithelialCellProperty>(collection.GetProperty());
+PRINT_VARIABLE("f")
 						if (mB1GainOfFunction)
 						{
-							cell_is_myo->SetB1IntegrinExpression(true);
+							p_myo->SetB1IntegrinExpression(true);
 						}
 						if (mB1LossOfFunction)
 						{
-							cell_is_myo->SetB1IntegrinExpression(false);
+							p_myo->SetB1IntegrinExpression(false);
 						}
 						if (mB4GainOfFunction)
 						{
-							cell_is_myo->SetB4IntegrinExpression(true);
+							p_myo->SetB4IntegrinExpression(true);
 						}
 						if (mB4LossOfFunction)
 						{
-							cell_is_myo->SetB4IntegrinExpression(false);
+							p_myo->SetB4IntegrinExpression(false);
 						}
 					}
 				}
 			}
-			
+PRINT_VARIABLE("g")			
 			mIntegrinExpressionModified = true;
+			PRINT_VARIABLE("h")
 		}
 	}
 }
