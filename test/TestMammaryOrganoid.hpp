@@ -344,22 +344,104 @@ public:
         p_random_force->SetMovementParameter(0.05); //0.1 causes dissasociation, 0.001 is not enough
         simulator.AddForce(p_random_force);
 
+        // Run simulation
+        simulator.Solve();
+    }    
+    
+    void TestMammaryOrganoidIntegrinExpressionModifier()
+    {
+        EXIT_IF_PARALLEL;
+        
+        // Create a 3D 'nodes only' mesh, specifying nodes manually
+        std::vector<Node<3>*> nodes;
+        nodes.push_back(new Node<3>(0,  false,  0.0, 0.0, 0.0));
+        nodes.push_back(new Node<3>(1,  false,  0.75, 0.0, 0.0));
+        nodes.push_back(new Node<3>(2,  false,  -0.5, -0.5, 0.0));
+        nodes.push_back(new Node<3>(3,  false,  1.25, -0.5, 0.0));
+        nodes.push_back(new Node<3>(4,  false,  0.0, 0.75, 0.0));
+        nodes.push_back(new Node<3>(5,  false,  0.75, 0.75, 0.0));
+        nodes.push_back(new Node<3>(6,  false,  0.0, 0.0, 1.0));
+        nodes.push_back(new Node<3>(7,  false,  -0.5, -0.5, 1.0));
+        nodes.push_back(new Node<3>(8,  false,  -0.5, 0.5, 1.0));
+        nodes.push_back(new Node<3>(9,  false,  1.25, 0.0, 0.0));
+        nodes.push_back(new Node<3>(10,  false,  0.0, 1.0, 0.0));
+        nodes.push_back(new Node<3>(11,  false,  0.0, 0.75, 1.0));
+        
+        NodesOnlyMesh<3> mesh;
+        mesh.ConstructNodesWithoutMesh(nodes, 1.5);
+       
+        // Create a vector of proliferative cells using the helper CellsGenerator
+        std::vector<CellPtr> cells;
+        CellsGenerator<MammaryCellCycleModel, 3> cells_generator;
+        cells_generator.GenerateBasicRandom(cells, mesh.GetNumNodes());
+      
+        // Use the mesh and cells to create a cell population
+        NodeBasedCellPopulation<3> cell_population(mesh, cells);
+        
+        // Create the different cell types: luminal stem cells, myoepithelial stem differentiated luminal cells and differentiated myoepithelial cell, 
+        // (we do it this way to make sure they're tracked correctly in the simulation)
+        boost::shared_ptr<AbstractCellProperty> p_luminal(cell_population.GetCellPropertyRegistry()->Get<LuminalCellProperty>());
+        boost::shared_ptr<AbstractCellProperty> p_myo(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialCellProperty>());
+        boost::shared_ptr<AbstractCellProperty> p_luminal_stem(cell_population.GetCellPropertyRegistry()->Get<LuminalStemCellProperty>());
+        boost::shared_ptr<AbstractCellProperty> p_myo_stem(cell_population.GetCellPropertyRegistry()->Get<MyoepithelialStemCellProperty>());
+        
+        // Assign these properties to cells
+        cell_population.GetCellUsingLocationIndex(0)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(1)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(2)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(3)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(4)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(5)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(6)->AddCellProperty(p_luminal);
+        cell_population.GetCellUsingLocationIndex(7)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(8)->AddCellProperty(p_myo);
+        cell_population.GetCellUsingLocationIndex(9)->AddCellProperty(p_myo_stem);
+        cell_population.GetCellUsingLocationIndex(10)->AddCellProperty(p_luminal_stem);
+        cell_population.GetCellUsingLocationIndex(11)->AddCellProperty(p_luminal);
+
+        // Set population to output all data to results files
+        cell_population.AddCellWriter<CellIdWriter>();
+        cell_population.AddCellWriter<MammaryCellTypeWriter>();
+        cell_population.AddCellWriter<CellLocationWriter>();
+        cell_population.AddCellWriter<CellVelocityWriter>();
+        cell_population.AddPopulationWriter<CellPopulationAdjacencyWriter>();
+
+        // Pass the cell population to the simulation and specify duration and output parameters
+        OffLatticeSimulation<3> simulator(cell_population);
+        simulator.SetOutputDirectory("TestMammaryOrganoid/IntegrinExpressionModifier/LoF/MEDOKO/n=1");
+        simulator.SetSamplingTimestepMultiple(12);
+        simulator.SetEndTime(240.0);
+
+        // We create a force law and pass it to the
+        MAKE_PTR(GeneralisedLinearSpringForce<3>, p_linear_force);
+        p_linear_force->SetCutOffLength(1.5);
+        simulator.AddForce(p_linear_force);
+
+        // Create a force law and pass it to the simulation
+        MAKE_PTR(CellECMAdhesionForce<3>, p_force);
+        simulator.AddForce(p_force);
+
+        // Add some noise to avoid local minimum
+        MAKE_PTR(RandomMotionForce<3>, p_random_force);
+        p_random_force->SetMovementParameter(0.05); //0.1 causes dissasociation, 0.001 is not enough
+        simulator.AddForce(p_random_force);
+
         // Add and pass a modifier to the simulation specifying when and how B1/B4 integrin expression should be gained/lost in luminal/myoepithelial cells
         MAKE_PTR(IntegrinExpressionModifier<3>, p_integrin_modifier);
-		p_integrin_modifier->SetIntegrinExpressionModificationTime(60.0);
-		p_integrin_modifier->SetLuminalCellsAffected(true);
-		p_integrin_modifier->SetMyoepithelialCellsAffected(false);
-		p_integrin_modifier->SetB1GainOfFunction(true);
-		p_integrin_modifier->SetB1LossOfFunction(false);
+		p_integrin_modifier->SetIntegrinExpressionModificationTime(120.0);
+		p_integrin_modifier->SetLuminalCellsAffected(false);
+		p_integrin_modifier->SetMyoepithelialCellsAffected(true);
+		p_integrin_modifier->SetB1GainOfFunction(false);
+		p_integrin_modifier->SetB1LossOfFunction(true);
 		p_integrin_modifier->SetB4GainOfFunction(false);
-		p_integrin_modifier->SetB4LossOfFunction(false);
+		p_integrin_modifier->SetB4LossOfFunction(true);
         simulator.AddSimulationModifier(p_integrin_modifier);
 
         // Run simulation
         simulator.Solve();
     }
 
-    void TestMammaryOrganoidIndividualCellStart()
+    void xTestMammaryOrganoidIndividualCellStart()
     {
         EXIT_IF_PARALLEL;
         

@@ -178,7 +178,7 @@ public:
      * @param b4LossOfFunction Boolean encoding whether there is a B4 integrin loss of function.
      */
 	void SetB4LossOfFunction(bool b4LossOfFunction);
-}
+};
 
 #include "SerializationExportWrapper.hpp"
 EXPORT_TEMPLATE_CLASS_SAME_DIMS(IntegrinExpressionModifier)

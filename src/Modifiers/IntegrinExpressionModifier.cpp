@@ -1,5 +1,6 @@
 #include "IntegrinExpressionModifier.hpp"
 #include "NodeBasedCellPopulation.hpp"
+#include "AbstractMammaryCellProperty.hpp"
 #include "LuminalCellProperty.hpp"
 #include "MyoepithelialCellProperty.hpp"
 #include "LuminalStemCellProperty.hpp"
@@ -69,13 +70,7 @@ void IntegrinExpressionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
     rCellPopulation.Update();
 
 	if (mIntegrinExpressionModified == false)
-	{
-		        // Determine if cell B is luminal (if not, assume it is myoepithelial)
-        CellPtr p_cell_B = rCellPopulation.GetCellUsingLocationIndex(nodeBGlobalIndex);
-        bool cell_B_is_luminal = p_cell_B->template HasCellProperty<LuminalCellProperty>();
-		
-		
-		
+	{	
 		if (SimulationTime::Instance()->GetTime() >= mIntegrinExpressionModificationTime)
 		{
 			// Iterate over cell population
@@ -83,46 +78,57 @@ void IntegrinExpressionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
 				cell_iter != rCellPopulation.End();
 				++cell_iter)
 			{
+				unsigned node_index = rCellPopulation.GetLocationIndexUsingCell(*cell_iter);
+
+				// Determine cell type
+       			CellPtr p_cell = rCellPopulation.GetCellUsingLocationIndex(node_index);
+        		bool cell_is_luminal = p_cell->template HasCellProperty<LuminalCellProperty>();
+       			bool cell_is_myo = p_cell->template HasCellProperty<MyoepithelialCellProperty>();
+        		bool cell_is_luminal_stem = p_cell->template HasCellProperty<LuminalStemCellProperty>();
+        		bool cell_is_myo_stem = p_cell->template HasCellProperty<MyoepithelialStemCellProperty>();
+
 				if (mLuminalCellsAffected == true)
 				{
-					if (cell_iter->template HasCellProperty<LuminalCellProperty>())
+					if (cell_is_luminal || cell_is_luminal_stem)
 					{
 						if (mB1GainOfFunction)
-					{
-						p_mammary_cell_property->SetB1IntegrinExpression(true);
-					}
-					if (mB1LossOfFunction)
-					{
-						p_mammary_cell_property->SetB1IntegrinExpression(false);
-					}
-					if (mB4GainOfFunction)
-					{
-						p_mammary_cell_property->SetB4IntegrinExpression(true);
-					}
-					if (mB4LossOfFunction)
-					{
-						p_mammary_cell_property->SetB4IntegrinExpression(false);
+						{
+							cell_is_luminal->SetB1IntegrinExpression(true);
+						}
+						if (mB1LossOfFunction)
+						{
+							cell_is_luminal->SetB1IntegrinExpression(false);
+						}
+						if (mB4GainOfFunction)
+						{
+							cell_is_luminal->SetB4IntegrinExpression(true);
+						}
+						if (mB4LossOfFunction)
+						{
+							cell_is_luminal->SetB4IntegrinExpression(false);
+						}
 					}
 				}
 				if (mMyoepithelialCellsAffected == true)
 				{
-					if (cell_iter->template HasCellProperty<MyoepithelialCellProperty>())
+					if (cell_is_myo || cell_is_myo_stem)
 					{
 						if (mB1GainOfFunction)
-					{
-						p_mammary_cell_property->SetB1IntegrinExpression(true);
-					}
-					if (mB1LossOfFunction)
-					{
-						p_mammary_cell_property->SetB1IntegrinExpression(false);
-					}
-					if (mB4GainOfFunction)
-					{
-						p_mammary_cell_property->SetB4IntegrinExpression(true);
-					}
-					if (mB4LossOfFunction)
-					{
-						p_mammary_cell_property->SetB4IntegrinExpression(false);
+						{
+							cell_is_myo->SetB1IntegrinExpression(true);
+						}
+						if (mB1LossOfFunction)
+						{
+							cell_is_myo->SetB1IntegrinExpression(false);
+						}
+						if (mB4GainOfFunction)
+						{
+							cell_is_myo->SetB4IntegrinExpression(true);
+						}
+						if (mB4LossOfFunction)
+						{
+							cell_is_myo->SetB4IntegrinExpression(false);
+						}
 					}
 				}
 			}
@@ -189,4 +195,3 @@ template class IntegrinExpressionModifier<3>;
 // Serialization for Boost >= 1.36
 #include "SerializationExportWrapperForCpp.hpp"
 EXPORT_TEMPLATE_CLASS_SAME_DIMS(IntegrinExpressionModifier)
-
