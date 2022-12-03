@@ -408,7 +408,7 @@ public:
 
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryOrganoid/IntegrinExpressionModifier/LoF/MEDOKO/n=1");
+        simulator.SetOutputDirectory("TestMammaryOrganoid/IntegrinExpressionModifier/LoF/MEDOKO/n=5");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(240.0);
 
