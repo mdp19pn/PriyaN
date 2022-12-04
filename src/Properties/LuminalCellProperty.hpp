@@ -35,7 +35,7 @@ public:
      * @param b1IntegrinExpression  whether B1 integrin by this luminal cell
      * @param b4IntegrinExpression  whether B4 integrin by this luminal cell
      */
-    LuminalCellProperty(bool b1IntegrinExpression=true, bool b4IntegrinExpression=true);
+    LuminalCellProperty(bool b1IntegrinExpression=false, bool b4IntegrinExpression=false);
 
     /**
      * Virtual destructor, to make this class polymorphic.
