@@ -408,7 +408,7 @@ public:
 
         // Pass the cell population to the simulation and specify duration and output parameters
         OffLatticeSimulation<3> simulator(cell_population);
-        simulator.SetOutputDirectory("TestMammaryOrganoid/IntegrinExpressionModifier/GoF/MEDOKI/n=5");
+        simulator.SetOutputDirectory("TestMammaryOrganoid/IntegrinExpressionModifier/LoF/LEDOKO/n=5");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(240.0);
 
@@ -429,12 +429,12 @@ public:
         // Add and pass a modifier to the simulation specifying when and how B1/B4 integrin expression should be gained/lost in luminal/myoepithelial cells
         MAKE_PTR(IntegrinExpressionModifier<3>, p_integrin_modifier);
 		p_integrin_modifier->SetIntegrinExpressionModificationTime(120.0);
-		p_integrin_modifier->SetLuminalCellsAffected(false);
-		p_integrin_modifier->SetMyoepithelialCellsAffected(true);
-		p_integrin_modifier->SetB1GainOfFunction(true);
-		p_integrin_modifier->SetB1LossOfFunction(false);
-		p_integrin_modifier->SetB4GainOfFunction(true);
-		p_integrin_modifier->SetB4LossOfFunction(false);
+		p_integrin_modifier->SetLuminalCellsAffected(true);
+		p_integrin_modifier->SetMyoepithelialCellsAffected(false);
+		p_integrin_modifier->SetB1GainOfFunction(false);
+		p_integrin_modifier->SetB1LossOfFunction(true);
+		p_integrin_modifier->SetB4GainOfFunction(false);
+		p_integrin_modifier->SetB4LossOfFunction(true);
         simulator.AddSimulationModifier(p_integrin_modifier);
 
         // Run simulation
