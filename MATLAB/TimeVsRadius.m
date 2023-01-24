@@ -17,28 +17,28 @@ end
 
 x = position(:,1);
 y = M;
-
-ylim([1 2.4])
-xlim([0 120])
-
-figure 
-
-hold on
-
-plot(x(1:55:end),y(1:55:end))
-
-hold off
-
-ylabel ('Radius of 2D Culture (a.u)')
-xlabel('Time (h)')
-
-ax = gca;
-ax.FontSize = 14; 
-ax.FontName = "Calibri";
-
-folder = '~/Desktop/';
-exportgraphics(gca, 'FigureRadiusof2DCulture.tiff');
-movefile('FigureRadiusof2DCulture.tiff', folder);
+% 
+% ylim([1 2.4])
+% xlim([0 120])
+% 
+% figure 
+% 
+% hold on
+% 
+% plot(x(1:55:end),y(1:55:end))
+% 
+% hold off
+% 
+% ylabel ('Radius of 2D Culture (a.u)')
+% xlabel('Time (h)')
+% 
+% ax = gca;
+% ax.FontSize = 14; 
+% ax.FontName = "Calibri";
+% 
+% folder = '~/Desktop/';
+% exportgraphics(gca, 'FigureRadiusof2DCulture.tiff');
+% movefile('FigureRadiusof2DCulture.tiff', folder);
 
 return;
 

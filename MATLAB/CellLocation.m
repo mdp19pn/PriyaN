@@ -62,53 +62,80 @@ for row = 1:height (MyoepithelialPositions)
 end
 
 %% Plot location of LE and ME cells
+% luminal = r(end,:);
+% myo = r2(end,:);
+% g = [luminal myo];
+% C = [zeros(1,length(luminal)) ones(1,length(myo))];
+% 
+% boxplot(g,C, 'Labels', {'LE Cells', 'ME Cells'})
+% 
+% ylabel ('Position of Cell from the ECM (a.u.)')
+% 
+% ax = gca;
+% ax.FontSize = 14; 
+% ax.FontName = "Calibri";
+% 
+% folder = '~/Desktop/';
+% exportgraphics(gca, 'CellPosition.tiff');
+% movefile('CellPosition.tiff', folder);
+
+%Calculate Mean
+% LEaverage = mean(r,2);
+% MEaverage = mean(r2,2);
+% 
+% LEaverageEnd = LEaverage(end,:);
+% MEaverageEnd = MEaverage(end,:);
+
+%% Plot average location of LE and ME cells
+
+% y = cat(2, LEaverageEnd, MEaverageEnd);
+% x=categorical({'LE cells', 'ME cells'});
+% 
+% figure
+% 
+% b = bar(x,y);
+% 
+% ylabel('Average Position of Cells from the ECM (a.u.)') 
+% ax.XTickLabels = {'LE Cells', 'ME Cells'};
+% 
+% b.FaceColor = 'flat';
+% b.CData(1,:) = [.4 .8 .3];
+% b.CData(2,:) = [.8 .1 .2];
+% 
+% ax = gca;
+% ax.FontSize = 14; 
+% ax.FontName = "Calibri";
+% 
+% folder = '~/Desktop/';
+% exportgraphics(gca, 'AverageCellLocation.tiff');
+% movefile('AverageCellLocation.tiff', folder);
+
+
 luminal = r(end,:);
+LE1 = luminal.';
+LE2 = repmat({'LE cells'},size(LE1,1),1);
+
 myo = r2(end,:);
-g = [luminal myo];
-C = [zeros(1,length(luminal)) ones(1,length(myo))];
+ME1 = myo.';
+ME2 = repmat({'ME cells'},size(ME1,1),1);
 
-boxplot(g,C, 'Labels', {'LE Cells', 'ME Cells'})
+x = categorical(LE2);
+c = [0.4 0.8 0.3];
+x1 = categorical(ME2);
+c1 = [0.8 0.1 0.2];
 
-ylabel ('Position of Cell from the ECM (a.u.)')
+swarmchart(x,LE1,50,c,'filled')
+hold on 
+swarmchart(x1,ME1, 50,c1,'filled' )
+hold off
+ylabel ('Position of cell from the center (a.u.)')
 
 ax = gca;
 ax.FontSize = 14; 
 ax.FontName = "Calibri";
-
 folder = '~/Desktop/';
 exportgraphics(gca, 'CellPosition.tiff');
 movefile('CellPosition.tiff', folder);
-
-%Calculate Mean
-LEaverage = mean(r,2);
-MEaverage = mean(r2,2);
-
-LEaverageEnd = LEaverage(end,:);
-MEaverageEnd = MEaverage(end,:);
-
-%% Plot location of LE and ME cells
-
-y = cat(2, LEaverageEnd, MEaverageEnd);
-x=categorical({'LE cells', 'ME cells'});
-
-figure
-
-b = bar(x,y);
-
-ylabel('Average Position of Cells from the ECM (a.u.)') 
-ax.XTickLabels = {'LE Cells', 'ME Cells'};
-
-b.FaceColor = 'flat';
-b.CData(1,:) = [.4 .8 .3];
-b.CData(2,:) = [.8 .1 .2];
-
-ax = gca;
-ax.FontSize = 14; 
-ax.FontName = "Calibri";
-
-folder = '~/Desktop/';
-exportgraphics(gca, 'AverageCellLocation.tiff');
-movefile('AverageCellLocation.tiff', folder);
 
 return;
 end
